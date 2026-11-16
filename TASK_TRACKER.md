@@ -1,0 +1,245 @@
+# VIGIL v3.1 — Master Task & Milestone Tracker
+
+> **Execution Protocol:** Work one phase at a time (§15). Prove each phase's **Done means** before proceeding to the next.
+> **Deployment Rule:** A free public deployed link is mandatory. First slice deployed at the end of Phase 1, final deployment in Phase 6, verification in Phase 7.
+> **Repository Rules:** Main branch only, repository size strictly < 10 MB, offline mode 100% operational with no API keys, zero fabricated numbers.
+
+---
+
+## Progress Overview
+
+| Phase | Description | Target Date | Status | Deployment Milestone |
+|---|---|---|---|---|
+| **Phase 0** | Foundation & Guardrails | 17 Nov 2026 | 🟡 In Progress | Deployment scaffold (`deployment/`) |
+| **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | ⚪ Pending | **First Slice Deployed** (Vercel + Render) |
+| **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ⚪ Pending | - |
+| **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ⚪ Pending | - |
+| **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ⚪ Pending | - |
+| **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ⚪ Pending | Static demo data generator export |
+| **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ⚪ Pending | **Final Production Deployment** (Dual-mode) |
+| **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | ⚪ Pending | **Deployed Link Public Verification** |
+| **Phase 8** | Buffer & Emergency Fallback | 25 Nov 2026 | ⚪ Pending | Standby monitoring |
+
+---
+
+## Phase Details & "Done Means" Checklists
+
+### Phase 0 — Foundation & Guardrails (17 Nov)
+**Objective:** Clean, runnable skeleton with guardrails that ensure repository integrity and submission compliance.
+
+#### Tasks
+- [x] Initialise git repository on branch `main` and link remote `origin`.
+- [x] Create `.gitignore` per §11.2 (no models, no databases, no caches, no secrets).
+- [x] Create `.env.example` per Appendix C (offline default, empty Gemini placeholders).
+- [x] Create `README.md` skeleton per §19.1.
+- [x] Author comprehensive `ARCHITECTURE.md` with dual-adapter deployment specification.
+- [x] Author `TASK_TRACKER.md` with phases and exact Done-means checkpoints.
+- [x] Formulate Pinned Free-Only Dependency Plan and Lockfile Strategy.
+- [x] Establish System Risk Register with mitigations.
+- [x] Author `DEVELOPMENT_LOG.md` template for session audit logs.
+- [ ] Implement `scripts/preflight.py` per §11.3 (three size measures M1/M2/M3, branch checks, secret scans, history scan).
+- [ ] Implement `scripts/install_hooks.py` to configure local pre-push git hook.
+- [ ] Backend skeleton: FastAPI app, `/health`, CORS, request-ID middleware, standard error handler `{error: {code, message, request_id}}`.
+- [ ] Database scaffold: SQLite connection via SQLAlchemy 2, base models.
+- [ ] Frontend skeleton: Vite + React + TypeScript + Tailwind CSS with dark enterprise tokens (§12.2).
+- [ ] Frontend shell layout: persistent sidebar, top navigation bar, inspector panel, router with page placeholders.
+- [ ] Deployment scaffold: `deployment/render.yaml`, `deployment/vercel.json`, `deployment/DEPLOY.md`.
+- [ ] Test configuration: pytest + Ruff configured for Python; Vitest configured for React.
+
+#### Done Means Checkpoint
+- [ ] `pytest -q` passes with initial smoke tests.
+- [ ] `npm test` passes with frontend component smoke tests.
+- [ ] `GET /health` returns `{"status": "ok", "mode": "offline", "version": "3.1.0"}`.
+- [ ] Frontend loads and smoothly navigates all placeholder views without console errors.
+- [ ] `python scripts/preflight.py --quick` exits with code 0.
+- [ ] Commit pushed to `origin main`.
+- [ ] `git branch -a` and `git ls-remote --heads origin` confirm that **only** the `main` branch exists.
+
+---
+
+### Phase 1 — Vertical Slice 1: Paste → Entities → Observed Match → Graph → Score (18 Nov)
+**Objective:** A functional end-to-end path demonstrable on screen, deployed publicly early.
+
+#### Tasks
+- [ ] Endpoints: `POST /incidents`, `POST /incidents/{id}/evidence`, `POST /analyze/{id}`, `GET /incidents/{id}`, `GET /graph`.
+- [ ] Text normalisation (Unicode NFKC, zero-width stripping, case folding, SHA-256 provenance hashing).
+- [ ] Deterministic regex & gazetteer entity extraction (Phone E.164, UPI handle, Email, Domain, Organisation).
+- [ ] Persist entities, mentions, and structural relationships.
+- [ ] Implement `OBSERVED_MATCH` association generation for exact shared normalized identifiers with source evidence excerpts.
+- [ ] Implement baseline additive risk calculation storing factor contributions in `risk_contributions`.
+- [ ] Frontend New Investigation: paste transcript/message → creates incident → navigates to Detail.
+- [ ] Frontend Investigation Detail: masked entities, tactic timeline placeholder, risk badge with contribution list.
+- [ ] Frontend Intelligence Graph: React Flow canvas showing incident nodes, entity nodes, and solid `OBSERVED_MATCH` edges.
+- [ ] Minimal Evidence Inspector: opening on node/edge click showing source evidence excerpts.
+- [ ] Seed script (`scripts/seed_demo.py`) with 3 synthetic incidents (two sharing a UPI ID, one isolated).
+- [ ] **Deployment Milestone:** Deploy frontend to Vercel and backend to Render. Document URLs in `deployment/DEPLOY.md`. Resolve all CORS and bundle build errors.
+
+#### Done Means Checkpoint
+- [ ] Pasting a synthetic transcript generates an incident and displays masked entities (e.g., `+91 98•••••21`).
+- [ ] The graph displays a solid sky-blue `OBSERVED_MATCH` edge labeled `"observed match"` between two incidents sharing a UPI handle.
+- [ ] Clicking the edge opens the inspector, displaying the shared identifier and source evidence excerpts.
+- [ ] The third unrelated incident remains disconnected in the graph.
+- [ ] Unit tests pass verifying entity extraction and invariant I1 (no `OBSERVED_MATCH` without exact normalized equality).
+- [ ] Antigravity weekly quota inspected in **Settings → Models** and logged.
+- [ ] **First slice deployed publicly:** Deployed link opens on an external device and renders the interactive slice.
+
+---
+
+### Phase 2 — Intelligence Core: Tactics, Extractors, Injection Guard, Dataset v1 (19 Nov)
+**Objective:** Evidence-grounded tactic classification, prompt-injection defense, and the initial synthetic dataset.
+
+#### Tasks
+- [ ] Define `Extractor` Protocol and Pydantic data schemas in `ai_engine/extraction/interface.py`.
+- [ ] Implement `RuleMLExtractor`: Appendix A lexicon matching + scikit-learn TF-IDF (word + char n-grams) and Logistic Regression.
+- [ ] Seed lexicon authored in `data/lexicon.json` with English and Hinglish phrases.
+- [ ] Implement `GeminiExtractor` (optional Tier 3): schema-constrained JSON extraction, strict timeout, automatic fallback to `RuleMLExtractor`.
+- [ ] Implement Prompt-Injection Guard: delimiter sandboxing, instruction detection regex, `injection_flags` generation.
+- [ ] Enforce risk safety floor: injection flags prevent generation of mitigating factors.
+- [ ] Implement `scripts/generate_dataset.py` v1: slot-based templates, identifier rotation parameter, Faker names, validation checks.
+- [ ] Implement `scripts/train_classifier.py`: trains baseline model from `data/` in seconds (no binary models committed).
+- [ ] Persist `tactic_events` with confidence scores and text character spans.
+- [ ] Frontend: tactic timeline and highlighted text spans in Investigation Detail; manipulation attempt warning badge.
+
+#### Done Means Checkpoint
+- [ ] `python scripts/generate_dataset.py --seed 1` outputs valid JSONL < 1 MB.
+- [ ] Classifier trains in < 10 seconds; `evaluate_model.py --suite tactics` reports macro-F1 on template-held-out splits.
+- [ ] Pipeline runs 100% offline with no API key configured.
+- [ ] When configured with an invalid Gemini key or forced network timeout, system falls back gracefully to `RuleMLExtractor` with `fallback_used: true`.
+- [ ] 10 adversarial injection test transcripts trigger the manipulation badge with zero reduction in computed risk.
+- [ ] Investigation Detail highlights exact text spans for extracted tactics.
+
+---
+
+### Phase 3 — Associations, Temporal Engine, Fingerprint, Campaign Hypotheses (20 Nov)
+**Objective:** Playbook fingerprinting and campaign hypotheses with safety invariants I1–I5 strictly enforced.
+
+#### Tasks
+- [ ] Implement Association Service managing all five states (`OBSERVED_MATCH`, `CANDIDATE_ASSOCIATION`, `ANALYST_VERIFIED_ASSOCIATION`, `DISPUTED_ASSOCIATION`, `REJECTED_ASSOCIATION`).
+- [ ] Implement `reviews` audit table and review endpoints (`POST /associations/{id}/review`, `POST /campaigns/{id}/review`).
+- [ ] Implement Temporal Engine: chronologically ordered event streams, stage sequence derivation, dwell profile calculation, partial sequence handling, recurrence windows.
+- [ ] Implement Playbook Fingerprint similarity: LCS strict similarity, containment adjustment, relative order consistency, composite scoring.
+- [ ] Implement Playbook Association Gate ($\ge 3$ distinct stages, $\text{LCS} \ge 3$, $\text{similarity} \ge T_{\text{candidate}}$).
+- [ ] Implement Campaign Hypothesis Builder: connected components over observed matches, candidate edge extensions, hypothesis confidence calculation, weakest-link identification.
+- [ ] Frontend: visual edge styles per association state, graph legend clarifying observed match semantics, Campaigns view listing hypotheses.
+
+#### Done Means Checkpoint
+- [ ] Property unit tests enforce Invariant I1 (exact match only) and Invariant I2 (fingerprints cannot create observed or verified states).
+- [ ] Scenario with rotated identifiers produces a dashed amber `CANDIDATE_ASSOCIATION` edge with component scores.
+- [ ] Decoy scenarios (different tactics) fail the association gate and remain unlinked.
+- [ ] Cut-off partial sequences match correctly via containment adjustment.
+- [ ] Submitting an `ACCEPT` review transitions state to `ANALYST_VERIFIED_ASSOCIATION` and writes an audit record (Invariant I3).
+- [ ] All campaign views and API outputs strictly use the term "hypothesis" (Invariant I4).
+- [ ] All unit and integration tests pass.
+
+---
+
+### Phase 4 — Counter-Evidence Engine, Risk Ledger, Evidence Inspector (21 Nov)
+**Objective:** Explain why incidents might *not* be connected; provide complete evidence traceability.
+
+#### Tasks
+- [ ] Implement `counter_evidence` table and rules CE-1 through CE-8 (§6.10).
+- [ ] Author public identifier allowlist in `data/public_identifiers.json` (official helplines, bank domains).
+- [ ] Implement confidence adjustment logic; enforce invariant that HIGH severity findings set status to `DISPUTED_ASSOCIATION`.
+- [ ] Implement full Risk Engine with configurable weights (`config/risk_weights.json`) and persisted factor contributions.
+- [ ] Implement `GET /associations/{id}` inspector endpoint returning complete payload (§9).
+- [ ] Frontend Evidence Inspector: side-by-side excerpt comparisons, normalisation details, component score breakdown, counter-evidence panel, review controls.
+- [ ] Seed scenarios testing counter-evidence: public helpline reuse (CE-3), chronology inversion (CE-1), conflicting payment destinations (CE-2).
+
+#### Done Means Checkpoint
+- [ ] Unit tests pass for each counter-evidence rule (both positive trigger and negative control cases).
+- [ ] A HIGH severity finding transitions an association to `DISPUTED_ASSOCIATION` and renders a warning marker in the graph.
+- [ ] Counter-evidence findings remain visible and prominent even after an analyst manually accepts an association.
+- [ ] Risk contributions in `risk_contributions` sum exactly to the displayed 0–100 score.
+- [ ] The Evidence Inspector renders all required fields (§12.5.1) for associations, entities, and incidents.
+- [ ] Hand-written held-out evaluation set remains completely untouched.
+
+---
+
+### Phase 5 — Dataset v2, Evaluation & The Rotation Experiment (22 Nov)
+**Objective:** Rigorous scientific evaluation, multi-seed benchmark execution, and the hero rotation chart.
+
+#### Tasks
+- [ ] Dataset generator v2: full campaign templates (6 templates × 12–15 variants), 40 legitimate negatives, 20 decoys, 10 injection attacks.
+- [ ] Author the 25 hand-written held-out evaluation scenarios (written by hand, never seen during training).
+- [ ] Implement test harness `scripts/evaluate_model.py` supporting suites: `tactics`, `entities`, `associations`, `rotation`, `injection`, `heldout`, `latency`.
+- [ ] Execute Hero Rotation Experiment (E4): compare Arms A, B, C, D across rotation levels $r \in \{0.0, 0.25, 0.5, 0.75, 1.0\}$ across $\ge 10$ seeds.
+- [ ] Calculate Pairwise F1, False Association Rate, and Candidate Precision/Recall.
+- [ ] Implement `scripts/plot_results.py` to generate rotation benchmark chart PNG (< 200 KB).
+- [ ] Author `docs/EXPERIMENTS.md`, `docs/DATASET_CARD.md`, and `docs/MODEL_CARD.md`.
+- [ ] Scenario Lab API (`GET /scenarios`, `POST /scenarios/{name}/run`).
+
+#### Done Means Checkpoint
+- [ ] Every metric in `docs/EXPERIMENTS.md` is reproducible via CLI with recorded seeds.
+- [ ] False association rate and candidate precision/recall explicitly reported for all arms.
+- [ ] Suite E3 confirms zero false `OBSERVED_MATCH` edges across all decoys and negatives.
+- [ ] Hand-written held-out suite evaluated exactly once and logged.
+- [ ] Honest scientific interpretation documented (highlighting rotation regimes where Arm D excels vs. where it degrades).
+- [ ] Generated rotation chart PNG committed (< 200 KB).
+
+---
+
+### Phase 6 — UI Completion, Simulated Live Call Analysis, QA (23 Nov)
+**Objective:** Polished, accessible dark enterprise interface; interactive call simulation; feature freeze.
+
+#### Tasks
+- [ ] Complete Overview dashboard: real database KPI cards, activity feed, graph snapshot.
+- [ ] Complete Investigations list with search and risk filters.
+- [ ] Complete Campaigns page: side-by-side playbook sequence alignment, member list, review actions.
+- [ ] Complete Scenario Lab UI: scenario selector, rotation slider, deterministic run/replay, expected vs. actual diff.
+- [ ] Complete Reports view: structured exports (Observed Facts, Model Inferences, Analyst Actions, Counter-Evidence, Limitations) in JSON and CSV.
+- [ ] Complete Settings view: processing mode selector, transparency disclaimers, **"Clear all local data"** action (`DELETE /data`).
+- [ ] Implement **Simulated Live Call Analysis** page:
+  - Prominent disclaimer banner: *"Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls."*
+  - Progressive streaming transcript with tactic keyword highlighting.
+  - Interactive 6-stage tracker chips lighting up in sequence.
+  - Live heuristic risk gauge with real-time contribution list.
+  - Multi-lingual guidance cards (English and Hindi).
+  - Adversarial injection demonstration showing safety badge activation.
+- [ ] Comprehensive UI states: loading skeletons, empty states, error banners, success toasts.
+- [ ] Accessibility: WCAG AA contrast, visible focus rings, ARIA labels, alternative accessible Table View for the graph canvas.
+- [ ] Implement `scripts/export_static_demo.py` to compile demo JSON bundles into `frontend/public/demo-data/`.
+- [ ] Client API dual-adapter (`HttpApi` + `StaticApi`) with automatic sleeping backend detection and UI badge.
+- [ ] **Deployment Milestone:** Final deployment to Vercel and Render. Verify static fallback behavior when backend is stopped.
+- [ ] Declare formal **Feature Freeze** in `DEVELOPMENT_LOG.md`.
+
+#### Done Means Checkpoint
+- [ ] Every button, filter, and modal functions correctly across the entire application.
+- [ ] Every association edge has an explainable reason and triggers the Evidence Inspector.
+- [ ] Simulated Live Call Analysis operates completely offline and showcases real-time stage progression.
+- [ ] Keyboard-only navigation completes the core investigation workflow.
+- [ ] Zero unhandled JavaScript console errors on any route.
+- [ ] **Public Deployed Link verified:** Application operates seamlessly from a remote device in incognito mode with backend sleeping and awake.
+- [ ] Feature freeze formally committed to repository.
+
+---
+
+### Phase 7 — Documentation, Demo Video, Fresh-Clone Test, Submit (24 Nov)
+**Objective:** Flawless submission package, verified fresh clone, and final submission.
+
+#### Tasks
+- [ ] Finalise `README.md`: include verified live demo URL, architecture diagram, methodology, and honest benchmark tables.
+- [ ] Finalise all documentation: `ARCHITECTURE.md`, `API_SPEC.md`, `PRIVACY.md`, `DATASET_CARD.md`, `MODEL_CARD.md`.
+- [ ] Capture and compress UI screenshots ($\le 8$ images, each $< 200\text{ KB}$).
+- [ ] Record 3-minute demo video following §19.2 script; host externally (YouTube/Drive); add link to README.
+- [ ] Execute **Fresh-Clone Test** (§11.5) in a clean directory outside the project.
+- [ ] Run `python scripts/preflight.py --history`: verify M1, M2, and M3 size limits; verify zero historical secrets or blobs $> 1\text{ MB}$.
+- [ ] Verify deployed link from an independent smartphone on cellular data.
+- [ ] Validate submission requirements on Hack2skill dashboard (§0.2).
+- [ ] Execute formal submission (Attempt 1 of 2).
+
+#### Done Means Checkpoint
+- [ ] Fresh clone successfully sets up and runs offline using only README instructions with zero API keys.
+- [ ] `preflight.py --history` passes all checks (M1 < 8 MB, M2 < 9 MB, M3 < 9 MB, only `main` branch).
+- [ ] Public GitHub repository confirmed accessible in logged-out private browser session.
+- [ ] Live deployed link loads instantly, demonstrates all features, and displays appropriate mode badges.
+- [ ] Submission successfully recorded on competition portal before evening of 24 Nov.
+
+---
+
+### Phase 8 — Buffer & Emergency Fallback (25 Nov)
+**Objective:** Final review; address critical issues only.
+
+#### Tasks
+- [ ] Monitor public deployment stability.
+- [ ] Verify submission receipts.
+- [ ] If and only if a genuine submission defect is identified, use Attempt 2.
