@@ -1,0 +1,62 @@
+{
+ "suite": "associations",
+ "experiment": "E3",
+ "split": "all",
+ "command": "python scripts/evaluate_model.py --suite associations",
+ "dataset": {
+  "path": "data\\scenarios.jsonl",
+  "sha256_lf": "58d67bb2e15d62ad206a43553b6c65ce13092fd81c996bbc689678e089f4c82d",
+  "generator_version": "gen@2.0",
+  "seed": 1,
+  "rotation": 0.5,
+  "incidents": 150
+ },
+ "t_candidate": 0.75,
+ "edge_counts": {
+  "CANDIDATE_ASSOCIATION/PLAYBOOK": 778,
+  "DISPUTED_ASSOCIATION/EXACT_IDENTIFIER": 45,
+  "OBSERVED_MATCH/COMBINED": 36,
+  "OBSERVED_MATCH/EXACT_IDENTIFIER": 8
+ },
+ "integrity": {
+  "i1_violations": 0,
+  "i1_violation_examples": [],
+  "observed_edges_total": 44,
+  "identifier_edges_touching_benign_before_counter_evidence": 45,
+  "observed_edges_touching_benign_after_counter_evidence": 0,
+  "candidate_edges_total": 778,
+  "candidate_edges_touching_benign": 24,
+  "negatives_total": 40,
+  "negatives_with_observed_edge": 0,
+  "negatives_with_observed_or_candidate_edge": 0,
+  "decoys": {
+   "similar_wording_different_origin": {
+    "total": 5,
+    "linked_observed": 0,
+    "linked_observed_or_candidate": 2
+   },
+   "benign_shared_identifier": {
+    "total": 5,
+    "linked_observed": 0,
+    "linked_observed_or_candidate": 0
+   },
+   "incompatible_chronology": {
+    "total": 5,
+    "linked_observed": 0,
+    "linked_observed_or_candidate": 4
+   },
+   "ambiguous_extraction": {
+    "total": 5,
+    "linked_observed": 0,
+    "linked_observed_or_candidate": 0
+   }
+  },
+  "campaign_hypotheses": 3,
+  "campaign_hypotheses_containing_a_negative_or_decoy": 3
+ },
+ "caveat": "An OBSERVED_MATCH between two benign notices that cite the same official helpline satisfies invariant I1 (the identifiers ARE equal), so it is reported separately from I1 violations; counter-evidence rule CE-3 is what is expected to withdraw it.",
+ "environment": {
+  "python": "3.13.15",
+  "platform": "Windows-11-10.0.26200-SP0"
+ }
+}

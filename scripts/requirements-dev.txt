@@ -1,0 +1,2 @@
+# Dev-only tools for the evaluation scripts (blueprint Phase 5 "Tools"). The application does not need these.
+matplotlib==3.9.2
