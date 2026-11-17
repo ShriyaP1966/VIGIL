@@ -38,6 +38,7 @@ def build_inspector_payload(db: Session, assoc: Association) -> AssociationInspe
             "id": ce.id, "rule_id": ce.rule_id, "kind": ce.kind, "severity": ce.severity,
             "observation": ce.observation, "evidence_refs": json.loads(ce.evidence_refs_json or "[]"),
             "confidence_impact": ce.confidence_impact, "explanation": ce.explanation,
+            "rule_version": ce.rule_version,
         }
         for ce in ce_records
     ]
@@ -54,6 +55,12 @@ def build_inspector_payload(db: Session, assoc: Association) -> AssociationInspe
         for r in reviews
     ]
     review_state = REVIEW_STATE.get(reviews[-1].decision, "UNREVIEWED") if reviews else "UNREVIEWED"
+
+    dispute: dict = {}
+    if assoc.status == "DISPUTED_ASSOCIATION":
+        analyst = any(r.new_status == "DISPUTED_ASSOCIATION" for r in reviews)
+        dispute = {"source": "ANALYST" if analyst else "RULE",
+                   "rules": sorted(c["rule_id"] for c in counter_evidence if c["severity"] == "HIGH")}
 
     return AssociationInspectorResponse(
         id=assoc.id,
@@ -74,6 +81,7 @@ def build_inspector_payload(db: Session, assoc: Association) -> AssociationInspe
             else get_default_extractor().version,
         },
         review={"state": review_state, "history": history},
+        dispute=dispute,
     )
 
 

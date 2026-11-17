@@ -160,6 +160,24 @@ export interface CampaignListItem {
   basis_counts: Record<string, number>;
   weakest_link_association_id?: number | null;
   incident_ids: number[];
+  counter_evidence_count?: number;
+  highest_severity?: 'LOW' | 'MEDIUM' | 'HIGH' | null;
+}
+
+/** One counter-evidence finding on a link inside a hypothesis (aggregated view). */
+export interface CampaignFinding {
+  association_id: number;
+  incident_a_id: number;
+  incident_b_id: number;
+  link_status: AssociationStatus;
+  rule_id: string;
+  kind: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+  observation: string;
+  explanation: string;
+  confidence_impact: number;
+  rule_version?: string;
+  evidence_refs?: Array<{ evidence_id?: number; incident_id?: number; excerpt?: string; stage?: string; entity?: string }>;
 }
 
 export interface CampaignMemberView {
@@ -192,7 +210,8 @@ export interface CampaignDetail extends CampaignListItem {
   links: CampaignLink[];
   excluded_links: CampaignLink[];
   shared_indicators: Array<{ type: string; display_value: string; incident_ids: number[] }>;
-  counter_evidence: Array<Record<string, unknown>>;
+  counter_evidence: CampaignFinding[];
+  counter_evidence_summary?: Record<string, number>;
   review: { state: string; history: Array<{ id: number; decision: string; note?: string | null; previous_status: string; new_status: string; created_at: string }> };
   disclaimer: string;
   versions: Record<string, string>;
@@ -238,7 +257,11 @@ export interface AssociationInspectorData {
     observation: string;
     confidence_impact: number;
     explanation: string;
+    rule_version?: string;
+    evidence_refs?: Array<{ evidence_id?: number; incident_id?: number; excerpt?: string; stage?: string; entity?: string }>;
   }>;
+  /** Why the link is disputed: by a counter-evidence rule or by an analyst's flag. */
+  dispute?: { source?: 'RULE' | 'ANALYST' | null; rules?: string[] };
   explanation: string;
   versions: Record<string, string>;
   review: {

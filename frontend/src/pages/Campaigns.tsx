@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { AlertCircle, Layers, Link2, ShieldQuestion } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Layers, Link2, ShieldQuestion } from 'lucide-react';
 import { apiClient } from '../services/api/client';
-import type { CampaignDetail, CampaignListItem, ReviewDecision } from '../types';
+import type { CampaignDetail, CampaignLink, CampaignListItem, ReviewDecision } from '../types';
+import { FindingCard } from '../components/counterevidence/FindingCard';
+import { SEVERITY_LABEL, severityTone } from '../components/counterevidence/finding_view';
 import { ReviewControls } from '../components/review/ReviewControls';
 import { stageChips } from '../components/tactics/segments';
 import { basisLabel, basisTone, confidencePct, linkSummary, statusTone } from '../components/campaigns/campaign_view';
@@ -114,6 +116,12 @@ export const Campaigns: React.FC<CampaignsProps> = ({
                         {n} × {b.toLowerCase()}
                       </span>
                     ))}
+                    {(c.counter_evidence_count ?? 0) > 0 && (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded border ${severityTone(c.highest_severity ?? 'LOW')}`}>
+                        ⚠ {c.counter_evidence_count} counter-evidence finding{c.counter_evidence_count === 1 ? '' : 's'}
+                        {c.highest_severity ? ` (worst: ${SEVERITY_LABEL[c.highest_severity].toLowerCase()})` : ''}
+                      </span>
+                    )}
                   </div>
                 </button>
               </li>
@@ -230,6 +238,47 @@ export const Campaigns: React.FC<CampaignsProps> = ({
                     </div>
                   )}
                 </div>
+
+                <section aria-label="Counter-evidence across this hypothesis" className="bg-bg-card border border-border-subtle rounded-lg p-5 space-y-3">
+                  <h3 className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-risk-high" aria-hidden="true" />
+                    Why this hypothesis might NOT hold ({detail.counter_evidence.length})
+                  </h3>
+                  {detail.counter_evidence.length === 0 ? (
+                    <p className="text-xs text-text-muted">
+                      No contradicting evidence was found by the rules that are implemented. Some checks are not built yet,
+                      so this does not prove the hypothesis.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-[11px] text-text-muted">
+                        Findings on the links between these incidents, worst first. They stay on record even after an analyst accepts the hypothesis.
+                      </p>
+                      <ul className="space-y-2">
+                        {detail.counter_evidence.map((f, i) => (
+                          <FindingCard
+                            key={`${f.association_id}-${f.rule_id}-${i}`}
+                            ruleId={f.rule_id}
+                            kind={f.kind}
+                            severity={f.severity}
+                            observation={f.observation}
+                            explanation={f.explanation}
+                            impact={f.confidence_impact}
+                            ruleVersion={f.rule_version}
+                            refs={f.evidence_refs}
+                            context={(
+                              <>
+                                link #{f.association_id} · INC-{String(f.incident_a_id).padStart(4, '0')} ↔ INC-{String(f.incident_b_id).padStart(4, '0')} · {linkSummary({ ...(detail.links.concat(detail.excluded_links).find(l => l.id === f.association_id) as CampaignLink), status: f.link_status })}
+                                {' '}
+                                <button type="button" onClick={() => onInspectAssociation(f.association_id)} className="text-accent-primary hover:underline">inspect</button>
+                              </>
+                            )}
+                          />
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </section>
 
                 <div className="bg-bg-card border border-border-subtle rounded-lg p-5">
                   <ReviewControls subject="hypothesis" state={detail.review.state} history={detail.review.history}

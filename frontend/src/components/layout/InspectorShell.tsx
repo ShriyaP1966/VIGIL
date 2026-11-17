@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { X, AlertTriangle, ExternalLink, HelpCircle, Info } from 'lucide-react';
 import { AssociationInspectorData, NodeInspectorInfo, ReviewDecision } from '../../types';
 import { ReviewControls } from '../review/ReviewControls';
+import { FindingCard } from '../counterevidence/FindingCard';
+import { acceptedWithFindingsText, confidenceLine, disputeText, sortFindings } from '../counterevidence/finding_view';
 
 interface InspectorShellProps {
   association: AssociationInspectorData | null;
@@ -36,7 +38,10 @@ const AssociationPanel: React.FC<{
   data: AssociationInspectorData;
   canReview: boolean;
   onReview: (decision: ReviewDecision, note: string) => Promise<void>;
-}> = ({ data, canReview, onReview }) => (
+}> = ({ data, canReview, onReview }) => {
+  const disputeNote = disputeText(data.status, data.dispute);
+  const acceptedNote = acceptedWithFindingsText(data.status, data.counter_evidence);
+  return (
   <>
     {data.match_type === 'PLAYBOOK' && data.status === 'CANDIDATE_ASSOCIATION' && (
       <div className="flex gap-2 text-[11px] leading-snug text-text-secondary bg-risk-elevated/10 border border-risk-elevated/30 rounded-md p-2.5">
@@ -154,31 +159,48 @@ const AssociationPanel: React.FC<{
       </div>
     </div>
 
-    <div>
+    <section aria-label="Counter-evidence">
       <SectionTitle icon={<AlertTriangle className="w-3.5 h-3.5 text-risk-high" aria-hidden="true" />}>
-        Counter-evidence ({data.counter_evidence.length})
+        Why this link might NOT hold ({data.counter_evidence.length})
       </SectionTitle>
+
+      {disputeNote && (
+        <p role="note" className="mb-2 text-[11px] leading-snug text-risk-critical bg-risk-critical/10 border border-risk-critical/40 rounded p-2">
+          ⚠ {disputeNote}
+        </p>
+      )}
+      {acceptedNote && (
+        <p role="note" className="mb-2 text-[11px] leading-snug text-accent-secondary bg-accent-secondary/10 border border-accent-secondary/40 rounded p-2">
+          {acceptedNote}
+        </p>
+      )}
+
       {data.counter_evidence.length === 0 ? (
         <div className="text-xs text-text-muted bg-bg-main/50 p-3 rounded border border-border-subtle">
-          None recorded. The counter-evidence engine arrives in a later phase, so this does not mean the link is uncontested.
-          Contradictions an analyst flags are recorded in the review history below.
+          No contradicting evidence was found by the rules that are implemented. That does not prove the link is
+          right: some checks are not built yet.
         </div>
       ) : (
-        <div className="space-y-2">
-          {data.counter_evidence.map(ce => (
-            <div key={ce.id} className="bg-risk-critical/10 border border-risk-critical/30 p-2.5 rounded text-xs space-y-1">
-              <div className="flex items-center justify-between font-mono text-[10px]">
-                <span className="font-bold text-risk-critical">{ce.rule_id}</span>
-                <span className="text-risk-critical uppercase">{ce.severity}</span>
-              </div>
-              <div className="text-text-primary font-medium">{ce.observation}</div>
-              <div className="text-text-secondary text-[11px]">{ce.explanation}</div>
-              <div className="text-risk-critical font-mono text-[10px] text-right">Impact: {ce.confidence_impact}</div>
-            </div>
+        <ul className="space-y-2">
+          {sortFindings(data.counter_evidence).map(ce => (
+            <FindingCard
+              key={ce.id}
+              ruleId={ce.rule_id}
+              kind={ce.kind}
+              severity={ce.severity}
+              observation={ce.observation}
+              explanation={ce.explanation}
+              impact={ce.confidence_impact}
+              ruleVersion={ce.rule_version}
+              refs={ce.evidence_refs}
+            />
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+      <p className="mt-2 text-[11px] font-mono text-text-secondary">
+        {confidenceLine(data.base_confidence, data.adjusted_confidence, data.counter_evidence)}
+      </p>
+    </section>
 
     <div className="pt-2 border-t border-border-subtle flex flex-wrap justify-between gap-x-4 text-[10px] font-mono text-text-muted">
       <span>Method: {data.match_type.replace(/_/g, ' ').toLowerCase()} · Algorithm: {data.versions?.algorithm}</span>
@@ -193,7 +215,8 @@ const AssociationPanel: React.FC<{
       onReview={onReview}
     />
   </>
-);
+  );
+};
 
 const NodePanel: React.FC<{ info: NodeInspectorInfo; onOpenIncident: (id: number) => void }> = ({ info, onOpenIncident }) => {
   if (info.kind === 'incident') {

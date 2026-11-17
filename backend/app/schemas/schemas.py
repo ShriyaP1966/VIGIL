@@ -226,6 +226,9 @@ class CampaignListItem(BaseModel):
     basis_counts: Dict[str, int]
     weakest_link_association_id: Optional[int] = None
     incident_ids: List[int]
+    # Counter-evidence findings across all links between the members (see CampaignDetail.counter_evidence)
+    counter_evidence_count: int = 0
+    highest_severity: Optional[str] = None
 
 
 class CampaignMemberView(BaseModel):
@@ -264,7 +267,9 @@ class CampaignDetail(CampaignListItem):
     links: List[CampaignLink]
     excluded_links: List[CampaignLink]     # disputed or rejected links between members: shown, never connecting
     shared_indicators: List[SharedIndicator]
+    # Aggregated, read-time view of the findings stored on the links between members. Never hidden by a review.
     counter_evidence: List[Dict[str, Any]] = []
+    counter_evidence_summary: Dict[str, int] = {}
     review: Dict[str, Any]
     disclaimer: str
     versions: Dict[str, str]
@@ -285,3 +290,5 @@ class AssociationInspectorResponse(BaseModel):
     explanation: str
     versions: Dict[str, str]
     review: Dict[str, Any]
+    # Why the link is DISPUTED: {"source": "RULE" | "ANALYST" | None, "rules": ["CE-3", ...]}
+    dispute: Dict[str, Any] = {}

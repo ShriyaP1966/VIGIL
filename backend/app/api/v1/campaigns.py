@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from backend.app.core.database import get_db
 from backend.app.models.models import (
-    Analysis, Association, Campaign, Entity, Evidence, Incident, Mention, Review,
+    Analysis, Association, Campaign, CounterEvidence, Entity, Evidence, Incident, Mention, Review,
 )
 from backend.app.schemas.schemas import (
     CampaignDetail, CampaignLink, CampaignListItem, CampaignMemberView, ReviewRequest, SharedIndicator,
@@ -26,9 +26,32 @@ DISCLAIMER = (
 REVIEW_STATE = {"ACCEPT": "ACCEPTED", "REJECT": "REJECTED", "FLAG": "FLAGGED"}
 
 
-def _list_item(campaign: Campaign) -> CampaignListItem:
+SEVERITY_RANK = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
+
+
+def _campaign_findings(db: Session, member_ids: set[int]) -> list[dict]:
+    """Counter-evidence stored on every link between the members (connecting, disputed or rejected), aggregated at
+    read time so it can never go stale and is never hidden by a review. Worst first."""
+    rows = []
+    for a in db.query(Association).order_by(Association.id).all():
+        if a.incident_a_id in member_ids and a.incident_b_id in member_ids:
+            for ce in db.query(CounterEvidence).filter(CounterEvidence.association_id == a.id).order_by(CounterEvidence.id):
+                rows.append({
+                    "association_id": a.id, "incident_a_id": a.incident_a_id, "incident_b_id": a.incident_b_id,
+                    "link_status": a.status, "rule_id": ce.rule_id, "kind": ce.kind, "severity": ce.severity,
+                    "observation": ce.observation, "explanation": ce.explanation,
+                    "confidence_impact": ce.confidence_impact, "rule_version": ce.rule_version,
+                    "evidence_refs": json.loads(ce.evidence_refs_json or "[]"),
+                })
+    return sorted(rows, key=lambda r: (SEVERITY_RANK.get(r["severity"], 9), r["association_id"], r["rule_id"]))
+
+
+def _list_item(campaign: Campaign, db: Session | None = None) -> CampaignListItem:
     members = sorted(campaign.members, key=lambda m: m.incident_id)
+    findings = _campaign_findings(db, {m.incident_id for m in members}) if db is not None else []
     return CampaignListItem(
+        counter_evidence_count=len(findings),
+        highest_severity=findings[0]["severity"] if findings else None,
         id=campaign.id,
         hypothesis_title=campaign.hypothesis_title,
         status=campaign.status,
@@ -50,7 +73,7 @@ def _link(a: Association, weakest_id: int | None) -> CampaignLink:
 
 
 def _detail(db: Session, campaign: Campaign) -> CampaignDetail:
-    base = _list_item(campaign)
+    base = _list_item(campaign, db)
     member_ids = set(base.incident_ids)
     incidents = {i.id: i for i in db.query(Incident).filter(Incident.id.in_(member_ids)).all()}
     analyses: dict[int, Analysis] = {}
@@ -100,7 +123,9 @@ def _detail(db: Session, campaign: Campaign) -> CampaignDetail:
 
     return CampaignDetail(
         **base.model_dump(),
-        members=members, links=links, excluded_links=excluded, shared_indicators=shared, counter_evidence=[],
+        members=members, links=links, excluded_links=excluded, shared_indicators=shared,
+        counter_evidence=(findings := _campaign_findings(db, member_ids)),
+        counter_evidence_summary=dict(Counter(f["severity"] for f in findings)),
         review={"state": REVIEW_STATE.get(reviews[-1].decision, "UNREVIEWED") if reviews else "UNREVIEWED",
                 "history": history},
         disclaimer=DISCLAIMER, versions={"algorithm": CAMPAIGN_VERSION},
@@ -110,7 +135,7 @@ def _detail(db: Session, campaign: Campaign) -> CampaignDetail:
 @router.get("/campaigns", response_model=list[CampaignListItem])
 def api_list_campaigns(db: Session = Depends(get_db)):
     campaigns = db.query(Campaign).order_by(Campaign.id).all()
-    return [_list_item(c) for c in campaigns]
+    return [_list_item(c, db) for c in campaigns]
 
 
 @router.get("/campaigns/{campaign_id}", response_model=CampaignDetail)
