@@ -119,4 +119,12 @@ how much the generator's randomness moves a number, not how the system would beh
 
 ## Amendments
 
-_None yet._
+1. **17 Nov 2026, before any E3 or E4 run (clarification, nothing was run yet).** The F1 convention is the one
+   already used by `evaluate_model.prf`: F1 is `0.0` when at least one pair is predicted or true but there is no
+   true positive, and `null` only when there is no predicted and no true pair. Precision is `null` when nothing
+   was predicted and recall is `null` when there is no true pair (section 5 says "undefined values are null"; this
+   spells out which values those are). Arm B includes `COMBINED` links (an identifier link that the fingerprint
+   also matched). The harness is `scripts/evaluate_model.py` with `scripts/eval_metrics.py` and
+   `backend/app/services/replay_service.py`; the arm definitions in section 4 are implemented exactly as written
+   and `backend/tests/test_eval_experiments.py` checks them (including B and C read from one run versus separate
+   ablated runs).
