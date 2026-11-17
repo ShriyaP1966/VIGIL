@@ -237,13 +237,15 @@ def _refresh_risk(db: Session, analysis: Analysis, injection_flagged: bool) -> N
     """Recompute the risk score and ledger of an existing analysis (same row, same version)."""
     score, band, contributions = calculate_risk(db, analysis.incident_id, injection_flagged=injection_flagged)
     analysis.risk_score, analysis.risk_band = score, band
-    db.query(RiskContribution).filter(RiskContribution.analysis_id == analysis.id).delete()
-    for c in contributions:
-        db.add(RiskContribution(
-            analysis_id=analysis.id, factor=c["factor"], evidence_ref=c.get("evidence_ref"),
-            rule_version=c["rule_version"], contribution=c["contribution"], effect=c["effect"],
-            explanation=c["explanation"],
-        ))
+    # Replace through the relationship (delete-orphan): a bulk delete followed by inserts would reuse SQLite row
+    # ids while the old objects are still in the session's identity map.
+    analysis.contributions = [
+        RiskContribution(
+            factor=c["factor"], evidence_ref=c.get("evidence_ref"), rule_version=c["rule_version"],
+            contribution=c["contribution"], effect=c["effect"], explanation=c["explanation"],
+        )
+        for c in contributions
+    ]
     db.commit()
 
 

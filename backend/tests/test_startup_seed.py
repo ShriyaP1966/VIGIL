@@ -24,11 +24,14 @@ def test_startup_seed_populates_empty_database_once(session_factory, monkeypatch
         for _ in range(2):  # a second cold start must not duplicate the seed data
             with _client_with_db(session_factory) as client:
                 incidents = client.get("/api/v1/incidents").json()
-                assert len(incidents) == 4
+                assert len(incidents) == 9
                 edges = [e for e in client.get("/api/v1/graph").json()["edges"] if e["id"].startswith("assoc_")]
-                assert sorted(e["status"] for e in edges) == ["CANDIDATE_ASSOCIATION", "OBSERVED_MATCH"]
+                assert sorted(e["status"] for e in edges) == [
+                    "CANDIDATE_ASSOCIATION", "DISPUTED_ASSOCIATION", "DISPUTED_ASSOCIATION",
+                    "OBSERVED_MATCH", "OBSERVED_MATCH"]
                 campaigns = client.get("/api/v1/campaigns").json()
-                assert len(campaigns) == 1 and campaigns[0]["basis_counts"] == {"OBSERVED": 2, "CANDIDATE": 1}
+                assert sorted(c["basis_counts"].get("OBSERVED", 0) for c in campaigns) == [2, 2]
+                assert sorted(c["member_count"] for c in campaigns) == [2, 3]
     finally:
         app_main.app.dependency_overrides.clear()
 

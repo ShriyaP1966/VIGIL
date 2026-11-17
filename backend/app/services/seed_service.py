@@ -56,6 +56,62 @@ SEED_INCIDENTS = [
             provenance="seed:scenario_04",
         )],
     ),
+    # --- Counter-evidence scenarios (blueprint Appendix B 11 and 12, plus conflicting payment destinations) ---
+    IncidentCreate(                       # CE-3: shares the PUBLIC helpline 1930 with the genuine bank notice (seed 3)
+        title="Customs call that cites the public cybercrime helpline",
+        source_channel="call",
+        language="en",
+        scenario_id="scenario_05_public_helpline",
+        evidence=[EvidenceCreate(
+            type="transcript",
+            text="Caller: This is Mumbai Customs. Pay the clearance fee to clearance55@oksbi.\nVictim: Is this real?\nCaller: Yes, you can verify it on helpline 1930.",
+            provenance="seed:scenario_05",
+        )],
+    ),
+    IncidentCreate(                       # CE-1: forward script ...
+        title="Chronology check A: forward script",
+        source_channel="call",
+        language="en",
+        scenario_id="scenario_06_chronology_forward",
+        evidence=[EvidenceCreate(
+            type="transcript",
+            text="Caller: This is Inspector Kulkarni from the Cyber Crime Cell.\nCaller: Do not tell anyone and stay on the video call.\nCaller: Act within 20 minutes.\nCaller: Transfer the security deposit to settlement31@ybl.",
+            provenance="seed:scenario_06",
+        )],
+    ),
+    IncidentCreate(                       # CE-1: ... and the same tactics in the opposite order, same payment handle
+        title="Chronology check B: reversed script",
+        source_channel="call",
+        language="en",
+        scenario_id="scenario_07_chronology_reversed",
+        evidence=[EvidenceCreate(
+            type="transcript",
+            text="Caller: Transfer the security deposit to settlement31@ybl.\nCaller: Act within 20 minutes.\nCaller: Do not tell anyone and stay on the video call.\nCaller: This is Inspector Kulkarni from the Cyber Crime Cell.",
+            provenance="seed:scenario_07",
+        )],
+    ),
+    IncidentCreate(                       # CE-2: same callback number ...
+        title="Payment check A: callback number, first payment handle",
+        source_channel="call",
+        language="en",
+        scenario_id="scenario_08_payment_a",
+        evidence=[EvidenceCreate(
+            type="transcript",
+            text="Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to alpha11@okaxis.",
+            provenance="seed:scenario_08",
+        )],
+    ),
+    IncidentCreate(                       # CE-2: ... but a different payment destination
+        title="Payment check B: same callback number, different payment handle",
+        source_channel="call",
+        language="en",
+        scenario_id="scenario_09_payment_b",
+        evidence=[EvidenceCreate(
+            type="transcript",
+            text="Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to beta22@oksbi.",
+            provenance="seed:scenario_09",
+        )],
+    ),
 ]
 
 
