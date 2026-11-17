@@ -1,0 +1,7 @@
+{
+  "synthetic": true,
+  "generated_by": "scripts/export_static_demo.py",
+  "note": "Precomputed from the real pipeline on synthetic seed data. Not real incidents.",
+  "incidents": 3,
+  "associations": 1
+}

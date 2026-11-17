@@ -1,33 +1,33 @@
 {
   "id": 1,
-  "title": "Digital Arrest Threat \u2014 CBI Officer Impersonation",
+  "title": "Digital Arrest Threat — CBI Officer Impersonation",
   "source_channel": "call",
   "language": "hi-Latn",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T08:00:00Z",
+  "created_at": "2026-11-17T12:14:27.621848",
   "evidence_items": [
     {
-      "id": 10,
+      "id": 1,
       "type": "transcript",
       "original_text": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain. Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
       "normalised_text": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain. Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
-      "sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "sha256": "8e56cbcb0778026ee376e28ce1faf6fcb933b2cf6f3dba67a9ff5bc52ed312ae",
       "provenance": "seed:scenario_01",
-      "timestamp": "2026-11-17T08:00:00Z",
+      "timestamp": "2026-11-17T12:14:27.634481",
       "entities": [
         {
-          "id": 100,
+          "id": 1,
           "type": "UPI_HANDLE",
           "canonical_value": "verify-cbi@okhdfcbank",
-          "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
+          "display_value": "ve•••@okhdfcbank",
           "norm_method": "lower_case",
-          "span_start": 255,
-          "span_end": 277,
+          "span_start": 269,
+          "span_end": 290,
           "confidence": 0.95
         },
         {
-          "id": 101,
+          "id": 2,
           "type": "ORGANISATION",
           "canonical_value": "Central Bureau of Investigation",
           "display_value": "Central Bureau of Investigation",
@@ -35,78 +35,73 @@
           "span_start": 5,
           "span_end": 8,
           "confidence": 0.92
+        },
+        {
+          "id": 3,
+          "type": "ORGANISATION",
+          "canonical_value": "Indian Customs",
+          "display_value": "Indian Customs",
+          "norm_method": "gazetteer_alias",
+          "span_start": 91,
+          "span_end": 98,
+          "confidence": 0.92
         }
       ]
     }
   ],
   "analysis": {
-    "id": 1,
+    "id": 3,
     "incident_id": 1,
     "extractor": "RuleMLExtractor",
     "extractor_version": "3.1.0",
     "fallback_used": false,
-    "risk_score": 78,
+    "risk_score": 60,
     "risk_band": "HIGH",
     "risk_version": "risk@3.1.0",
     "injection_flags": [],
     "fingerprint": {
-      "stage_sequence": [
-        "AUTHORITY",
-        "ALLEGATION",
-        "THREAT",
-        "ISOLATION",
-        "URGENCY",
-        "DEMAND"
-      ]
+      "stage_sequence": []
     },
     "contributions": [
       {
         "factor": "F1 tactic presence (Financial Demand via UPI)",
-        "evidence_ref": "evidence:10",
+        "evidence_ref": "evidence:1",
         "rule_version": "risk@3.1.0",
         "contribution": 18,
         "effect": "SUPPORTING",
-        "explanation": "Direct UPI payment handle identified in communication."
+        "explanation": "A UPI payment handle appears in the evidence."
       },
       {
         "factor": "F1 tactic presence (Authority Impersonation)",
-        "evidence_ref": "evidence:10",
+        "evidence_ref": "evidence:1",
         "rule_version": "risk@3.1.0",
         "contribution": 14,
         "effect": "SUPPORTING",
-        "explanation": "Claimed representation of law enforcement or regulatory agency."
+        "explanation": "Names a law-enforcement, customs, telecom or regulatory body (claimed authority)."
       },
       {
-        "factor": "F1 tactic presence (Threat & Intimidation)",
-        "evidence_ref": "evidence:10",
-        "rule_version": "risk@3.1.0",
-        "contribution": 14,
-        "effect": "SUPPORTING",
-        "explanation": "Threats of criminal prosecution, legal arrest, or asset freezing."
-      },
-      {
-        "factor": "F1 tactic presence (Urgency / Coercion)",
-        "evidence_ref": "evidence:10",
+        "factor": "F1 tactic presence (Urgency)",
+        "evidence_ref": "evidence:1",
         "rule_version": "risk@3.1.0",
         "contribution": 8,
         "effect": "SUPPORTING",
-        "explanation": "Artificial urgency applied to force immediate compliance."
+        "explanation": "Urgency or deadline wording is present."
       },
       {
-        "factor": "F2 canonical order observed",
-        "evidence_ref": "evidence:10",
+        "factor": "F1 tactic presence (Threat & Intimidation)",
+        "evidence_ref": "evidence:1",
         "rule_version": "risk@3.1.0",
-        "contribution": 12,
+        "contribution": 14,
         "effect": "SUPPORTING",
-        "explanation": "Progresses through canonical stages (Authority -> Threat -> Demand)."
+        "explanation": "Wording about arrest, warrants, FIR or similar legal threats is present."
       },
       {
-        "factor": "F3 OBSERVED_MATCH cross-incident link",
+        "factor": "F3 OBSERVED_MATCH to a higher-risk incident",
         "evidence_ref": "assoc:1",
         "rule_version": "risk@3.1.0",
-        "contribution": 12,
+        "contribution": 6,
         "effect": "SUPPORTING",
-        "explanation": "Shares identical normalized identifier with INC-0002."
+        "explanation": "Shares an identical normalised identifier with 1 incident(s) scoring ELEVATED or above. This is an observation, not proof of one campaign."
       }
     ]
   }

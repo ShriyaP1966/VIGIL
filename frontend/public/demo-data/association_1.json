@@ -5,7 +5,7 @@
   "incidents": [
     {
       "id": 1,
-      "title": "Digital Arrest Threat \u2014 CBI Officer Impersonation"
+      "title": "Digital Arrest Threat — CBI Officer Impersonation"
     },
     {
       "id": 2,
@@ -20,35 +20,35 @@
   },
   "shared_entities": [
     {
-      "entity_id": 100,
+      "entity_id": 1,
       "type": "UPI_HANDLE",
       "canonical_value": "verify-cbi@okhdfcbank",
-      "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
+      "display_value": "ve•••@okhdfcbank",
       "norm_method": "lower_case"
     }
   ],
   "evidence": [
     {
-      "evidence_id": 10,
-      "incident_id": 1,
-      "entity_id": 100,
+      "evidence_id": 2,
+      "incident_id": 2,
+      "entity_id": 1,
       "entity_type": "UPI_HANDLE",
       "canonical_value": "verify-cbi@okhdfcbank",
-      "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
-      "excerpt": "Main CBI officer Rajesh Sharma bol raha hoon. Pay verification fee to verify-cbi@okhdfcbank immediately..."
+      "display_value": "ve•••@okhdfcbank",
+      "excerpt": "This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been registered. Yo..."
     },
     {
-      "evidence_id": 20,
-      "incident_id": 2,
-      "entity_id": 100,
+      "evidence_id": 1,
+      "incident_id": 1,
+      "entity_id": 1,
       "entity_type": "UPI_HANDLE",
       "canonical_value": "verify-cbi@okhdfcbank",
-      "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
-      "excerpt": "This is Mumbai Customs Department. You are directed to transfer clearance charges immediately to verify-cbi@okhdfcbank within 30 minutes."
+      "display_value": "ve•••@okhdfcbank",
+      "excerpt": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money launde..."
     }
   ],
   "counter_evidence": [],
-  "explanation": "Exact normalized UPI_HANDLE 've\u2022\u2022\u2022@okhdfcbank' observed in evidence of both incidents.",
+  "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents.",
   "versions": {
     "algorithm": "vigil@3.1.0",
     "extractor": "regex_gazetteer@3.1.0"

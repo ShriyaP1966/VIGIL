@@ -1,13 +1,13 @@
 [
   {
     "id": 1,
-    "title": "Digital Arrest Threat \u2014 CBI Officer Impersonation",
+    "title": "Digital Arrest Threat — CBI Officer Impersonation",
     "source_channel": "call",
     "language": "hi-Latn",
     "status": "open",
-    "risk_score": 78,
+    "risk_score": 60,
     "risk_band": "HIGH",
-    "created_at": "2026-11-17T08:00:00Z"
+    "created_at": "2026-11-17T12:14:27.621848"
   },
   {
     "id": 2,
@@ -15,18 +15,18 @@
     "source_channel": "call",
     "language": "en",
     "status": "open",
-    "risk_score": 72,
+    "risk_score": 60,
     "risk_band": "HIGH",
-    "created_at": "2026-11-17T08:15:00Z"
+    "created_at": "2026-11-17T12:14:27.733350"
   },
   {
     "id": 3,
     "title": "HDFC Official Branch Alert",
     "source_channel": "sms",
     "language": "en",
-    "status": "reviewed",
-    "risk_score": 10,
+    "status": "open",
+    "risk_score": 0,
     "risk_band": "LOW",
-    "created_at": "2026-11-17T08:30:00Z"
+    "created_at": "2026-11-17T12:14:27.799236"
   }
 ]

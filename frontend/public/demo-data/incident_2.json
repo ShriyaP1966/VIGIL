@@ -1,0 +1,98 @@
+{
+  "id": 2,
+  "title": "Customs Contraband Parcel Demand",
+  "source_channel": "call",
+  "language": "en",
+  "status": "open",
+  "is_synthetic": true,
+  "created_at": "2026-11-17T12:14:27.733350",
+  "evidence_items": [
+    {
+      "id": 2,
+      "type": "transcript",
+      "original_text": "This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been registered. You are directed to transfer clearance charges immediately to verify-cbi@okhdfcbank within 30 minutes.",
+      "normalised_text": "This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been registered. You are directed to transfer clearance charges immediately to verify-cbi@okhdfcbank within 30 minutes.",
+      "sha256": "802d610fd1da0ff603bde938339dcfac61520195b8667ed6b6cca0cf91f78e9d",
+      "provenance": "seed:scenario_02",
+      "timestamp": "2026-11-17T12:14:27.737337",
+      "entities": [
+        {
+          "id": 1,
+          "type": "UPI_HANDLE",
+          "canonical_value": "verify-cbi@okhdfcbank",
+          "display_value": "ve•••@okhdfcbank",
+          "norm_method": "lower_case",
+          "span_start": 210,
+          "span_end": 231,
+          "confidence": 0.95
+        },
+        {
+          "id": 3,
+          "type": "ORGANISATION",
+          "canonical_value": "Indian Customs",
+          "display_value": "Indian Customs",
+          "norm_method": "gazetteer_alias",
+          "span_start": 15,
+          "span_end": 22,
+          "confidence": 0.92
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "id": 2,
+    "incident_id": 2,
+    "extractor": "RuleMLExtractor",
+    "extractor_version": "3.1.0",
+    "fallback_used": false,
+    "risk_score": 60,
+    "risk_band": "HIGH",
+    "risk_version": "risk@3.1.0",
+    "injection_flags": [],
+    "fingerprint": {
+      "stage_sequence": []
+    },
+    "contributions": [
+      {
+        "factor": "F1 tactic presence (Financial Demand via UPI)",
+        "evidence_ref": "evidence:2",
+        "rule_version": "risk@3.1.0",
+        "contribution": 18,
+        "effect": "SUPPORTING",
+        "explanation": "A UPI payment handle appears in the evidence."
+      },
+      {
+        "factor": "F1 tactic presence (Authority Impersonation)",
+        "evidence_ref": "evidence:2",
+        "rule_version": "risk@3.1.0",
+        "contribution": 14,
+        "effect": "SUPPORTING",
+        "explanation": "Names a law-enforcement, customs, telecom or regulatory body (claimed authority)."
+      },
+      {
+        "factor": "F1 tactic presence (Urgency)",
+        "evidence_ref": "evidence:2",
+        "rule_version": "risk@3.1.0",
+        "contribution": 8,
+        "effect": "SUPPORTING",
+        "explanation": "Urgency or deadline wording is present."
+      },
+      {
+        "factor": "F1 tactic presence (Threat & Intimidation)",
+        "evidence_ref": "evidence:2",
+        "rule_version": "risk@3.1.0",
+        "contribution": 14,
+        "effect": "SUPPORTING",
+        "explanation": "Wording about arrest, warrants, FIR or similar legal threats is present."
+      },
+      {
+        "factor": "F3 OBSERVED_MATCH to a higher-risk incident",
+        "evidence_ref": "assoc:1",
+        "rule_version": "risk@3.1.0",
+        "contribution": 6,
+        "effect": "SUPPORTING",
+        "explanation": "Shares an identical normalised identifier with 1 incident(s) scoring ELEVATED or above. This is an observation, not proof of one campaign."
+      }
+    ]
+  }
+}
