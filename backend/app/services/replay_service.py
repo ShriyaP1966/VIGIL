@@ -24,7 +24,7 @@ from sqlalchemy.pool import StaticPool
 
 from backend.app.core.database import Base
 from backend.app.models import models  # noqa: F401  (register tables)
-from backend.app.models.models import Association, Campaign, CampaignMember, Entity, TacticEvent
+from backend.app.models.models import Analysis, Association, Campaign, CampaignMember, Entity, TacticEvent
 from backend.app.schemas.schemas import EvidenceCreate, IncidentCreate
 from backend.app.services import incident_service
 from backend.app.services.incident_service import create_incident, run_incident_analysis
@@ -50,6 +50,7 @@ class ReplayResult:
     campaigns: list[dict] = field(default_factory=list)       # {members, confidence, status, bases}
     labels: dict[str, list[str]] = field(default_factory=dict)   # record id -> distinct tactic labels
     risk: dict[str, dict] = field(default_factory=dict)       # record id -> {score, band}
+    injection: dict[str, list[str]] = field(default_factory=dict)   # record id -> injection rule ids that fired
 
 
 def _incident_payload(rec: dict) -> IncidentCreate:
@@ -107,11 +108,11 @@ def _read_back(db, db_id: dict[str, int]) -> ReplayResult:
         })
     for rid, iid in db_id.items():
         result.labels[rid] = sorted({e.label for e in db.query(TacticEvent).filter(TacticEvent.incident_id == iid)})
-    from backend.app.models.models import Analysis
     latest: dict[int, Analysis] = {}
     for an in db.query(Analysis).order_by(Analysis.id):
         latest[an.incident_id] = an
     for rid, iid in db_id.items():
         if iid in latest:
             result.risk[rid] = {"score": latest[iid].risk_score, "band": latest[iid].risk_band}
+            result.injection[rid] = json.loads(latest[iid].injection_flags_json or "[]")
     return result

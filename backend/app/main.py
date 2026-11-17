@@ -13,7 +13,7 @@ from backend.app.core.errors import (
     VigilException, vigil_exception_handler, generic_exception_handler,
     http_exception_handler, validation_exception_handler,
 )
-from backend.app.api.v1 import health, incidents, graph, associations, campaigns
+from backend.app.api.v1 import health, incidents, graph, associations, campaigns, scenarios
 from backend.app.models.models import (
     Incident, Evidence, Utterance, Entity, Mention, Relationship, TacticEvent, Association,
     Analysis, RiskContribution, CounterEvidence, Review, Campaign, CampaignMember, Redaction,
@@ -62,6 +62,7 @@ app.include_router(incidents.router, prefix="/api/v1", tags=["Incidents"])
 app.include_router(graph.router, prefix="/api/v1", tags=["Graph"])
 app.include_router(associations.router, prefix="/api/v1", tags=["Associations"])
 app.include_router(campaigns.router, prefix="/api/v1", tags=["Campaigns"])
+app.include_router(scenarios.router, prefix="/api/v1", tags=["Scenario Lab"])
 
 
 @app.delete("/api/v1/data", tags=["Settings"])
