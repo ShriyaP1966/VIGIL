@@ -7,6 +7,7 @@ from backend.app.models.models import (
     TacticEvent,
 )
 from ai_engine.extraction.interface import ExtractionResult, UtteranceInput
+from ai_engine.guard.injection import detect_injection, flag_ids, mask_spans
 from ai_engine.extraction.rule_extractor import get_default_extractor
 from ai_engine.extraction.tactics import CANONICAL_STAGES, STAGE_OF_LABEL
 from ai_engine.extraction.turns import parse_labelled_turns
@@ -190,14 +191,18 @@ def _incident_utterances(db: Session, incident_id: int) -> list[Utterance]:
     )
 
 
-def _extract_and_store_tactics(db: Session, incident_id: int) -> tuple[ExtractionResult, dict]:
-    """Run the rule extractor over the incident's utterances and persist `tactic_events`.
-    Re-analysis replaces the previous events, so they are never duplicated."""
+def _extract_and_store_tactics(db: Session, incident_id: int) -> tuple[ExtractionResult, dict, list[str]]:
+    """Run the injection guard and the rule extractor over the incident's utterances and persist
+    `tactic_events`. Flagged spans are masked before extraction, so injected text cannot create labels.
+    Re-analysis replaces the previous events, so they are never duplicated.
+    Returns (extraction result, fingerprint, injection rule ids)."""
     incident = db.query(Incident).filter(Incident.id == incident_id).one()
     rows = _incident_utterances(db, incident_id)
+    injection_flags = [detect_injection(u.text) for u in rows]
     inputs = [
-        UtteranceInput(idx=i, speaker=u.speaker, text=u.text, t_start_sec=u.t_start_sec, language=u.language)
-        for i, u in enumerate(rows)
+        UtteranceInput(idx=i, speaker=u.speaker, text=mask_spans(u.text, flags),
+                       t_start_sec=u.t_start_sec, language=u.language)
+        for i, (u, flags) in enumerate(zip(rows, injection_flags))
     ]
     extractor = get_default_extractor()
     result = extractor.analyze(inputs)
@@ -228,7 +233,7 @@ def _extract_and_store_tactics(db: Session, incident_id: int) -> tuple[Extractio
         "language": result.detected_language,
         "channel": incident.source_channel,
     }
-    return result, fingerprint
+    return result, fingerprint, flag_ids([f for flags in injection_flags for f in flags])
 
 
 def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True) -> Analysis:
@@ -243,11 +248,12 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
     # 1. Generate observed matches
     find_or_create_observed_matches(db, incident_id)
 
-    # 2. Tactic extraction (rules) -> tactic_events + first-cut fingerprint
-    extraction, fingerprint = _extract_and_store_tactics(db, incident_id)
+    # 2. Injection guard + tactic extraction (rules) -> tactic_events + first-cut fingerprint
+    extraction, fingerprint, injection_ids = _extract_and_store_tactics(db, incident_id)
 
-    # 3. Calculate risk heuristic from the persisted tactic events
-    risk_score, risk_band, contributions = calculate_risk(db, incident_id)
+    # 3. Calculate risk heuristic from the persisted tactic events. A manipulation attempt can never
+    #    lower the score: when flagged, no mitigating factor is applied.
+    risk_score, risk_band, contributions = calculate_risk(db, incident_id, injection_flagged=bool(injection_ids))
 
     # 4. Create Analysis record
     analysis = Analysis(
@@ -259,7 +265,7 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
         risk_score=risk_score,
         risk_band=risk_band,
         risk_version=RISK_VERSION,
-        injection_flags_json="[]"
+        injection_flags_json=json.dumps(injection_ids)
     )
     db.add(analysis)
     db.commit()
