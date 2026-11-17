@@ -4,7 +4,7 @@
     "hypothesis_title": "Campaign hypothesis: 3 related incidents (claimed institution: Central Agency)",
     "status": "HYPOTHESIS_UNREVIEWED",
     "status_label": "Hypothesis (unreviewed)",
-    "confidence": 0.875,
+    "confidence": 0.8049999999999999,
     "member_count": 3,
     "basis_counts": {
       "OBSERVED": 2,
@@ -15,6 +15,26 @@
       1,
       2,
       4
-    ]
+    ],
+    "counter_evidence_count": 3,
+    "highest_severity": "MEDIUM"
+  },
+  {
+    "id": 2,
+    "hypothesis_title": "Campaign hypothesis: 2 related incidents (claimed institution: Courier Customs)",
+    "status": "HYPOTHESIS_UNREVIEWED",
+    "status_label": "Hypothesis (unreviewed)",
+    "confidence": 0.6,
+    "member_count": 2,
+    "basis_counts": {
+      "OBSERVED": 2
+    },
+    "weakest_link_association_id": 5,
+    "incident_ids": [
+      8,
+      9
+    ],
+    "counter_evidence_count": 1,
+    "highest_severity": "MEDIUM"
   }
 ]

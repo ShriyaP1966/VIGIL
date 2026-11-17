@@ -1,0 +1,129 @@
+{
+  "id": 9,
+  "title": "Payment check B: same callback number, different payment handle",
+  "source_channel": "call",
+  "language": "en",
+  "status": "open",
+  "is_synthetic": true,
+  "created_at": "2026-11-17T14:21:16.250744",
+  "evidence_items": [
+    {
+      "id": 9,
+      "type": "transcript",
+      "original_text": "Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to beta22@oksbi.",
+      "normalised_text": "Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to beta22@oksbi.",
+      "sha256": "2636cb8326af01ed74c86e26a62abbc30f720d9e7c5932c6db9630cfba102b8d",
+      "provenance": "seed:scenario_09",
+      "timestamp": "2026-11-17T14:21:16.252440",
+      "entities": [
+        {
+          "id": 9,
+          "type": "PHONE",
+          "canonical_value": "+919876511111",
+          "display_value": "+91 98•••••11",
+          "norm_method": "phonenumbers_E164",
+          "span_start": 76,
+          "span_end": 91,
+          "confidence": 0.98
+        },
+        {
+          "id": 11,
+          "type": "UPI_HANDLE",
+          "canonical_value": "beta22@oksbi",
+          "display_value": "be•••@oksbi",
+          "norm_method": "lower_case",
+          "span_start": 131,
+          "span_end": 143,
+          "confidence": 0.95
+        },
+        {
+          "id": 3,
+          "type": "ORGANISATION",
+          "canonical_value": "Indian Customs",
+          "display_value": "Indian Customs",
+          "norm_method": "gazetteer_alias",
+          "span_start": 40,
+          "span_end": 47,
+          "confidence": 0.92
+        }
+      ],
+      "utterances": [
+        {
+          "id": 25,
+          "idx": 0,
+          "speaker": "caller",
+          "text": "This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 50,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 26,
+          "idx": 1,
+          "speaker": "caller",
+          "text": "Transfer the clearance fee to beta22@oksbi.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "FINANCIAL_DEMAND",
+              "start": 0,
+              "end": 42,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "id": 12,
+    "incident_id": 9,
+    "extractor": "rules",
+    "extractor_version": "rules@1.0",
+    "fallback_used": false,
+    "risk_score": 24,
+    "risk_band": "LOW",
+    "risk_version": "risk@3.1.1",
+    "injection_flags": [],
+    "fingerprint": {
+      "stage_sequence": [
+        "AUTHORITY",
+        "DEMAND"
+      ],
+      "credential_requested": false,
+      "institution_class": "COURIER_CUSTOMS",
+      "payment_channel": "UPI",
+      "language": "en",
+      "channel": "call"
+    },
+    "contributions": [
+      {
+        "factor": "F1 tactic presence: AUTHORITY",
+        "evidence_ref": "utterance:25",
+        "rule_version": "risk@3.1.1",
+        "contribution": 6,
+        "effect": "SUPPORTING",
+        "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: DEMAND",
+        "evidence_ref": "utterance:26",
+        "rule_version": "risk@3.1.1",
+        "contribution": 18,
+        "effect": "SUPPORTING",
+        "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+      }
+    ]
+  },
+  "redactions": []
+}

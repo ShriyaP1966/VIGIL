@@ -14,7 +14,7 @@
   ],
   "similarity": 1.0,
   "base_confidence": 1.0,
-  "adjusted_confidence": 1.0,
+  "adjusted_confidence": 0.98,
   "component_scores": {
     "seq_sim": 1.0,
     "lcs_sim": 1.0,
@@ -185,7 +185,19 @@
       "extractor": "rules@1.0"
     }
   ],
-  "counter_evidence": [],
+  "counter_evidence": [
+    {
+      "id": 3,
+      "rule_id": "CE-7",
+      "kind": "LANGUAGE_DIFFERENCE",
+      "severity": "LOW",
+      "observation": "The incidents are in different languages (mixed vs en).",
+      "evidence_refs": [],
+      "confidence_impact": -0.02,
+      "explanation": "Recorded as context only: campaigns target many languages, so this is not a contradiction.",
+      "rule_version": "ce@3.1.0"
+    }
+  ],
   "explanation": "Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used.",
   "versions": {
     "algorithm": "fingerprint@3.1.0",
@@ -194,5 +206,6 @@
   "review": {
     "state": "UNREVIEWED",
     "history": []
-  }
+  },
+  "dispute": {}
 }

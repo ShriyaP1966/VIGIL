@@ -5,7 +5,7 @@
   "language": "en",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T13:46:32.735975",
+  "created_at": "2026-11-17T14:21:15.877453",
   "evidence_items": [
     {
       "id": 4,
@@ -14,10 +14,10 @@
       "normalised_text": "Caller: This is Officer Anil Verma from the CBI cyber division. Your SIM card is linked to a money laundering case.\nVictim: I did not do anything.\nCaller: You will be arrested within 30 minutes. Do not tell anyone and stay on the video call.\nCaller: Transfer a refundable deposit to clearance47@okicici.",
       "sha256": "49fac975049f8542c8e508c6644fdb86336864e4554ac4537d3033f1e85c40ef",
       "provenance": "seed:scenario_04",
-      "timestamp": "2026-11-17T13:46:32.740588",
+      "timestamp": "2026-11-17T14:21:15.880200",
       "entities": [
         {
-          "id": 4,
+          "id": 5,
           "type": "UPI_HANDLE",
           "canonical_value": "clearance47@okicici",
           "display_value": "cl•••@okicici",

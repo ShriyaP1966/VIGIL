@@ -14,7 +14,7 @@
   ],
   "similarity": null,
   "base_confidence": 0.75,
-  "adjusted_confidence": 0.75,
+  "adjusted_confidence": 0.63,
   "component_scores": {
     "exact_identifier_match": 1.0
   },
@@ -47,7 +47,51 @@
       "excerpt": "Caller: Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur mone..."
     }
   ],
-  "counter_evidence": [],
+  "counter_evidence": [
+    {
+      "id": 1,
+      "rule_id": "CE-5",
+      "kind": "INCONSISTENT_IMPERSONATION",
+      "severity": "MEDIUM",
+      "observation": "The incidents claim different institutions (Central Agency vs Courier Customs).",
+      "evidence_refs": [
+        {
+          "evidence_id": 1,
+          "incident_id": 1,
+          "stage": "AUTHORITY",
+          "excerpt": "Main CBI officer",
+          "span": [
+            0,
+            16
+          ]
+        },
+        {
+          "evidence_id": 2,
+          "incident_id": 2,
+          "stage": "AUTHORITY",
+          "excerpt": "This is Mumbai Customs",
+          "span": [
+            0,
+            22
+          ]
+        }
+      ],
+      "confidence_impact": -0.1,
+      "explanation": "One group can impersonate several institutions, but a different claimed institution makes a common origin less likely.",
+      "rule_version": "ce@3.1.0"
+    },
+    {
+      "id": 2,
+      "rule_id": "CE-7",
+      "kind": "LANGUAGE_DIFFERENCE",
+      "severity": "LOW",
+      "observation": "The incidents are in different languages (mixed vs en).",
+      "evidence_refs": [],
+      "confidence_impact": -0.02,
+      "explanation": "Recorded as context only: campaigns target many languages, so this is not a contradiction.",
+      "rule_version": "ce@3.1.0"
+    }
+  ],
   "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents.",
   "versions": {
     "algorithm": "vigil@3.1.0",
@@ -56,5 +100,6 @@
   "review": {
     "state": "UNREVIEWED",
     "history": []
-  }
+  },
+  "dispute": {}
 }

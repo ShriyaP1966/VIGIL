@@ -1,0 +1,177 @@
+{
+  "id": 7,
+  "title": "Chronology check B: reversed script",
+  "source_channel": "call",
+  "language": "en",
+  "status": "open",
+  "is_synthetic": true,
+  "created_at": "2026-11-17T14:21:16.083034",
+  "evidence_items": [
+    {
+      "id": 7,
+      "type": "transcript",
+      "original_text": "Caller: Transfer the security deposit to settlement31@ybl.\nCaller: Act within 20 minutes.\nCaller: Do not tell anyone and stay on the video call.\nCaller: This is Inspector Kulkarni from the Cyber Crime Cell.",
+      "normalised_text": "Caller: Transfer the security deposit to settlement31@ybl.\nCaller: Act within 20 minutes.\nCaller: Do not tell anyone and stay on the video call.\nCaller: This is Inspector Kulkarni from the Cyber Crime Cell.",
+      "sha256": "7f126902d93f7476890d801d2b82fe90e3e33b6dd7ce139c0ffb923be15ceca2",
+      "provenance": "seed:scenario_07",
+      "timestamp": "2026-11-17T14:21:16.084574",
+      "entities": [
+        {
+          "id": 7,
+          "type": "UPI_HANDLE",
+          "canonical_value": "settlement31@ybl",
+          "display_value": "se•••@ybl",
+          "norm_method": "lower_case",
+          "span_start": 41,
+          "span_end": 57,
+          "confidence": 0.95
+        },
+        {
+          "id": 8,
+          "type": "ORGANISATION",
+          "canonical_value": "Cyber Crime Cell",
+          "display_value": "Cyber Crime Cell",
+          "norm_method": "gazetteer_alias",
+          "span_start": 189,
+          "span_end": 200,
+          "confidence": 0.92
+        }
+      ],
+      "utterances": [
+        {
+          "id": 19,
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Transfer the security deposit to settlement31@ybl.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "FINANCIAL_DEMAND",
+              "start": 0,
+              "end": 49,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 20,
+          "idx": 1,
+          "speaker": "caller",
+          "text": "Act within 20 minutes.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "URGENCY",
+              "start": 4,
+              "end": 21,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 21,
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Do not tell anyone and stay on the video call.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "ISOLATION",
+              "start": 0,
+              "end": 18,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 23,
+              "end": 45,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 22,
+          "idx": 3,
+          "speaker": "caller",
+          "text": "This is Inspector Kulkarni from the Cyber Crime Cell.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 47,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "id": 9,
+    "incident_id": 7,
+    "extractor": "rules",
+    "extractor_version": "rules@1.0",
+    "fallback_used": false,
+    "risk_score": 48,
+    "risk_band": "ELEVATED",
+    "risk_version": "risk@3.1.1",
+    "injection_flags": [],
+    "fingerprint": {
+      "stage_sequence": [
+        "DEMAND",
+        "URGENCY",
+        "ISOLATION",
+        "AUTHORITY"
+      ],
+      "credential_requested": false,
+      "institution_class": "POLICE",
+      "payment_channel": "UPI",
+      "language": "en",
+      "channel": "call"
+    },
+    "contributions": [
+      {
+        "factor": "F1 tactic presence: AUTHORITY",
+        "evidence_ref": "utterance:22",
+        "rule_version": "risk@3.1.1",
+        "contribution": 6,
+        "effect": "SUPPORTING",
+        "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: ISOLATION",
+        "evidence_ref": "utterance:21",
+        "rule_version": "risk@3.1.1",
+        "contribution": 16,
+        "effect": "SUPPORTING",
+        "explanation": "The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: URGENCY",
+        "evidence_ref": "utterance:20",
+        "rule_version": "risk@3.1.1",
+        "contribution": 8,
+        "effect": "SUPPORTING",
+        "explanation": "The urgency stage was detected (URGENCY, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: DEMAND",
+        "evidence_ref": "utterance:19",
+        "rule_version": "risk@3.1.1",
+        "contribution": 18,
+        "effect": "SUPPORTING",
+        "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+      }
+    ]
+  },
+  "redactions": []
+}

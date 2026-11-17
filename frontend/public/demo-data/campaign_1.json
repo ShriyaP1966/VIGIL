@@ -3,7 +3,7 @@
   "hypothesis_title": "Campaign hypothesis: 3 related incidents (claimed institution: Central Agency)",
   "status": "HYPOTHESIS_UNREVIEWED",
   "status_label": "Hypothesis (unreviewed)",
-  "confidence": 0.875,
+  "confidence": 0.8049999999999999,
   "member_count": 3,
   "basis_counts": {
     "OBSERVED": 2,
@@ -15,6 +15,8 @@
     2,
     4
   ],
+  "counter_evidence_count": 3,
+  "highest_severity": "MEDIUM",
   "members": [
     {
       "incident_id": 1,
@@ -80,7 +82,7 @@
       "status": "OBSERVED_MATCH",
       "match_type": "EXACT_IDENTIFIER",
       "similarity": null,
-      "adjusted_confidence": 0.75,
+      "adjusted_confidence": 0.63,
       "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents.",
       "is_weakest": true
     },
@@ -91,7 +93,7 @@
       "status": "CANDIDATE_ASSOCIATION",
       "match_type": "PLAYBOOK",
       "similarity": 1.0,
-      "adjusted_confidence": 1.0,
+      "adjusted_confidence": 0.98,
       "explanation": "Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used.",
       "is_weakest": false
     }
@@ -107,7 +109,75 @@
       ]
     }
   ],
-  "counter_evidence": [],
+  "counter_evidence": [
+    {
+      "association_id": 1,
+      "incident_a_id": 1,
+      "incident_b_id": 2,
+      "link_status": "OBSERVED_MATCH",
+      "rule_id": "CE-5",
+      "kind": "INCONSISTENT_IMPERSONATION",
+      "severity": "MEDIUM",
+      "observation": "The incidents claim different institutions (Central Agency vs Courier Customs).",
+      "explanation": "One group can impersonate several institutions, but a different claimed institution makes a common origin less likely.",
+      "confidence_impact": -0.1,
+      "rule_version": "ce@3.1.0",
+      "evidence_refs": [
+        {
+          "evidence_id": 1,
+          "incident_id": 1,
+          "stage": "AUTHORITY",
+          "excerpt": "Main CBI officer",
+          "span": [
+            0,
+            16
+          ]
+        },
+        {
+          "evidence_id": 2,
+          "incident_id": 2,
+          "stage": "AUTHORITY",
+          "excerpt": "This is Mumbai Customs",
+          "span": [
+            0,
+            22
+          ]
+        }
+      ]
+    },
+    {
+      "association_id": 1,
+      "incident_a_id": 1,
+      "incident_b_id": 2,
+      "link_status": "OBSERVED_MATCH",
+      "rule_id": "CE-7",
+      "kind": "LANGUAGE_DIFFERENCE",
+      "severity": "LOW",
+      "observation": "The incidents are in different languages (mixed vs en).",
+      "explanation": "Recorded as context only: campaigns target many languages, so this is not a contradiction.",
+      "confidence_impact": -0.02,
+      "rule_version": "ce@3.1.0",
+      "evidence_refs": []
+    },
+    {
+      "association_id": 2,
+      "incident_a_id": 1,
+      "incident_b_id": 4,
+      "link_status": "CANDIDATE_ASSOCIATION",
+      "rule_id": "CE-7",
+      "kind": "LANGUAGE_DIFFERENCE",
+      "severity": "LOW",
+      "observation": "The incidents are in different languages (mixed vs en).",
+      "explanation": "Recorded as context only: campaigns target many languages, so this is not a contradiction.",
+      "confidence_impact": -0.02,
+      "rule_version": "ce@3.1.0",
+      "evidence_refs": []
+    }
+  ],
+  "counter_evidence_summary": {
+    "MEDIUM": 1,
+    "LOW": 2
+  },
   "review": {
     "state": "UNREVIEWED",
     "history": []

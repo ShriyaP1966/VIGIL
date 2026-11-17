@@ -14,7 +14,7 @@
 | **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | 🟡 Code complete, 2 items open: public deployment (needs Vercel/Render sign-in), in-browser walk-through. Antigravity quota log waived by owner (build moved to Claude Code) | **First Slice Deployed** (Vercel + Render): *not yet* |
 | **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ✅ Done as scoped by the owner (Gemini, scikit-learn tier and delimiter sandboxing cut); UI not yet viewed in a browser | - |
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ✅ Done as scoped by the owner (dwell, fuzzy candidates, CE-8, side-by-side UI and graph hull cut); UI not yet viewed in a browser. **Finding:** the fingerprint recognises a script family, not a campaign instance (see DEVELOPMENT_LOG Session 5) | - |
-| **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ⚪ Pending | - |
+| **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ✅ Done as scoped by the owner (CE-6, CE-8, F4, `risk_weights.json` and fuller node inspectors deferred; CE-4 minimal); UI not yet viewed in a browser | - |
 | **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ⚪ Pending | Static demo data generator export |
 | **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ⚪ Pending | **Final Production Deployment** (Dual-mode) |
 | **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | ⚪ Pending | **Deployed Link Public Verification** |
@@ -139,21 +139,22 @@
 **Objective:** Explain why incidents might *not* be connected; provide complete evidence traceability.
 
 #### Tasks
-- [ ] Implement `counter_evidence` table and rules CE-1 through CE-8 (§6.10).
-- [ ] Author public identifier allowlist in `data/public_identifiers.json` (official helplines, bank domains).
-- [ ] Implement confidence adjustment logic; enforce invariant that HIGH severity findings set status to `DISPUTED_ASSOCIATION`.
-- [ ] Implement full Risk Engine with configurable weights (`config/risk_weights.json`) and persisted factor contributions.
-- [ ] Implement `GET /associations/{id}` inspector endpoint returning complete payload (§9).
-- [ ] Frontend Evidence Inspector: side-by-side excerpt comparisons, normalisation details, component score breakdown, counter-evidence panel, review controls.
-- [ ] Seed scenarios testing counter-evidence: public helpline reuse (CE-3), chronology inversion (CE-1), conflicting payment destinations (CE-2).
+- [x] `counter_evidence` table in use; rules **CE-1, CE-2, CE-3, CE-5, CE-7 implemented, CE-4 minimal** (fires only on a low-confidence extraction, which the current extractor never produces, so it is exercised by a test that lowers a mention's confidence). **CE-6 and CE-8 deferred** (recorded as such in `config/counter_evidence_rules.json`). Severities and impacts are a-priori priors, in config.
+- [x] Public identifier allowlist `data/public_identifiers.json` (national cyber crime helpline 1930 plus 15 official domains; exact or subdomain match, look-alike domains do not match). *Non-exhaustive; each entry must be verified against its official source by whoever maintains the list.* Required a narrow extraction of "helpline 1930" so a shared public helpline is a real observed match for CE-3 to dispute.
+- [x] Confidence adjustment `clip(base + sum of impacts, 0, 1)`; any HIGH finding sets a system-created association to `DISPUTED_ASSOCIATION`; a system dispute reverts when no HIGH finding remains; analyst decisions are never overridden; the risk ledger is recomputed when a link flips between observed and disputed so F3 never counts a disputed link.
+- [~] Full Risk Engine with `config/risk_weights.json` and the F4 factor: **deferred by the owner's cut line** (weights stay in code, `risk@3.1.1`).
+- [x] `GET /associations/{id}` inspector payload now carries findings (with rule version and evidence refs), `dispute` source and the base to adjusted confidence.
+- [~] Frontend Evidence Inspector: the counter-evidence panel, dispute and accepted-with-findings notes, component breakdown, stage excerpts and review controls are done. **Fuller entity-node and incident-node inspectors and side-by-side excerpt comparison: deferred by the owner's cut line.**
+- [x] Seed scenarios (9 seeded incidents now): CE-3 shared public helpline (adjusted confidence 0.20, disputed), CE-1 chronology inversion (0.45, disputed), CE-2 conflicting payment destinations (0.70 to 0.60, stays observed).
+- [x] Findings aggregated on campaign hypotheses (read-time, worst first, severity summary, count and worst severity on the list).
 
 #### Done Means Checkpoint
-- [ ] Unit tests pass for each counter-evidence rule (both positive trigger and negative control cases).
-- [ ] A HIGH severity finding transitions an association to `DISPUTED_ASSOCIATION` and renders a warning marker in the graph.
-- [ ] Counter-evidence findings remain visible and prominent even after an analyst manually accepts an association.
-- [ ] Risk contributions in `risk_contributions` sum exactly to the displayed 0–100 score.
-- [ ] The Evidence Inspector renders all required fields (§12.5.1) for associations, entities, and incidents.
-- [ ] Hand-written held-out evaluation set remains completely untouched.
+- [x] Unit tests for each rule, positive and negative (29 pure-rule tests) plus 20 end-to-end tests through the pipeline.
+- [x] A HIGH finding transitions an association to `DISPUTED_ASSOCIATION` (tested, with a mutation check); the graph layout renders disputed edges dashed red with a warning label (layout unit-tested; not yet seen in a browser).
+- [x] Findings remain visible after an analyst accepts: in the inspector payload and aggregated on the hypothesis, including after accepting the hypothesis itself.
+- [x] Risk contributions sum exactly to the score, including after a dispute-triggered recompute (tested on the seeds).
+- [~] The Evidence Inspector renders the §12.5.1 fields for **associations**; entity and incident nodes show only a short summary (deferred).
+- [x] The hand-written held-out set was never created or touched.
 
 ---
 

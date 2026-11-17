@@ -2,7 +2,7 @@
   "synthetic": true,
   "generated_by": "scripts/export_static_demo.py",
   "note": "Precomputed from the real pipeline on synthetic seed data. Not real incidents.",
-  "incidents": 4,
-  "associations": 2,
-  "campaign_hypotheses": 1
+  "incidents": 9,
+  "associations": 5,
+  "campaign_hypotheses": 2
 }

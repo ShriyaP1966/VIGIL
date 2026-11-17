@@ -1,0 +1,84 @@
+{
+  "id": 5,
+  "status": "OBSERVED_MATCH",
+  "match_type": "EXACT_IDENTIFIER",
+  "incidents": [
+    {
+      "id": 8,
+      "title": "Payment check A: callback number, first payment handle"
+    },
+    {
+      "id": 9,
+      "title": "Payment check B: same callback number, different payment handle"
+    }
+  ],
+  "similarity": null,
+  "base_confidence": 0.7,
+  "adjusted_confidence": 0.6,
+  "component_scores": {
+    "exact_identifier_match": 1.0
+  },
+  "shared_entities": [
+    {
+      "entity_id": 9,
+      "type": "PHONE",
+      "canonical_value": "+919876511111",
+      "display_value": "+91 98•••••11",
+      "norm_method": "phonenumbers_E164"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": 9,
+      "incident_id": 9,
+      "entity_id": 9,
+      "entity_type": "PHONE",
+      "canonical_value": "+919876511111",
+      "display_value": "+91 98•••••11",
+      "excerpt": "Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to beta22@oksbi...."
+    },
+    {
+      "evidence_id": 8,
+      "incident_id": 8,
+      "entity_id": 9,
+      "entity_type": "PHONE",
+      "canonical_value": "+919876511111",
+      "display_value": "+91 98•••••11",
+      "excerpt": "Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to alpha11@okaxis...."
+    }
+  ],
+  "counter_evidence": [
+    {
+      "id": 7,
+      "rule_id": "CE-2",
+      "kind": "DIFFERENT_PAYMENT_DESTINATION",
+      "severity": "MEDIUM",
+      "observation": "Both incidents share +91 98•••••11, but they ask for payment to different handles (al•••@okaxis vs be•••@oksbi).",
+      "evidence_refs": [
+        {
+          "evidence_id": 8,
+          "incident_id": 8,
+          "entity": "al•••@okaxis"
+        },
+        {
+          "evidence_id": 9,
+          "incident_id": 9,
+          "entity": "be•••@oksbi"
+        }
+      ],
+      "confidence_impact": -0.1,
+      "explanation": "The same contact point paired with different payment destinations may be a reused or recycled identifier rather than one operation.",
+      "rule_version": "ce@3.1.0"
+    }
+  ],
+  "explanation": "Exact normalized PHONE '+91 98•••••11' observed in evidence of both incidents.",
+  "versions": {
+    "algorithm": "vigil@3.1.0",
+    "extractor": "regex_gazetteer@3.1.0"
+  },
+  "review": {
+    "state": "UNREVIEWED",
+    "history": []
+  },
+  "dispute": {}
+}

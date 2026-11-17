@@ -1,0 +1,113 @@
+{
+  "id": 3,
+  "status": "DISPUTED_ASSOCIATION",
+  "match_type": "EXACT_IDENTIFIER",
+  "incidents": [
+    {
+      "id": 3,
+      "title": "HDFC Official Branch Alert"
+    },
+    {
+      "id": 5,
+      "title": "Customs call that cites the public cybercrime helpline"
+    }
+  ],
+  "similarity": null,
+  "base_confidence": 0.7,
+  "adjusted_confidence": 0.19999999999999996,
+  "component_scores": {
+    "exact_identifier_match": 1.0
+  },
+  "shared_entities": [
+    {
+      "entity_id": 4,
+      "type": "PHONE",
+      "canonical_value": "1930",
+      "display_value": "1930",
+      "norm_method": "public_shortcode"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": 5,
+      "incident_id": 5,
+      "entity_id": 4,
+      "entity_type": "PHONE",
+      "canonical_value": "1930",
+      "display_value": "1930",
+      "excerpt": "Caller: This is Mumbai Customs. Pay the clearance fee to clearance55@oksbi.\nVictim: Is this real?\nCaller: Yes, you can verify it on helpline 1930...."
+    },
+    {
+      "evidence_id": 3,
+      "incident_id": 3,
+      "entity_id": 4,
+      "entity_type": "PHONE",
+      "canonical_value": "1930",
+      "display_value": "1930",
+      "excerpt": "Dear Customer, your monthly bank statement has been dispatched to your registered email address. For inquiries, visit your nearest bank branch with or..."
+    }
+  ],
+  "counter_evidence": [
+    {
+      "id": 4,
+      "rule_id": "CE-3",
+      "kind": "BENIGN_CONTEXT_IDENTIFIER",
+      "severity": "HIGH",
+      "observation": "The shared identifier is used in a benign context: 1930 is a public identifier (National Cyber Crime Helpline).",
+      "evidence_refs": [
+        {
+          "evidence_id": 5,
+          "incident_id": 5,
+          "excerpt": "Caller: This is Mumbai Customs. Pay the clearance fee to clearance55@oksbi.\nVictim: Is this real?\nCaller: Yes, you can verify it on helpline 1930....",
+          "entity": "1930"
+        },
+        {
+          "evidence_id": 3,
+          "incident_id": 3,
+          "excerpt": "Dear Customer, your monthly bank statement has been dispatched to your registered email address. For inquiries, visit your nearest bank branch with or...",
+          "entity": "1930"
+        }
+      ],
+      "confidence_impact": -0.4,
+      "explanation": "Genuine notices and scam calls can both cite an official identifier, so seeing it twice says nothing about a common origin. The match is disputed until an analyst decides.",
+      "rule_version": "ce@3.1.0"
+    },
+    {
+      "id": 5,
+      "rule_id": "CE-5",
+      "kind": "INCONSISTENT_IMPERSONATION",
+      "severity": "MEDIUM",
+      "observation": "The incidents claim different institutions (Bank vs Courier Customs).",
+      "evidence_refs": [
+        {
+          "evidence_id": 5,
+          "incident_id": 5,
+          "stage": "AUTHORITY",
+          "excerpt": "This is Mumbai Customs",
+          "span": [
+            0,
+            22
+          ]
+        }
+      ],
+      "confidence_impact": -0.1,
+      "explanation": "One group can impersonate several institutions, but a different claimed institution makes a common origin less likely.",
+      "rule_version": "ce@3.1.0"
+    }
+  ],
+  "explanation": "Exact normalized PHONE '1930' observed in evidence of both incidents.",
+  "versions": {
+    "algorithm": "vigil@3.1.0",
+    "extractor": "regex_gazetteer@3.1.0"
+  },
+  "review": {
+    "state": "UNREVIEWED",
+    "history": []
+  },
+  "dispute": {
+    "source": "RULE",
+    "rules": [
+      "CE-3"
+    ]
+  }
+}

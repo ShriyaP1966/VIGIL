@@ -1,0 +1,159 @@
+{
+  "id": 4,
+  "status": "DISPUTED_ASSOCIATION",
+  "match_type": "EXACT_IDENTIFIER",
+  "incidents": [
+    {
+      "id": 6,
+      "title": "Chronology check A: forward script"
+    },
+    {
+      "id": 7,
+      "title": "Chronology check B: reversed script"
+    }
+  ],
+  "similarity": null,
+  "base_confidence": 0.75,
+  "adjusted_confidence": 0.45,
+  "component_scores": {
+    "exact_identifier_match": 1.0
+  },
+  "shared_entities": [
+    {
+      "entity_id": 7,
+      "type": "UPI_HANDLE",
+      "canonical_value": "settlement31@ybl",
+      "display_value": "se•••@ybl",
+      "norm_method": "lower_case"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": 7,
+      "incident_id": 7,
+      "entity_id": 7,
+      "entity_type": "UPI_HANDLE",
+      "canonical_value": "settlement31@ybl",
+      "display_value": "se•••@ybl",
+      "excerpt": "Caller: Transfer the security deposit to settlement31@ybl.\nCaller: Act within 20 minutes.\nCaller: Do not tell anyone and stay on the video call.\nCalle..."
+    },
+    {
+      "evidence_id": 6,
+      "incident_id": 6,
+      "entity_id": 7,
+      "entity_type": "UPI_HANDLE",
+      "canonical_value": "settlement31@ybl",
+      "display_value": "se•••@ybl",
+      "excerpt": "Caller: This is Inspector Kulkarni from the Cyber Crime Cell.\nCaller: Do not tell anyone and stay on the video call.\nCaller: Act within 20 minutes.\nCa..."
+    }
+  ],
+  "counter_evidence": [
+    {
+      "id": 6,
+      "rule_id": "CE-1",
+      "kind": "INCOMPATIBLE_CHRONOLOGY",
+      "severity": "HIGH",
+      "observation": "4 shared stages (AUTHORITY, ISOLATION, URGENCY, DEMAND) occur in conflicting order; only 0% of the stage pairs appear in the same relative order.",
+      "evidence_refs": [
+        {
+          "evidence_id": 6,
+          "incident_id": 6,
+          "stage": "AUTHORITY",
+          "excerpt": "This is Inspector Kulkarni from the Cyber Crime",
+          "span": [
+            0,
+            47
+          ]
+        },
+        {
+          "evidence_id": 6,
+          "incident_id": 6,
+          "stage": "ISOLATION",
+          "excerpt": "Do not tell anyone",
+          "span": [
+            0,
+            18
+          ]
+        },
+        {
+          "evidence_id": 6,
+          "incident_id": 6,
+          "stage": "URGENCY",
+          "excerpt": "within 20 minutes",
+          "span": [
+            4,
+            21
+          ]
+        },
+        {
+          "evidence_id": 6,
+          "incident_id": 6,
+          "stage": "DEMAND",
+          "excerpt": "Transfer the security deposit to settlement31@ybl",
+          "span": [
+            0,
+            49
+          ]
+        },
+        {
+          "evidence_id": 7,
+          "incident_id": 7,
+          "stage": "AUTHORITY",
+          "excerpt": "This is Inspector Kulkarni from the Cyber Crime",
+          "span": [
+            0,
+            47
+          ]
+        },
+        {
+          "evidence_id": 7,
+          "incident_id": 7,
+          "stage": "ISOLATION",
+          "excerpt": "Do not tell anyone",
+          "span": [
+            0,
+            18
+          ]
+        },
+        {
+          "evidence_id": 7,
+          "incident_id": 7,
+          "stage": "URGENCY",
+          "excerpt": "within 20 minutes",
+          "span": [
+            4,
+            21
+          ]
+        },
+        {
+          "evidence_id": 7,
+          "incident_id": 7,
+          "stage": "DEMAND",
+          "excerpt": "Transfer the security deposit to settlement31@ybl",
+          "span": [
+            0,
+            49
+          ]
+        }
+      ],
+      "confidence_impact": -0.3,
+      "explanation": "A script usually runs in one order. The same tactics in a conflicting order are weak evidence that the two incidents come from the same playbook.",
+      "rule_version": "ce@3.1.0"
+    }
+  ],
+  "explanation": "Exact normalized UPI_HANDLE 'se•••@ybl' observed in evidence of both incidents.",
+  "versions": {
+    "algorithm": "vigil@3.1.0",
+    "extractor": "regex_gazetteer@3.1.0"
+  },
+  "review": {
+    "state": "UNREVIEWED",
+    "history": []
+  },
+  "dispute": {
+    "source": "RULE",
+    "rules": [
+      "CE-1"
+    ]
+  }
+}

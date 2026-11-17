@@ -1,0 +1,112 @@
+{
+  "id": 2,
+  "hypothesis_title": "Campaign hypothesis: 2 related incidents (claimed institution: Courier Customs)",
+  "status": "HYPOTHESIS_UNREVIEWED",
+  "status_label": "Hypothesis (unreviewed)",
+  "confidence": 0.6,
+  "member_count": 2,
+  "basis_counts": {
+    "OBSERVED": 2
+  },
+  "weakest_link_association_id": 5,
+  "incident_ids": [
+    8,
+    9
+  ],
+  "counter_evidence_count": 1,
+  "highest_severity": "MEDIUM",
+  "members": [
+    {
+      "incident_id": 8,
+      "title": "Payment check A: callback number, first payment handle",
+      "source_channel": "call",
+      "language": "en",
+      "risk_score": 24,
+      "risk_band": "LOW",
+      "membership_basis": "OBSERVED",
+      "stage_sequence": [
+        "AUTHORITY",
+        "DEMAND"
+      ],
+      "institution_class": "COURIER_CUSTOMS",
+      "payment_channel": "UPI"
+    },
+    {
+      "incident_id": 9,
+      "title": "Payment check B: same callback number, different payment handle",
+      "source_channel": "call",
+      "language": "en",
+      "risk_score": 24,
+      "risk_band": "LOW",
+      "membership_basis": "OBSERVED",
+      "stage_sequence": [
+        "AUTHORITY",
+        "DEMAND"
+      ],
+      "institution_class": "COURIER_CUSTOMS",
+      "payment_channel": "UPI"
+    }
+  ],
+  "links": [
+    {
+      "id": 5,
+      "incident_a_id": 8,
+      "incident_b_id": 9,
+      "status": "OBSERVED_MATCH",
+      "match_type": "EXACT_IDENTIFIER",
+      "similarity": null,
+      "adjusted_confidence": 0.6,
+      "explanation": "Exact normalized PHONE '+91 98•••••11' observed in evidence of both incidents.",
+      "is_weakest": true
+    }
+  ],
+  "excluded_links": [],
+  "shared_indicators": [
+    {
+      "type": "PHONE",
+      "display_value": "+91 98•••••11",
+      "incident_ids": [
+        8,
+        9
+      ]
+    }
+  ],
+  "counter_evidence": [
+    {
+      "association_id": 5,
+      "incident_a_id": 8,
+      "incident_b_id": 9,
+      "link_status": "OBSERVED_MATCH",
+      "rule_id": "CE-2",
+      "kind": "DIFFERENT_PAYMENT_DESTINATION",
+      "severity": "MEDIUM",
+      "observation": "Both incidents share +91 98•••••11, but they ask for payment to different handles (al•••@okaxis vs be•••@oksbi).",
+      "explanation": "The same contact point paired with different payment destinations may be a reused or recycled identifier rather than one operation.",
+      "confidence_impact": -0.1,
+      "rule_version": "ce@3.1.0",
+      "evidence_refs": [
+        {
+          "evidence_id": 8,
+          "incident_id": 8,
+          "entity": "al•••@okaxis"
+        },
+        {
+          "evidence_id": 9,
+          "incident_id": 9,
+          "entity": "be•••@oksbi"
+        }
+      ]
+    }
+  ],
+  "counter_evidence_summary": {
+    "MEDIUM": 1
+  },
+  "review": {
+    "state": "UNREVIEWED",
+    "history": []
+  },
+  "disclaimer": "A campaign hypothesis groups incidents that may be related, based on observed identifiers and similar behaviour. It is not a confirmed finding and does not attribute activity to any person or organisation. Analyst review is required before it is relied on.",
+  "versions": {
+    "algorithm": "campaign@3.1.0"
+  }
+}

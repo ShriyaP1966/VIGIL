@@ -12,7 +12,7 @@
         "language": "hi-Latn",
         "status": "open",
         "risk_score": 86,
-        "created_at": "2026-11-17T13:46:32.360080"
+        "created_at": "2026-11-17T14:21:15.610009"
       }
     },
     {
@@ -27,7 +27,7 @@
         "language": "en",
         "status": "open",
         "risk_score": 58,
-        "created_at": "2026-11-17T13:46:32.601110"
+        "created_at": "2026-11-17T14:21:15.744556"
       }
     },
     {
@@ -42,7 +42,7 @@
         "language": "en",
         "status": "open",
         "risk_score": 0,
-        "created_at": "2026-11-17T13:46:32.686414"
+        "created_at": "2026-11-17T14:21:15.841758"
       }
     },
     {
@@ -57,7 +57,82 @@
         "language": "en",
         "status": "open",
         "risk_score": 80,
-        "created_at": "2026-11-17T13:46:32.735975"
+        "created_at": "2026-11-17T14:21:15.877453"
+      }
+    },
+    {
+      "id": "incident_5",
+      "type": "incident",
+      "label": "INC-0005: Customs call that cites ",
+      "risk_band": "LOW",
+      "details": {
+        "incident_id": 5,
+        "title": "Customs call that cites the public cybercrime helpline",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 24,
+        "created_at": "2026-11-17T14:21:15.940707"
+      }
+    },
+    {
+      "id": "incident_6",
+      "type": "incident",
+      "label": "INC-0006: Chronology check A: forw",
+      "risk_band": "ELEVATED",
+      "details": {
+        "incident_id": 6,
+        "title": "Chronology check A: forward script",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 58,
+        "created_at": "2026-11-17T14:21:16.034540"
+      }
+    },
+    {
+      "id": "incident_7",
+      "type": "incident",
+      "label": "INC-0007: Chronology check B: reve",
+      "risk_band": "ELEVATED",
+      "details": {
+        "incident_id": 7,
+        "title": "Chronology check B: reversed script",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 48,
+        "created_at": "2026-11-17T14:21:16.083034"
+      }
+    },
+    {
+      "id": "incident_8",
+      "type": "incident",
+      "label": "INC-0008: Payment check A: callbac",
+      "risk_band": "LOW",
+      "details": {
+        "incident_id": 8,
+        "title": "Payment check A: callback number, first payment handle",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 24,
+        "created_at": "2026-11-17T14:21:16.199273"
+      }
+    },
+    {
+      "id": "incident_9",
+      "type": "incident",
+      "label": "INC-0009: Payment check B: same ca",
+      "risk_band": "LOW",
+      "details": {
+        "incident_id": 9,
+        "title": "Payment check B: same callback number, different payment handle",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 24,
+        "created_at": "2026-11-17T14:21:16.250744"
       }
     },
     {
@@ -101,14 +176,105 @@
     },
     {
       "id": "entity_4",
+      "type": "phone",
+      "label": "1930",
+      "risk_band": null,
+      "details": {
+        "entity_id": 4,
+        "type": "PHONE",
+        "canonical_value": "1930",
+        "display_value": "1930",
+        "norm_method": "public_shortcode"
+      }
+    },
+    {
+      "id": "entity_5",
       "type": "upi_handle",
       "label": "cl•••@okicici",
       "risk_band": null,
       "details": {
-        "entity_id": 4,
+        "entity_id": 5,
         "type": "UPI_HANDLE",
         "canonical_value": "clearance47@okicici",
         "display_value": "cl•••@okicici",
+        "norm_method": "lower_case"
+      }
+    },
+    {
+      "id": "entity_6",
+      "type": "upi_handle",
+      "label": "cl•••@oksbi",
+      "risk_band": null,
+      "details": {
+        "entity_id": 6,
+        "type": "UPI_HANDLE",
+        "canonical_value": "clearance55@oksbi",
+        "display_value": "cl•••@oksbi",
+        "norm_method": "lower_case"
+      }
+    },
+    {
+      "id": "entity_7",
+      "type": "upi_handle",
+      "label": "se•••@ybl",
+      "risk_band": null,
+      "details": {
+        "entity_id": 7,
+        "type": "UPI_HANDLE",
+        "canonical_value": "settlement31@ybl",
+        "display_value": "se•••@ybl",
+        "norm_method": "lower_case"
+      }
+    },
+    {
+      "id": "entity_8",
+      "type": "organisation",
+      "label": "Cyber Crime Cell",
+      "risk_band": null,
+      "details": {
+        "entity_id": 8,
+        "type": "ORGANISATION",
+        "canonical_value": "Cyber Crime Cell",
+        "display_value": "Cyber Crime Cell",
+        "norm_method": "gazetteer_alias"
+      }
+    },
+    {
+      "id": "entity_9",
+      "type": "phone",
+      "label": "+91 98•••••11",
+      "risk_band": null,
+      "details": {
+        "entity_id": 9,
+        "type": "PHONE",
+        "canonical_value": "+919876511111",
+        "display_value": "+91 98•••••11",
+        "norm_method": "phonenumbers_E164"
+      }
+    },
+    {
+      "id": "entity_10",
+      "type": "upi_handle",
+      "label": "al•••@okaxis",
+      "risk_band": null,
+      "details": {
+        "entity_id": 10,
+        "type": "UPI_HANDLE",
+        "canonical_value": "alpha11@okaxis",
+        "display_value": "al•••@okaxis",
+        "norm_method": "lower_case"
+      }
+    },
+    {
+      "id": "entity_11",
+      "type": "upi_handle",
+      "label": "be•••@oksbi",
+      "risk_band": null,
+      "details": {
+        "entity_id": 11,
+        "type": "UPI_HANDLE",
+        "canonical_value": "beta22@oksbi",
+        "display_value": "be•••@oksbi",
         "norm_method": "lower_case"
       }
     }
@@ -170,9 +336,20 @@
       "explanation": null
     },
     {
-      "id": "struct_4_4",
-      "source": "incident_4",
+      "id": "struct_3_4",
+      "source": "incident_3",
       "target": "entity_4",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.9,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_4_5",
+      "source": "incident_4",
+      "target": "entity_5",
       "type": "structural",
       "label": "mentions",
       "similarity": null,
@@ -192,13 +369,156 @@
       "explanation": null
     },
     {
+      "id": "struct_5_4",
+      "source": "incident_5",
+      "target": "entity_4",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.9,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_5_6",
+      "source": "incident_5",
+      "target": "entity_6",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.95,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_5_3",
+      "source": "incident_5",
+      "target": "entity_3",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.92,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_6_7",
+      "source": "incident_6",
+      "target": "entity_7",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.95,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_6_8",
+      "source": "incident_6",
+      "target": "entity_8",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.92,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_7_7",
+      "source": "incident_7",
+      "target": "entity_7",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.95,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_7_8",
+      "source": "incident_7",
+      "target": "entity_8",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.92,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_8_9",
+      "source": "incident_8",
+      "target": "entity_9",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.98,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_8_10",
+      "source": "incident_8",
+      "target": "entity_10",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.95,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_8_3",
+      "source": "incident_8",
+      "target": "entity_3",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.92,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_9_9",
+      "source": "incident_9",
+      "target": "entity_9",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.98,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_9_11",
+      "source": "incident_9",
+      "target": "entity_11",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.95,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_9_3",
+      "source": "incident_9",
+      "target": "entity_3",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.92,
+      "status": null,
+      "explanation": null
+    },
+    {
       "id": "assoc_1",
       "source": "incident_1",
       "target": "incident_2",
       "type": "OBSERVED_MATCH",
       "label": "observed match",
       "similarity": null,
-      "confidence": 0.75,
+      "confidence": 0.63,
       "status": "OBSERVED_MATCH",
       "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents."
     },
@@ -209,9 +529,42 @@
       "type": "CANDIDATE_ASSOCIATION",
       "label": "100%",
       "similarity": 1.0,
-      "confidence": 1.0,
+      "confidence": 0.98,
       "status": "CANDIDATE_ASSOCIATION",
       "explanation": "Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used."
+    },
+    {
+      "id": "assoc_3",
+      "source": "incident_3",
+      "target": "incident_5",
+      "type": "DISPUTED_ASSOCIATION",
+      "label": "0%",
+      "similarity": null,
+      "confidence": 0.19999999999999996,
+      "status": "DISPUTED_ASSOCIATION",
+      "explanation": "Exact normalized PHONE '1930' observed in evidence of both incidents."
+    },
+    {
+      "id": "assoc_4",
+      "source": "incident_6",
+      "target": "incident_7",
+      "type": "DISPUTED_ASSOCIATION",
+      "label": "0%",
+      "similarity": null,
+      "confidence": 0.45,
+      "status": "DISPUTED_ASSOCIATION",
+      "explanation": "Exact normalized UPI_HANDLE 'se•••@ybl' observed in evidence of both incidents."
+    },
+    {
+      "id": "assoc_5",
+      "source": "incident_8",
+      "target": "incident_9",
+      "type": "OBSERVED_MATCH",
+      "label": "observed match",
+      "similarity": null,
+      "confidence": 0.6,
+      "status": "OBSERVED_MATCH",
+      "explanation": "Exact normalized PHONE '+91 98•••••11' observed in evidence of both incidents."
     }
   ]
 }

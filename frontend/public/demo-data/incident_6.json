@@ -1,0 +1,185 @@
+{
+  "id": 6,
+  "title": "Chronology check A: forward script",
+  "source_channel": "call",
+  "language": "en",
+  "status": "open",
+  "is_synthetic": true,
+  "created_at": "2026-11-17T14:21:16.034540",
+  "evidence_items": [
+    {
+      "id": 6,
+      "type": "transcript",
+      "original_text": "Caller: This is Inspector Kulkarni from the Cyber Crime Cell.\nCaller: Do not tell anyone and stay on the video call.\nCaller: Act within 20 minutes.\nCaller: Transfer the security deposit to settlement31@ybl.",
+      "normalised_text": "Caller: This is Inspector Kulkarni from the Cyber Crime Cell.\nCaller: Do not tell anyone and stay on the video call.\nCaller: Act within 20 minutes.\nCaller: Transfer the security deposit to settlement31@ybl.",
+      "sha256": "d876a14c1f9efb31e8cba3180af6b2015d0efc33fca2a4e1d70b0c88f58812a3",
+      "provenance": "seed:scenario_06",
+      "timestamp": "2026-11-17T14:21:16.036242",
+      "entities": [
+        {
+          "id": 7,
+          "type": "UPI_HANDLE",
+          "canonical_value": "settlement31@ybl",
+          "display_value": "se•••@ybl",
+          "norm_method": "lower_case",
+          "span_start": 189,
+          "span_end": 205,
+          "confidence": 0.95
+        },
+        {
+          "id": 8,
+          "type": "ORGANISATION",
+          "canonical_value": "Cyber Crime Cell",
+          "display_value": "Cyber Crime Cell",
+          "norm_method": "gazetteer_alias",
+          "span_start": 44,
+          "span_end": 55,
+          "confidence": 0.92
+        }
+      ],
+      "utterances": [
+        {
+          "id": 15,
+          "idx": 0,
+          "speaker": "caller",
+          "text": "This is Inspector Kulkarni from the Cyber Crime Cell.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 47,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 16,
+          "idx": 1,
+          "speaker": "caller",
+          "text": "Do not tell anyone and stay on the video call.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "ISOLATION",
+              "start": 0,
+              "end": 18,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 23,
+              "end": 45,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 17,
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Act within 20 minutes.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "URGENCY",
+              "start": 4,
+              "end": 21,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 18,
+          "idx": 3,
+          "speaker": "caller",
+          "text": "Transfer the security deposit to settlement31@ybl.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "FINANCIAL_DEMAND",
+              "start": 0,
+              "end": 49,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "id": 10,
+    "incident_id": 6,
+    "extractor": "rules",
+    "extractor_version": "rules@1.0",
+    "fallback_used": false,
+    "risk_score": 58,
+    "risk_band": "ELEVATED",
+    "risk_version": "risk@3.1.1",
+    "injection_flags": [],
+    "fingerprint": {
+      "stage_sequence": [
+        "AUTHORITY",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ],
+      "credential_requested": false,
+      "institution_class": "POLICE",
+      "payment_channel": "UPI",
+      "language": "en",
+      "channel": "call"
+    },
+    "contributions": [
+      {
+        "factor": "F1 tactic presence: AUTHORITY",
+        "evidence_ref": "utterance:15",
+        "rule_version": "risk@3.1.1",
+        "contribution": 6,
+        "effect": "SUPPORTING",
+        "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: ISOLATION",
+        "evidence_ref": "utterance:16",
+        "rule_version": "risk@3.1.1",
+        "contribution": 16,
+        "effect": "SUPPORTING",
+        "explanation": "The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: URGENCY",
+        "evidence_ref": "utterance:17",
+        "rule_version": "risk@3.1.1",
+        "contribution": 8,
+        "effect": "SUPPORTING",
+        "explanation": "The urgency stage was detected (URGENCY, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: DEMAND",
+        "evidence_ref": "utterance:18",
+        "rule_version": "risk@3.1.1",
+        "contribution": 18,
+        "effect": "SUPPORTING",
+        "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+      },
+      {
+        "factor": "F2 canonical order observed",
+        "evidence_ref": "utterance:18",
+        "rule_version": "risk@3.1.1",
+        "contribution": 10,
+        "effect": "SUPPORTING",
+        "explanation": "4 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+      }
+    ]
+  },
+  "redactions": []
+}
