@@ -15,7 +15,7 @@
 | **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ✅ Done as scoped by the owner (Gemini, scikit-learn tier and delimiter sandboxing cut); UI not yet viewed in a browser | - |
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ✅ Done as scoped by the owner (dwell, fuzzy candidates, CE-8, side-by-side UI and graph hull cut); UI not yet viewed in a browser. **Finding:** the fingerprint recognises a script family, not a campaign instance (see DEVELOPMENT_LOG Session 5) | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ✅ Done as scoped by the owner (CE-6, CE-8, F4, `risk_weights.json` and fuller node inspectors deferred; CE-4 minimal); UI not yet viewed in a browser | - |
-| **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ⚪ Pending | Static demo data generator export |
+| **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ✅ Done as scoped by the owner (E8 cut), except the owner's hand-written held-out set (E6), which the owner writes and the harness runs once. **Findings:** identifier arms collapse at r = 1; the fingerprint recovers links but over-merges (false association rate 0.23-0.34) and does not beat the text baseline under the instance truth; decoys D1 and D3 were linked by candidate links (see docs/EXPERIMENTS.md) | Static demo data generator export (unchanged, re-verified) |
 | **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ⚪ Pending | **Final Production Deployment** (Dual-mode) |
 | **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | ⚪ Pending | **Deployed Link Public Verification** |
 | **Phase 8** | Buffer & Emergency Fallback | 25 Nov 2026 | ⚪ Pending | Standby monitoring |
@@ -162,22 +162,22 @@
 **Objective:** Rigorous scientific evaluation, multi-seed benchmark execution, and the hero rotation chart.
 
 #### Tasks
-- [ ] Dataset generator v2: full campaign templates (6 templates × 12–15 variants), 40 legitimate negatives, 20 decoys, 10 injection attacks.
-- [ ] Author the 25 hand-written held-out evaluation scenarios (written by hand, never seen during training).
-- [ ] Implement test harness `scripts/evaluate_model.py` supporting suites: `tactics`, `entities`, `associations`, `rotation`, `injection`, `heldout`, `latency`.
-- [ ] Execute Hero Rotation Experiment (E4): compare Arms A, B, C, D across rotation levels $r \in \{0.0, 0.25, 0.5, 0.75, 1.0\}$ across $\ge 10$ seeds.
-- [ ] Calculate Pairwise F1, False Association Rate, and Candidate Precision/Recall.
-- [ ] Implement `scripts/plot_results.py` to generate rotation benchmark chart PNG (< 200 KB).
-- [ ] Author `docs/EXPERIMENTS.md`, `docs/DATASET_CARD.md`, and `docs/MODEL_CARD.md`.
-- [ ] Scenario Lab API (`GET /scenarios`, `POST /scenarios/{name}/run`).
+- [x] Dataset generator v2: 6 templates × 15 variants, 40 legitimate negatives, 20 decoys (four types), unique identifiers, script-family ground truth; the 10 injection attacks are in `data/injection_attacks.json`. Frozen and pre-registered (`docs/PREREGISTRATION.md`) before any experiment.
+- [ ] Author the 25 hand-written held-out evaluation scenarios. **Owner's task.** `data/heldout/README.md` documents the format and `heldout.jsonl` is an empty placeholder; nothing reads it until the owner says it is ready.
+- [~] Evaluation harness `scripts/evaluate_model.py`: suites `tactics`, `entities`, `associations`, `rotation`, `injection`, `latency` run and committed; `heldout` is implemented and guarded (refuses an empty file and a second run) but **not run**.
+- [x] Hero Rotation Experiment (E4): arms A, B, C, D at r in 0, 0.25, 0.5, 0.75, 1.0, 10 seeds (1001-1010), both ground truths, two scored slices.
+- [x] Pairwise F1, false association rate, candidate precision/recall (`docs/experiments/rotation.json`).
+- [x] `scripts/plot_results.py` chart PNGs (about 108 KB each, limit 200 KB; matplotlib is a dev-only dependency in `scripts/requirements-dev.txt`).
+- [x] `docs/EXPERIMENTS.md` (tables generated from the JSON), `docs/DATASET_CARD.md`, `docs/MODEL_CARD.md`.
+- [x] Scenario Lab API (`GET /api/v1/scenarios`, `POST /api/v1/scenarios/{name}/run`): 11 deterministic scenarios replayed through the real pipeline in an isolated database. The Scenario Lab UI and static-mode scenario data are Phase 6.
 
 #### Done Means Checkpoint
-- [ ] Every metric in `docs/EXPERIMENTS.md` is reproducible via CLI with recorded seeds.
-- [ ] False association rate and candidate precision/recall explicitly reported for all arms.
-- [ ] Suite E3 confirms zero false `OBSERVED_MATCH` edges across all decoys and negatives.
-- [ ] Hand-written held-out suite evaluated exactly once and logged.
-- [ ] Honest scientific interpretation documented (highlighting rotation regimes where Arm D excels vs. where it degrades).
-- [ ] Generated rotation chart PNG committed (< 200 KB).
+- [x] Every metric in `docs/EXPERIMENTS.md` is reproducible via CLI with recorded seeds (a test re-runs one full experiment cell and checks the tables against the JSON; the full E4 takes about 40 minutes).
+- [x] False association rate and candidate precision/recall explicitly reported for all arms.
+- [~] Suite E3: **0 I1 violations; 0 observed links touch a negative or decoy after counter-evidence** (1848 before it), negatives are never linked. **But decoys D1 (awareness notices) and D3 (reversed order) were linked by behaviour-only candidate links in a large share of runs**, so the blueprint goal that decoys must not form a campaign hypothesis is not met for them. Reported as is; the decoys were not changed.
+- [ ] Hand-written held-out suite evaluated exactly once and logged. **Pending the owner's set.**
+- [x] Honest scientific interpretation documented (where D helps and where it degrades), including that D does not beat the text baseline under the instance truth.
+- [x] Generated rotation chart PNG committed (< 200 KB).
 
 ---
 
