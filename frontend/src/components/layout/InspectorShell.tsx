@@ -302,10 +302,13 @@ export const InspectorShell: React.FC<InspectorShellProps> = ({
   const heading = association ? association.status.replace(/_/g, ' ') : node?.kind === 'incident' ? 'INCIDENT' : 'IDENTIFIER';
 
   return (
+    <>
+    {/* Below md the inspector is an overlay on top of the page: tapping outside it closes it. */}
+    <div className="md:hidden fixed inset-0 z-30 bg-black/50" onClick={onClose} aria-hidden="true" data-testid="inspector-backdrop" />
     <aside
       role="complementary"
       aria-label="Evidence inspector"
-      className="w-96 max-w-[90vw] bg-bg-card border-l border-border-subtle h-full flex flex-col z-20 shadow-xl overflow-hidden"
+      className="fixed inset-y-0 right-0 z-40 w-96 max-w-[90vw] md:static md:z-20 bg-bg-card border-l border-border-subtle h-full flex flex-col shadow-xl overflow-hidden"
     >
       <div className="p-4 border-b border-border-subtle flex items-center justify-between bg-bg-elevated/40">
         <div className="flex items-center gap-2">
@@ -335,5 +338,6 @@ export const InspectorShell: React.FC<InspectorShellProps> = ({
         ) : node ? <NodePanel info={node} onOpenIncident={onOpenIncident} /> : null}
       </div>
     </aside>
+    </>
   );
 };

@@ -81,7 +81,7 @@ export const NewInvestigation: React.FC<NewInvestigationProps> = ({ apiMode, onS
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">New Investigation</h1>
         <p className="text-sm text-text-secondary mt-1">

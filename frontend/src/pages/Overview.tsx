@@ -37,7 +37,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   const totalEntities = graphData?.nodes.filter(n => n.type !== 'incident').length || 0;
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -104,7 +104,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
 
       {/* Recent Incidents Feed */}
       <div className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-b border-border-subtle flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-base font-semibold text-text-primary">Recent Evidence Records</h2>
           <button 
             onClick={() => onNavigate('graph')}
@@ -133,10 +133,10 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                 tabIndex={0}
                 onClick={() => onNavigate('investigation_detail', inc.id)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('investigation_detail', inc.id); } }}
-                className="px-6 py-4 flex items-center justify-between hover:bg-bg-elevated/40 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
+                className="px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3 hover:bg-bg-elevated/40 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-xs text-text-muted">INC-{inc.id.toString().padStart(4, '0')}</span>
                     <span className="font-semibold text-sm text-text-primary hover:text-accent-primary transition-colors">
                       {inc.title}

@@ -15,7 +15,7 @@ export const SimulatedLiveCall: React.FC = () => {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
       {/* Simulation Disclaimer Banner (§10, §12.4) */}
       <div className="bg-risk-high/10 border-2 border-risk-high/40 rounded-lg p-4 flex items-center gap-3">
         <AlertTriangle className="w-5 h-5 text-risk-high shrink-0" />

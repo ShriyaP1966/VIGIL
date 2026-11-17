@@ -29,6 +29,11 @@ export const App: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const canReview = apiMode === 'live';
 
+  // Below 768 px the sidebar is a drawer, closed by default; it also closes whenever the page changes (e.g. Back).
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  useEffect(() => { setMenuOpen(false); }, [route.path]);
+
   useEffect(() => {
     const unsubscribe = apiClient.subscribeMode((mode) => setApiMode(mode));
     return () => unsubscribe();
@@ -90,14 +95,24 @@ export const App: React.FC = () => {
   const inspectorOpen = shownAssociation != null || (route.assocId == null && nodeInfo != null);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-bg-main text-text-primary">
-      <Sidebar currentView={sectionOf(route)} />
+    <div className="flex h-screen w-full max-w-full overflow-hidden bg-bg-main text-text-primary">
+      <Sidebar
+        currentView={sectionOf(route)}
+        open={menuOpen}
+        onClose={closeMenu}
+        onNavigate={closeMenu}
+      />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <TopBar apiMode={apiMode} onNewInvestigation={() => handleNavigate('new_investigation')} />
+        <TopBar
+          apiMode={apiMode}
+          onNewInvestigation={() => handleNavigate('new_investigation')}
+          onOpenMenu={() => setMenuOpen(true)}
+          menuOpen={menuOpen}
+        />
 
         {inspectorError && (
-          <div role="alert" className="bg-risk-critical/10 border-b border-risk-critical/30 text-risk-critical text-xs px-6 py-2 flex justify-between">
+          <div role="alert" className="bg-risk-critical/10 border-b border-risk-critical/30 text-risk-critical text-xs px-4 sm:px-6 py-2 flex justify-between gap-3">
             <span>{inspectorError}</span>
             <button type="button" onClick={() => setInspectorError(null)} className="underline">Dismiss</button>
           </div>

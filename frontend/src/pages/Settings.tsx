@@ -25,7 +25,7 @@ export const Settings: React.FC<{ apiMode: ApiMode }> = ({ apiMode }) => {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8">
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6 sm:space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">System Settings</h1>
         <p className="text-sm text-text-secondary mt-1">

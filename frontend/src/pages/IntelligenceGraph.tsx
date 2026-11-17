@@ -82,7 +82,7 @@ export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
   return (
     <div className="flex flex-col h-full min-h-[560px] bg-bg-main">
       {/* Toolbar */}
-      <div className="bg-bg-sidebar border-b border-border-subtle flex flex-wrap items-center justify-between gap-3 px-6 py-3">
+      <div className="bg-bg-sidebar border-b border-border-subtle flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3">
         <div className="flex flex-wrap items-center gap-4">
           <h1 className="flex items-center gap-2 text-sm font-semibold text-text-primary">
             <Network className="w-4 h-4 text-accent-primary" aria-hidden="true" />
@@ -128,7 +128,7 @@ export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
       </div>
 
       {/* Legend (wording required by blueprint §12.5) */}
-      <div className="bg-bg-elevated/40 border-b border-border-subtle px-6 py-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-text-muted">
+      <div className="bg-bg-elevated/40 border-b border-border-subtle px-4 sm:px-6 py-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-text-muted">
         <span className="flex items-center gap-2">
           <span className="w-5 h-0.5" style={{ background: EDGE_COLORS.OBSERVED_MATCH }} aria-hidden="true" />
           <span><strong className="text-text-primary">Solid blue = identifier observed in both incidents.</strong> It is not proof of one campaign.</span>
@@ -170,8 +170,8 @@ export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
             No incidents yet. Create an investigation to see identifiers and observed matches here.
           </div>
         ) : tableView ? (
-          <div className="p-6 overflow-auto h-full">
-            <div className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden max-w-6xl mx-auto">
+          <div className="p-3 sm:p-6 overflow-auto h-full">
+            <div className="bg-bg-card border border-border-subtle rounded-lg overflow-x-auto max-w-6xl mx-auto">
               <table className="w-full text-left text-xs">
                 <caption className="sr-only">Association links between incidents</caption>
                 <thead className="bg-bg-elevated text-text-muted uppercase font-mono text-[10px] border-b border-border-subtle">
