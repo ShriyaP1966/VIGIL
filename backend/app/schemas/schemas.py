@@ -201,6 +201,21 @@ class GraphResponse(BaseModel):
     edges: List[GraphEdge]
 
 
+class ReviewRequest(BaseModel):
+    decision: Literal["ACCEPT", "REJECT", "FLAG"]
+    note: Optional[str] = Field(default=None, max_length=1000)
+
+    @model_validator(mode="after")
+    def _redact_note(self):
+        # The note is free text and is stored: secrets are removed like everywhere else (§5.5).
+        if self.note:
+            try:
+                self.note = redact_text(self.note).text
+            except Exception:
+                raise ValueError(SANITISE_FAILED) from None
+        return self
+
+
 class AssociationInspectorResponse(BaseModel):
     id: int
     status: str

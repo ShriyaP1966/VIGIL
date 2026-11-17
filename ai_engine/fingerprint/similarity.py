@@ -97,6 +97,25 @@ def lcs_length(a: tuple[str, ...] | list[str], b: tuple[str, ...] | list[str]) -
     return prev[-1]
 
 
+def lcs_stages(a: tuple[str, ...] | list[str], b: tuple[str, ...] | list[str]) -> list[str]:
+    """One longest common subsequence (used to explain a match in plain language)."""
+    n, m = len(a), len(b)
+    table = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n - 1, -1, -1):
+        for j in range(m - 1, -1, -1):
+            table[i][j] = table[i + 1][j + 1] + 1 if a[i] == b[j] else max(table[i + 1][j], table[i][j + 1])
+    out, i, j = [], 0, 0
+    while i < n and j < m:
+        if a[i] == b[j]:
+            out.append(a[i])
+            i, j = i + 1, j + 1
+        elif table[i + 1][j] >= table[i][j + 1]:
+            i += 1
+        else:
+            j += 1
+    return out
+
+
 def order_consistency(a: tuple[str, ...] | list[str], b: tuple[str, ...] | list[str]) -> float:
     """Share of stage pairs present in BOTH sequences that appear in the same relative order.
     With no shared pair: 1.0 if at least one stage is shared (nothing to contradict), else 0.0."""
