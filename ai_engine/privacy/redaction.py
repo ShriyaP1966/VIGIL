@@ -14,8 +14,9 @@ spelled-out digits, secrets with no cue word nearby, and very unusual formats.
 from __future__ import annotations
 
 import re
-import unicodedata
 from dataclasses import dataclass, replace
+
+from ai_engine.extraction.normalisation import normalised_view
 
 REDACTOR_VERSION = "redact@1.0"
 
@@ -84,29 +85,9 @@ def verhoeff_valid(digits: str) -> bool:
     return c == 0
 
 
-# --------------------------------------------------------------------------------------
-# Normalised view: detection runs on NFKC text with zero-width characters removed and
-# non-ASCII decimal digits (Devanagari, fullwidth...) mapped to ASCII. An index map lets us
-# redact the ORIGINAL text, so nothing outside a secret is altered.
-# --------------------------------------------------------------------------------------
-
-_ZERO_WIDTH = {"​", "‌", "‍", "⁠", "﻿", "­"}
-
-
-def _normalised_view(text: str) -> tuple[str, list[int]]:
-    chars: list[str] = []
-    idx: list[int] = []
-    for i, ch in enumerate(text):
-        if ch in _ZERO_WIDTH:
-            continue
-        if ch.isdecimal() and not ch.isascii():
-            norm = str(unicodedata.decimal(ch))
-        else:
-            norm = unicodedata.normalize("NFKC", ch)
-        for c in norm:
-            chars.append(c)
-            idx.append(i)
-    return "".join(chars), idx
+# Detection runs on a normalised view (NFKC, zero-width characters removed, non-ASCII decimal digits
+# mapped to ASCII) with an index map back to the ORIGINAL text, so nothing outside a secret is altered.
+_normalised_view = normalised_view
 
 
 # --------------------------------------------------------------------------------------

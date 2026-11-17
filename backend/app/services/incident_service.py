@@ -3,8 +3,13 @@ from dataclasses import dataclass, replace
 from sqlalchemy.orm import Session
 from backend.app.core.errors import VigilException
 from backend.app.models.models import (
-    Incident, Evidence, Utterance, Entity, Mention, Analysis, RiskContribution, Association, Redaction
+    Incident, Evidence, Utterance, Entity, Mention, Analysis, RiskContribution, Association, Redaction,
+    TacticEvent,
 )
+from ai_engine.extraction.interface import ExtractionResult, UtteranceInput
+from ai_engine.extraction.rule_extractor import get_default_extractor
+from ai_engine.extraction.tactics import CANONICAL_STAGES, STAGE_OF_LABEL
+from ai_engine.extraction.turns import parse_labelled_turns
 from backend.app.schemas.schemas import IncidentCreate, EvidenceCreate
 from ai_engine.privacy.redaction import REDACTOR_VERSION, RedactionEvent, redact_evidence, redact_text
 from ai_engine.extraction.normalisation import normalise_text, compute_sha256, detect_language, mask_identifier
@@ -109,9 +114,10 @@ def add_evidence_to_incident(
     db.refresh(evidence)
     _store_redactions(db, incident_id, evidence.id, prep.events)
 
-    # If speaker turns provided, create utterances
-    if prep.speaker_turns:
-        for idx, turn in enumerate(prep.speaker_turns):
+    # Speaker turns: provided by the caller, or parsed from a pasted "Speaker: text" transcript
+    turns = prep.speaker_turns or parse_labelled_turns(prep.text)
+    if turns:
+        for idx, turn in enumerate(turns):
             utt = Utterance(
                 evidence_id=evidence.id,
                 idx=idx,
@@ -174,6 +180,57 @@ def add_evidence_to_incident(
     return evidence
 
 
+def _incident_utterances(db: Session, incident_id: int) -> list[Utterance]:
+    return (
+        db.query(Utterance)
+        .join(Evidence, Utterance.evidence_id == Evidence.id)
+        .filter(Evidence.incident_id == incident_id)
+        .order_by(Evidence.id, Utterance.idx)
+        .all()
+    )
+
+
+def _extract_and_store_tactics(db: Session, incident_id: int) -> tuple[ExtractionResult, dict]:
+    """Run the rule extractor over the incident's utterances and persist `tactic_events`.
+    Re-analysis replaces the previous events, so they are never duplicated."""
+    incident = db.query(Incident).filter(Incident.id == incident_id).one()
+    rows = _incident_utterances(db, incident_id)
+    inputs = [
+        UtteranceInput(idx=i, speaker=u.speaker, text=u.text, t_start_sec=u.t_start_sec, language=u.language)
+        for i, u in enumerate(rows)
+    ]
+    extractor = get_default_extractor()
+    result = extractor.analyze(inputs)
+
+    db.query(TacticEvent).filter(TacticEvent.incident_id == incident_id).delete()
+    for row, ur in zip(rows, result.utterances):
+        for label in ur.tactic_labels:
+            for start, end in ur.label_spans.get(label, []):
+                db.add(TacticEvent(
+                    incident_id=incident_id, utterance_id=row.id, label=label,
+                    confidence=ur.confidence_scores[label],
+                    extractor=result.extractor_version, evidence_span=f"{start}:{end}",
+                ))
+    db.commit()
+
+    # First-cut fingerprint: stages in order of first appearance. The full temporal engine is Phase 3.
+    sequence: list[str] = []
+    for ur in result.utterances:
+        stages = {STAGE_OF_LABEL[lab] for lab in ur.tactic_labels if lab in STAGE_OF_LABEL}
+        for stage in CANONICAL_STAGES:
+            if stage in stages and stage not in sequence:
+                sequence.append(stage)
+    fingerprint = {
+        "stage_sequence": sequence,
+        "credential_requested": any("CREDENTIAL_REQUEST" in ur.tactic_labels for ur in result.utterances),
+        "institution_class": result.institution_class,
+        "payment_channel": result.payment_channel,
+        "language": result.detected_language,
+        "channel": incident.source_channel,
+    }
+    return result, fingerprint
+
+
 def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True) -> Analysis:
     """
     Run full end-to-end analysis on an incident:
@@ -186,16 +243,19 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
     # 1. Generate observed matches
     find_or_create_observed_matches(db, incident_id)
 
-    # 2. Calculate risk heuristic
+    # 2. Tactic extraction (rules) -> tactic_events + first-cut fingerprint
+    extraction, fingerprint = _extract_and_store_tactics(db, incident_id)
+
+    # 3. Calculate risk heuristic
     risk_score, risk_band, contributions = calculate_baseline_risk(db, incident_id)
 
-    # 3. Create Analysis record
+    # 4. Create Analysis record
     analysis = Analysis(
         incident_id=incident_id,
-        extractor="RuleMLExtractor",
-        extractor_version="3.1.0",
-        fallback_used=False,
-        fingerprint_json=json.dumps({"stage_sequence": []}),
+        extractor=extraction.extractor_name,
+        extractor_version=extraction.extractor_version,
+        fallback_used=extraction.fallback_used,
+        fingerprint_json=json.dumps(fingerprint),
         risk_score=risk_score,
         risk_band=risk_band,
         risk_version="risk@3.1.0",

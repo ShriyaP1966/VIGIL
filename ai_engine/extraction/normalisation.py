@@ -7,6 +7,33 @@ def compute_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+_ZERO_WIDTH = {"​", "‌", "‍", "⁠", "﻿", "­"}
+
+
+def normalised_view(text: str) -> tuple[str, list[int]]:
+    """Matching view of `text`: NFKC, zero-width characters removed, non-ASCII decimal digits
+    (Devanagari, fullwidth...) mapped to ASCII. Returns (view, index_map) where index_map[i] is the
+    position in the ORIGINAL text of view[i], so spans found in the view can be mapped back."""
+    chars: list[str] = []
+    idx: list[int] = []
+    for i, ch in enumerate(text):
+        if ch in _ZERO_WIDTH:
+            continue
+        if ch.isdecimal() and not ch.isascii():
+            norm = str(unicodedata.decimal(ch))
+        else:
+            norm = unicodedata.normalize("NFKC", ch)
+        for c in norm:
+            chars.append(c)
+            idx.append(i)
+    return "".join(chars), idx
+
+
+def map_span(idx: list[int], start: int, end: int) -> tuple[int, int]:
+    """Map a [start, end) span of the normalised view back to the original text."""
+    return idx[start], idx[end - 1] + 1
+
+
 def normalise_text(text: str) -> str:
     """
     Normalise text:

@@ -17,6 +17,8 @@ class UtteranceExtractionData(BaseModel):
     tactic_labels: List[str]
     confidence_scores: Dict[str, float]
     evidence_spans: List[Tuple[int, int]]
+    # Per-label matched spans, relative to the utterance text (blueprint §6.3 "evidence span")
+    label_spans: Dict[str, List[Tuple[int, int]]] = {}
 
 
 class ExtractionResult(BaseModel):
