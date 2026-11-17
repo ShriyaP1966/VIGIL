@@ -10,7 +10,11 @@ from pathlib import Path
 HOOK_CONTENT = """#!/bin/sh
 # VIGIL pre-push gatekeeper
 echo "Running VIGIL preflight check before push..."
-python scripts/preflight.py --quick
+# Prefer the repo virtual environment so the hook works without an activated shell.
+PY=python
+if [ -x ".venv/Scripts/python.exe" ]; then PY=".venv/Scripts/python.exe"; fi
+if [ -x ".venv/bin/python" ]; then PY=".venv/bin/python"; fi
+"$PY" scripts/preflight.py --quick
 if [ $? -ne 0 ]; then
     echo "Preflight check failed! Push aborted."
     exit 1

@@ -10,8 +10,8 @@
 
 | Phase | Description | Target Date | Status | Deployment Milestone |
 |---|---|---|---|---|
-| **Phase 0** | Foundation & Guardrails | 17 Nov 2026 | 🟡 In Progress | Deployment scaffold (`deployment/`) |
-| **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | ⚪ Pending | **First Slice Deployed** (Vercel + Render) |
+| **Phase 0** | Foundation & Guardrails | 17 Nov 2026 | ✅ Done (browser walk-through of placeholder pages not recorded) | Deployment scaffold (`deployment/`) |
+| **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | 🟡 Code complete, 3 items open: public deployment (needs Vercel/Render sign-in), Antigravity quota log, in-browser walk-through | **First Slice Deployed** (Vercel + Render): *not yet* |
 | **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ⚪ Pending | - |
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ⚪ Pending | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ⚪ Pending | - |
@@ -37,23 +37,23 @@
 - [x] Formulate Pinned Free-Only Dependency Plan and Lockfile Strategy.
 - [x] Establish System Risk Register with mitigations.
 - [x] Author `DEVELOPMENT_LOG.md` template for session audit logs.
-- [ ] Implement `scripts/preflight.py` per §11.3 (three size measures M1/M2/M3, branch checks, secret scans, history scan).
-- [ ] Implement `scripts/install_hooks.py` to configure local pre-push git hook.
-- [ ] Backend skeleton: FastAPI app, `/health`, CORS, request-ID middleware, standard error handler `{error: {code, message, request_id}}`.
-- [ ] Database scaffold: SQLite connection via SQLAlchemy 2, base models.
-- [ ] Frontend skeleton: Vite + React + TypeScript + Tailwind CSS with dark enterprise tokens (§12.2).
-- [ ] Frontend shell layout: persistent sidebar, top navigation bar, inspector panel, router with page placeholders.
-- [ ] Deployment scaffold: `deployment/render.yaml`, `deployment/vercel.json`, `deployment/DEPLOY.md`.
-- [ ] Test configuration: pytest + Ruff configured for Python; Vitest configured for React.
+- [x] Implement `scripts/preflight.py` per §11.3 (three size measures M1/M2/M3, branch checks, secret scans, history scan).
+- [x] Implement `scripts/install_hooks.py` to configure local pre-push git hook. *(Script exists; the hook is local to each clone and is installed by running it.)*
+- [x] Backend skeleton: FastAPI app, `/health`, CORS, request-ID middleware, standard error handler `{error: {code, message, request_id}}`. *(Error body now also covers HTTP and validation errors.)*
+- [x] Database scaffold: SQLite connection via SQLAlchemy 2, base models.
+- [x] Frontend skeleton: Vite + React + TypeScript + Tailwind CSS with dark enterprise tokens (§12.2).
+- [x] Frontend shell layout: persistent sidebar, top navigation bar, inspector panel, state-based page switching with placeholders. *(No URL router; views are switched in `App.tsx`.)*
+- [x] Deployment scaffold: `deployment/render.yaml`, `deployment/vercel.json`, `deployment/DEPLOY.md`. *(Corrected on 17 Nov: Render must run from the repo root.)*
+- [x] Test configuration: pytest + Ruff configured for Python; Vitest configured for React.
 
 #### Done Means Checkpoint
-- [ ] `pytest -q` passes with initial smoke tests.
-- [ ] `npm test` passes with frontend component smoke tests.
-- [ ] `GET /health` returns `{"status": "ok", "mode": "offline", "version": "3.1.0"}`.
-- [ ] Frontend loads and smoothly navigates all placeholder views without console errors.
-- [ ] `python scripts/preflight.py --quick` exits with code 0.
-- [ ] Commit pushed to `origin main`.
-- [ ] `git branch -a` and `git ls-remote --heads origin` confirm that **only** the `main` branch exists.
+- [x] `pytest -q` passes. *(54 passed on 17 Nov.)*
+- [x] `npm test` passes. *(19 passed; logic tests only, no DOM component tests because no DOM test library is in the blueprint.)*
+- [x] `GET /health` returns `status: ok`, `mode: offline`, `version: 3.1.0` (plus a timestamp).
+- [ ] Frontend loads and navigates all placeholder views without console errors. *(`tsc` and `vite build` pass; not yet walked through in a browser.)*
+- [x] `python scripts/preflight.py --quick` exits with code 0.
+- [x] Commit pushed to `origin main`. *(`a0b0d0d` was on origin at the start of the 17 Nov session; later local commits wait for the owner's push.)*
+- [x] `git branch -a` and `git ls-remote --heads origin` confirm that **only** the `main` branch exists.
 
 ---
 
@@ -61,27 +61,27 @@
 **Objective:** A functional end-to-end path demonstrable on screen, deployed publicly early.
 
 #### Tasks
-- [ ] Endpoints: `POST /incidents`, `POST /incidents/{id}/evidence`, `POST /analyze/{id}`, `GET /incidents/{id}`, `GET /graph`.
-- [ ] Text normalisation (Unicode NFKC, zero-width stripping, case folding, SHA-256 provenance hashing).
-- [ ] Deterministic regex & gazetteer entity extraction (Phone E.164, UPI handle, Email, Domain, Organisation).
-- [ ] Persist entities, mentions, and structural relationships.
-- [ ] Implement `OBSERVED_MATCH` association generation for exact shared normalized identifiers with source evidence excerpts.
-- [ ] Implement baseline additive risk calculation storing factor contributions in `risk_contributions`.
-- [ ] Frontend New Investigation: paste transcript/message → creates incident → navigates to Detail.
-- [ ] Frontend Investigation Detail: masked entities, tactic timeline placeholder, risk badge with contribution list.
-- [ ] Frontend Intelligence Graph: React Flow canvas showing incident nodes, entity nodes, and solid `OBSERVED_MATCH` edges.
-- [ ] Minimal Evidence Inspector: opening on node/edge click showing source evidence excerpts.
-- [ ] Seed script (`scripts/seed_demo.py`) with 3 synthetic incidents (two sharing a UPI ID, one isolated).
-- [ ] **Deployment Milestone:** Deploy frontend to Vercel and backend to Render. Document URLs in `deployment/DEPLOY.md`. Resolve all CORS and bundle build errors.
+- [x] Endpoints: `POST /incidents`, `POST /incidents/{id}/evidence`, `POST /analyze/{id}`, `GET /incidents/{id}`, `GET /graph` (plus `GET /incidents`, `GET /associations/{id}`, `DELETE /data`).
+- [x] Text normalisation (Unicode NFKC, zero-width stripping, whitespace collapsing, SHA-256 of the original). Extraction runs on the normalised text. *(Case folding is applied to canonical identifiers, not to stored text.)*
+- [x] Deterministic regex & gazetteer entity extraction (Phone E.164, UPI handle, Email, URL, Domain, Organisation).
+- [x] Persist entities and mentions. *(The `relationships` table exists but is not populated; structural edges are derived from mentions at graph time.)*
+- [x] Implement `OBSERVED_MATCH` association generation for exact shared normalized identifiers with source evidence excerpts.
+- [x] Implement baseline additive risk calculation storing factor contributions in `risk_contributions` (placeholder cues; replaced by the tactic classifier in Phase 2).
+- [x] Frontend New Investigation: paste transcript/message → creates incident → navigates to Detail. *(Needs the live backend; disabled in the hosted static demo.)*
+- [x] Frontend Investigation Detail: masked entities, tactic timeline placeholder (marks no stages until Phase 2), risk badge with contribution list.
+- [x] Frontend Intelligence Graph: React Flow canvas showing incident nodes, entity nodes, and solid `OBSERVED_MATCH` edges.
+- [x] Minimal Evidence Inspector: opening on node/edge click showing source evidence excerpts.
+- [x] Seed script (`scripts/seed_demo.py`) with 3 synthetic incidents (two sharing a UPI ID, one isolated).
+- [ ] **Deployment Milestone:** Deploy frontend to Vercel and backend to Render. Document URLs in `deployment/DEPLOY.md`. Resolve all CORS and bundle build errors. *(Blocked: needs the owner's Vercel and Render sign-in. Config and docs are ready; a Render-style boot was verified locally.)*
 
 #### Done Means Checkpoint
-- [ ] Pasting a synthetic transcript generates an incident and displays masked entities (e.g., `+91 98•••••21`).
-- [ ] The graph displays a solid sky-blue `OBSERVED_MATCH` edge labeled `"observed match"` between two incidents sharing a UPI handle.
-- [ ] Clicking the edge opens the inspector, displaying the shared identifier and source evidence excerpts.
-- [ ] The third unrelated incident remains disconnected in the graph.
-- [ ] Unit tests pass verifying entity extraction and invariant I1 (no `OBSERVED_MATCH` without exact normalized equality).
-- [ ] Antigravity weekly quota inspected in **Settings → Models** and logged.
-- [ ] **First slice deployed publicly:** Deployed link opens on an external device and renders the interactive slice.
+- [x] Pasting a synthetic transcript generates an incident and displays masked entities (e.g., `+91 98•••••10`). *(Verified through the API in `test_api_slice.py`; UI not yet walked through in a browser.)*
+- [x] The graph displays a solid sky-blue `OBSERVED_MATCH` edge labeled `"observed match"` between two incidents sharing a UPI handle. *(Verified by API and layout unit tests; not yet seen in a browser.)*
+- [x] Clicking the edge opens the inspector, displaying the shared identifier and source evidence excerpts. *(Inspector payload verified by API test; click wiring type-checked and built, not yet clicked in a browser.)*
+- [x] The third unrelated incident remains disconnected in the graph. *(API test and layout test.)*
+- [x] Unit tests pass verifying entity extraction and invariant I1 (no `OBSERVED_MATCH` without exact normalized equality).
+- [ ] Antigravity weekly quota inspected in **Settings → Models** and logged. *(Owner action; cannot be done from this environment.)*
+- [ ] **First slice deployed publicly:** Deployed link opens on an external device and renders the interactive slice. *(Blocked on sign-in, see above.)*
 
 ---
 

@@ -5,6 +5,7 @@ Launches both backend (Uvicorn on port 8000) and frontend (Vite on port 5173) in
 """
 
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -22,7 +23,8 @@ def main():
         python_bin = "python"
 
     print("Checking database seed data...")
-    subprocess.run([str(python_bin), str(root_dir / "scripts" / "seed_demo.py")], check=False)
+    # Run from the repo root so the seed and the API share the same ./vigil.db
+    subprocess.run([str(python_bin), str(root_dir / "scripts" / "seed_demo.py")], cwd=str(root_dir), check=False)
 
     print("\nStarting FastAPI backend server on http://localhost:8000...")
     backend_proc = subprocess.Popen(
@@ -49,7 +51,11 @@ def main():
     except KeyboardInterrupt:
         print("\nShutting down servers...")
         backend_proc.terminate()
-        frontend_proc.terminate()
+        if sys.platform == "win32":
+            # npm runs through a shell: terminate() would leave the Vite (node) child running.
+            subprocess.run(["taskkill", "/F", "/T", "/PID", str(frontend_proc.pid)], check=False)
+        else:
+            frontend_proc.terminate()
         print("Shutdown complete.")
 
 

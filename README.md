@@ -5,7 +5,7 @@
 >
 > **PromptWars × AI Vibeathon 2026 Submission**
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live%20Static%20First-blue)](https://vigil-demo.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Demo-link%20pending%20deployment-lightgrey)](#project-status)
 [![Demo Video](https://img.shields.io/badge/Video-3--Minute%20Walkthrough-red)](#demo-walkthrough)
 [![Branch](https://img.shields.io/badge/Branch-main%20only-green)](#repository-rules)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](#license)
@@ -15,9 +15,23 @@
 
 ## 1. Executive Summary
 
-- **Live Deployed Application:** `https://vigil-demo.vercel.app` *(Static-first architecture: always available with precomputed synthetic datasets; auto-upgrades to live backend when awake)*
-- **Demo Video:** `[YouTube / Drive Link - External]` *(3-minute walkthrough)*
-- **Core Breakthrough:** Playbook Fingerprinting across rotating phone numbers, UPI IDs, and phishing domains, backed by an explicit 5-state association graph and counter-evidence reasoning.
+- **Live Deployed Application:** *pending: not deployed yet.* The design is static-first: the public site always works from precomputed synthetic data and upgrades to the live backend when that is awake (see [deployment/DEPLOY.md](deployment/DEPLOY.md)).
+- **Demo Video:** *pending.*
+- **Core idea:** Playbook Fingerprinting across rotating phone numbers, UPI IDs, and phishing domains, backed by an explicit 5-state association graph and counter-evidence reasoning.
+
+## Project status
+
+This README describes the full v3.1 design. **Only the Phase 1 vertical slice is implemented so far**; everything else below is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
+
+| Implemented (Phase 1) | Planned (not built yet) |
+|---|---|
+| Paste evidence, SHA-256 provenance, NFKC normalisation | Tactic classification, injection guard (Phase 2) |
+| Phone / UPI / email / URL / domain / organisation extraction, masked display | Playbook fingerprint, candidate associations, campaign hypotheses (Phase 3) |
+| `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | Counter-evidence engine, full inspector, analyst review (Phase 4) |
+| Placeholder risk indicator with an exact contribution ledger | Evaluation and the rotation experiment (Phase 5) |
+| Graph (React Flow), evidence inspector, static precomputed demo mode | Simulated live call, reports, scenario lab UI (Phase 6) |
+
+No evaluation results exist yet, and none are claimed.
 
 ---
 
@@ -121,14 +135,18 @@ cd frontend
 npm ci
 cd ..
 
-# 4. Copy environment template (offline by default, no API keys needed)
+# 4. (Optional) copy the environment template. Offline mode is the default and needs no .env or API keys.
+#    Windows PowerShell: Copy-Item .env.example .env
 cp .env.example .env
 
-# 5. Launch the demo
+# 5. Launch the demo (seeds 3 synthetic incidents, starts the API and the web UI)
 python scripts/run_demo.py
 ```
 
 Open `http://localhost:5173` in your browser. Backend API docs are accessible at `http://localhost:8000/docs`.
+
+Checks: `pytest -q` (repo root), `cd frontend && npm test`, `python scripts/preflight.py`.
+To regenerate the precomputed demo data from the real pipeline: `python scripts/export_static_demo.py`.
 
 ---
 
@@ -168,7 +186,7 @@ Developed in partnership with **Google Antigravity**:
 ## 11. Security & Responsible Use
 
 - **Prompt-Injection Defense:** Untrusted transcripts are strictly bounded, validated against rigid Pydantic schemas, and analyzed by regex injection detectors. Flagged input cannot lower risk scores.
-- **Privacy by Design:** Phone numbers and UPI handles are masked in the UI. Passwords, OTPs, and card credentials are automatically redacted at ingestion.
+- **Privacy by Design:** Phone numbers and UPI handles are masked in the UI (canonical values are stored for exact matching). Redaction of OTPs, passwords and card numbers at ingestion is specified in the blueprint (§5.5) but **not implemented yet**; use synthetic data only.
 - **Size Budget & Hygiene:** Enforced by `scripts/preflight.py` to ensure repository size remains under 10 MB on a single `main` branch.
 
 ---
