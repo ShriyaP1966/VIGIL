@@ -38,7 +38,7 @@ This README describes the full v3.1 design. **Phases 1-3 are implemented so far*
 | Tactic timeline and highlighted transcript; graph (React Flow), evidence inspector, static demo mode | |
 | Synthetic dataset generator v1 and the `tactics` / `injection` evaluation suites | |
 
-**Evaluation so far (Phase 2 only).** On the held-out *test templates* of the synthetic dataset the rule extractor scores macro-F1 0.964 (authority-claim recall 0.80 and allegation precision 0.77 are the weak spots). The 10 injection attacks are all flagged. All of this is synthetic data written by the same author as the rules, so the numbers are optimistic and do not predict real-world performance. Reproduce with `python scripts/evaluate_model.py --suite tactics --split test`; results and caveats are in [docs/experiments/](docs/experiments/). The headline identifier-rotation experiment has **not** been run yet, and no result for it is claimed. A preliminary diagnostic on the synthetic train/dev data suggests the behavioural fingerprint recognises a *script family*, not an individual campaign: it finds most true pairs but also links different campaign instances that run the same script (precision about 0.2 against the "same campaign instance" ground truth, with no cross-script false links). See `DEVELOPMENT_LOG.md` (Session 5); the proper evaluation is planned.
+**Evaluation so far (Phase 2 only).** On the held-out *test templates* of the synthetic dataset the rule extractor scores macro-F1 0.964 (authority-claim recall 0.80 and allegation precision 0.77 are the weak spots). The 10 injection attacks are all flagged. All of this is synthetic data written by the same author as the rules, so the numbers are optimistic and do not predict real-world performance. Reproduce with `python scripts/evaluate_model.py --suite tactics --split test`; results and caveats are in [docs/experiments/](docs/experiments/). The headline identifier-rotation experiment has **not** been run yet, and no result for it is claimed. **The fingerprint recognises a script family (a playbook), never a specific group, person or organisation.** A preliminary diagnostic on the synthetic train/dev data shows it finds most true pairs but also links different campaign instances that run the same script (precision about 0.2 against the "same campaign instance" ground truth, with no cross-script false links). The Phase 5 evaluation will report **both** that original campaign-instance ground truth (with its low precision stated plainly) **and** a script-family ground truth, side by side; no behavioural habits will be added to the generator after seeing results. See `DEVELOPMENT_LOG.md` (Sessions 5 and 6).
 
 ---
 
@@ -46,8 +46,8 @@ This README describes the full v3.1 design. **Phases 1-3 are implemented so far*
 
 Digital-arrest, impersonation, and KYC scams in India operate as industrialised scripts across phone calls, SMS/WhatsApp messages, and malicious payment links. Scammers routinely rotate disposable phone numbers, mule UPI IDs, and newly registered domains.
 - **Current tools inspect one message or call in isolation**, reacting only to known-bad identifiers.
-- Because identifiers rotate rapidly, **10 separate reports from the same criminal campaign appear as 10 isolated incidents**.
-- Fraud teams at fintechs, banks, and response agencies hold fragmented evidence in spreadsheets and chat logs without cross-channel campaign reconstruction.
+- Because identifiers rotate rapidly, **10 reports that follow the same scam script can look like 10 unrelated incidents**.
+- Fraud teams at fintechs, banks, and response agencies hold fragmented evidence in spreadsheets and chat logs and cannot easily see which reports share an identifier or a script.
 
 ---
 

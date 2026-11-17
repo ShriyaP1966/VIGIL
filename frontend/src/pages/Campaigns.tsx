@@ -67,7 +67,8 @@ export const Campaigns: React.FC<CampaignsProps> = ({
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">Campaign hypotheses</h1>
         <p className="text-sm text-text-secondary mt-1 max-w-3xl">
           Groups of incidents that may be related, built from shared identifiers and similar behaviour.
-          Every group is a hypothesis for an analyst to review, not a finding.
+          Every group is a hypothesis for an analyst to review, not a finding. A behavioural match means a similar
+          script (playbook); it does not identify a specific group, person or organisation.
         </p>
       </div>
 
