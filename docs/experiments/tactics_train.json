@@ -5,12 +5,12 @@
  "command": "python scripts/evaluate_model.py --suite tactics --split train",
  "dataset": {
   "path": "data\\scenarios.jsonl",
-  "sha256": "6876abef53ef3ad4da5c535d354e173235808674f91644b4543286f926e33798",
-  "generator_version": "gen@1.0",
+  "sha256": "58d67bb2e15d62ad206a43553b6c65ce13092fd81c996bbc689678e089f4c82d",
+  "generator_version": "gen@2.0",
   "seed": 1,
   "rotation": 0.5,
-  "incidents": 38,
-  "utterances": 162,
+  "incidents": 44,
+  "utterances": 206,
   "templates": [
    "N1",
    "N2",
@@ -25,7 +25,7 @@
   "threshold": 0.5
  },
  "metrics": {
-  "macro_f1_over_labels_with_support": 0.9725,
+  "macro_f1_over_labels_with_support": 0.9707,
   "labels_with_support": [
    "AUTHORITY_IMPERSONATION",
    "FALSE_ALLEGATION",
@@ -40,74 +40,74 @@
    "OTHER_SUSPICIOUS"
   ],
   "micro": {
-   "tp": 135,
-   "fp": 5,
+   "tp": 168,
+   "fp": 7,
    "fn": 0,
-   "support": 135,
-   "precision": 0.9643,
+   "support": 168,
+   "precision": 0.96,
    "recall": 1.0,
-   "f1": 0.9818
+   "f1": 0.9796
   },
   "per_label": {
    "AUTHORITY_IMPERSONATION": {
-    "tp": 24,
+    "tp": 30,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 30,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "FALSE_ALLEGATION": {
-    "tp": 24,
+    "tp": 30,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 30,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "THREAT_INTIMIDATION": {
-    "tp": 22,
+    "tp": 28,
     "fp": 2,
     "fn": 0,
-    "support": 22,
-    "precision": 0.9167,
+    "support": 28,
+    "precision": 0.9333,
     "recall": 1.0,
-    "f1": 0.9565
+    "f1": 0.9655
    },
    "ISOLATION": {
-    "tp": 7,
-    "fp": 3,
+    "tp": 10,
+    "fp": 5,
     "fn": 0,
-    "support": 7,
-    "precision": 0.7,
+    "support": 10,
+    "precision": 0.6667,
     "recall": 1.0,
-    "f1": 0.8235
+    "f1": 0.8
    },
    "URGENCY": {
-    "tp": 19,
+    "tp": 25,
     "fp": 0,
     "fn": 0,
-    "support": 19,
+    "support": 25,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "FINANCIAL_DEMAND": {
-    "tp": 7,
+    "tp": 10,
     "fp": 0,
     "fn": 0,
-    "support": 7,
+    "support": 10,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "CREDENTIAL_REQUEST": {
-    "tp": 12,
+    "tp": 15,
     "fp": 0,
     "fn": 0,
-    "support": 12,
+    "support": 15,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
@@ -133,27 +133,32 @@
   },
   "per_language_micro": {
    "en": {
-    "tp": 111,
-    "fp": 5,
+    "tp": 132,
+    "fp": 7,
     "fn": 0,
-    "support": 111,
-    "precision": 0.9569,
+    "support": 132,
+    "precision": 0.9496,
     "recall": 1.0,
-    "f1": 0.978
+    "f1": 0.9742
    },
    "hi-Latn": {
-    "tp": 24,
+    "tp": 36,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 36,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    }
   },
-  "incident_stage_sequence_exact_match": 0.9211,
-  "institution_class_accuracy": 0.7105,
-  "payment_channel_accuracy": 0.6579
+  "incident_stage_sequence_exact_match": 0.9091,
+  "institution_class_accuracy": 0.7727,
+  "payment_channel_accuracy": 0.6591,
+  "decoy_utterances_labelled_despite_no_gold_label": {
+   "utterances_without_gold_labels": 5,
+   "of_which_labelled_by_extractor": 4,
+   "rate": 0.8
+  }
  },
  "error_examples": {
   "AUTHORITY_IMPERSONATION": {
@@ -182,19 +187,29 @@
   "ISOLATION": {
    "false_positives": [
     {
-     "incident": "inc_0082",
+     "incident": "inc_0099",
      "language": "en",
      "text": "Your one time password for login has been sent to your registered mobile. Never share it with anyone."
     },
     {
-     "incident": "inc_0083",
+     "incident": "inc_0099",
      "language": "en",
      "text": "Your verification code is valid for 10 minutes. Never share it with anyone."
     },
     {
-     "incident": "inc_0086",
+     "incident": "inc_0100",
+     "language": "en",
+     "text": "Your verification code is valid for 10 minutes. Never share it with anyone."
+    },
+    {
+     "incident": "inc_0101",
      "language": "en",
      "text": "Your one time password for login has been sent to your registered mobile. Never share it with anyone."
+    },
+    {
+     "incident": "inc_0102",
+     "language": "en",
+     "text": "Your verification code is valid for 10 minutes. Never share it with anyone."
     }
    ],
    "false_negatives": []

@@ -79,7 +79,13 @@ def write_result(name: str, payload: dict, no_write: bool) -> None:
 
 def suite_tactics(args) -> dict:
     from generate_dataset import load
-    records = [r for r in load(args.data) if args.split == "all" or r["split"] == args.split]
+    everything = load(args.data)
+    # Decoys are scored in E3/E4 (do they form a campaign?), not here: their gold tactic labels are mostly empty
+    # by design (an awareness notice that quotes a scam is not itself a threat). They are reported separately below.
+    records = [r for r in everything
+               if (args.split == "all" or r["split"] == args.split) and r["scenario_type"] != "decoy"]
+    decoys = [r for r in everything
+              if (args.split == "all" or r["split"] == args.split) and r["scenario_type"] == "decoy"]
     extractor = RuleExtractor()
 
     counts = {lab: Counter() for lab in TACTIC_LABELS}
@@ -122,6 +128,19 @@ def suite_tactics(args) -> dict:
     fn = sum(counts[lab]["fn"] for lab in TACTIC_LABELS)
     micro = prf(tp, fp, fn)
 
+    # Decoy side-report: utterances that have NO gold tactic label (awareness notices, benign notices, vague notes)
+    # but that the extractor still labels. These are expected weak spots of a keyword/lexicon extractor.
+    quiet = flagged = 0
+    for r in decoys:
+        res = extractor.analyze([UtteranceInput(idx=u["idx"], speaker=u["speaker"], text=u["text"])
+                                 for u in r["utterances"]])
+        for u, pred in zip(r["utterances"], res.utterances):
+            if u["speaker"] != "victim" and not u["tactic_labels"]:
+                quiet += 1
+                flagged += any(lab != "LEGITIMATE" for lab in pred.tactic_labels)   # a scam label, not LEGITIMATE
+    decoy_report = {"utterances_without_gold_labels": quiet, "of_which_labelled_by_extractor": flagged,
+                    "rate": rnd(flagged / quiet) if quiet else None}
+
     meta = records[0] if records else {}
     return {
         "suite": "tactics", "experiment": "E1", "split": args.split,
@@ -144,6 +163,7 @@ def suite_tactics(args) -> dict:
             "incident_stage_sequence_exact_match": rnd(seq_exact / seq_total) if seq_total else None,
             "institution_class_accuracy": rnd(inst_ok / inc_total) if inc_total else None,
             "payment_channel_accuracy": rnd(pay_ok / inc_total) if inc_total else None,
+            "decoy_utterances_labelled_despite_no_gold_label": decoy_report,
         },
         "error_examples": errors,
         "caveat": CAVEAT, "environment": environment(),
@@ -163,6 +183,9 @@ def print_tactics(result: dict) -> None:
     print("per language micro-F1:", {k: v["f1"] for k, v in m["per_language_micro"].items()})
     print(f"stage-sequence exact match: {m['incident_stage_sequence_exact_match']}  "
           f"institution acc: {m['institution_class_accuracy']}  payment acc: {m['payment_channel_accuracy']}")
+    d = m["decoy_utterances_labelled_despite_no_gold_label"]
+    print(f"decoy utterances with no gold label that the extractor still labels: "
+          f"{d['of_which_labelled_by_extractor']}/{d['utterances_without_gold_labels']}")
     if m["labels_without_support"]:
         print("no gold examples in this split for:", ", ".join(m["labels_without_support"]))
     print("\n" + CAVEAT)

@@ -1,13 +1,27 @@
 #!/usr/bin/env python3
-"""Synthetic dataset generator v1 (blueprint §7). Everything it writes is synthetic and says so.
+"""Synthetic dataset generator v2 (blueprint §7). Everything it writes is synthetic and says so.
 
 Slot-based templates: 6 scam campaign templates (3 digital-arrest variants, bank KYC, payment link,
-courier/customs) x 12 incidents, plus 40 legitimate negatives. Seeded and deterministic. Campaign
-incidents come in instances of 3; between successive incidents of one instance each identifier (phone,
-UPI handle, domain, account) is replaced by a fresh synthetic one with probability `--rotation`.
+courier/customs) x 15 incidents, plus 40 legitimate negatives and 20 decoys. Seeded and deterministic.
+Campaign incidents come in instances of 3; between successive incidents of one instance each identifier
+(phone, UPI handle, domain, account) is replaced by a fresh synthetic one with probability `--rotation`.
+Every identifier is unique within a dataset, so two different instances never share one by accident.
 
-Splits are by campaign template (never by paraphrase): train T1,T4 / dev T2,T5 / test T3,T6.
-Decoys, the injection attacks file and the hand-written held-out set are Phase 5 / owner work.
+Two ground truths (decided 17 Nov 2026, before any experiment):
+  (a) campaign instance: a true pair shares `campaign_instance_id`
+  (b) script family:     a true pair shares `script_family` (digital_arrest = T1+T2+T3, bank_kyc = T4,
+                         payment_link = T5, courier_customs = T6), defined by scam type
+Negatives and decoys are non-pairs under both. The family map was fixed before the test split was used.
+
+Decoys (20, blueprint §7.1; they must not form a confident campaign):
+  D1 similar wording, different origin   public-awareness notices that quote scam scripts
+  D2 shared identifier, benign context   genuine notices that cite an official helpline / portal
+  D3 same tactics, incompatible chronology   scam-like calls whose stages come in a non-canonical order
+  D4 ambiguous extraction                vague notes with no clear stage or no extractable identifier
+
+Splits are by campaign template (never by paraphrase): train T1,T4,D1 / dev T2,T5,D2 / test T3,T6,D3,D4.
+The injection attacks file is data/injection_attacks.json. The hand-written held-out set is written by the
+project owner in data/heldout/ and is never generated here.
 
 Identifiers are synthetic by construction: phones use the widely-used example range +91 98765 xxxxx,
 domains end in the reserved `.example` TLD, UPI handles use invented names. The validator re-checks this
@@ -34,13 +48,25 @@ sys.path.insert(0, str(ROOT))
 from ai_engine.extraction.tactics import CANONICAL_STAGES, TACTIC_LABELS  # noqa: E402
 from ai_engine.privacy.redaction import redact_text  # noqa: E402
 
-GENERATOR_VERSION = "gen@1.0"
+GENERATOR_VERSION = "gen@2.0"
 DEFAULT_OUT = ROOT / "data" / "scenarios.jsonl"
 MAX_BYTES = 1_000_000
+DEFAULT_VARIANTS = 15
 
 TEMPLATE_SPLIT = {"T1": "train", "T4": "train", "T2": "dev", "T5": "dev", "T3": "test", "T6": "test"}
 NEGATIVE_SPLIT = {"N1": "train", "N2": "train", "N3": "dev", "N4": "dev", "N5": "test", "N6": "test"}
 NEGATIVE_COUNTS = {"N1": 8, "N2": 6, "N3": 7, "N4": 7, "N5": 6, "N6": 6}   # 40 in total
+DECOY_SPLIT = {"D1": "train", "D2": "dev", "D3": "test", "D4": "test"}
+DECOY_TYPES = {"D1": "similar_wording_different_origin", "D2": "benign_shared_identifier",
+               "D3": "incompatible_chronology", "D4": "ambiguous_extraction"}
+DECOY_COUNTS = {"D1": 5, "D2": 5, "D3": 5, "D4": 5}                        # 20 in total
+ALL_SPLIT = {**TEMPLATE_SPLIT, **NEGATIVE_SPLIT, **DECOY_SPLIT}
+
+# Ground truth (b): the script family of each campaign template, defined by scam type and fixed on
+# 17 Nov 2026 before the test split or any experiment was used. T4 (bank KYC) and T5 (payment link) are
+# deliberately different families even though both are link-based SMS scripts.
+FAMILY_OF = {"T1": "digital_arrest", "T2": "digital_arrest", "T3": "digital_arrest",
+             "T4": "bank_kyc", "T5": "payment_link", "T6": "courier_customs"}
 
 STAGE_LABEL = {
     "AUTH": "AUTHORITY_IMPERSONATION", "ALLEG": "FALSE_ALLEGATION", "THREAT": "THREAT_INTIMIDATION",
@@ -382,6 +408,95 @@ def build_negative_incident(rng, nid, ids_unused=None):
     return utterances, cfg["channel"]
 
 
+# ---------------------------------------------------------------------------------------------
+# Decoys (blueprint §7.1). Written before any experiment; they are not adjusted after results exist.
+# ---------------------------------------------------------------------------------------------
+
+BANK_DOMAIN = {"SBI": "sbi.co.in", "HDFC Bank": "hdfcbank.com", "ICICI Bank": "icicibank.com", "PNB": "pnbindia.in"}
+
+DECOY_POOLS = {
+    # D1: public-awareness notices that QUOTE scam scripts. They describe a scam; they are not one.
+    "D1": ["Public awareness notice from {bank}: fraudsters pretend to be officers of the CBI or the police, say a "
+           "parcel in your name was found with drugs and threaten arrest. Real agencies never ask for money over a "
+           "call. Do not transfer any amount.",
+           "Cyber safety bulletin: a common scam begins with a caller who claims to be a government officer and says "
+           "you are under digital arrest. They tell you not to tell anyone and to pay immediately. If you get such a "
+           "call, hang up and visit your nearest police station.",
+           "Awareness alert from {bank} Security Team: beware of messages saying your KYC has expired and your "
+           "account will be blocked unless you click a link. We never send such links. Visit your branch to update KYC.",
+           "News digest: police warn that callers posing as customs officials are demanding clearance fees for "
+           "parcels. Citizens are advised not to pay anything and to report such calls to the local police station.",
+           "Reminder from {bank}: we will never ask you to pay a fee to release a parcel or to avoid arrest. If "
+           "someone threatens you on a call, disconnect and tell your family."],
+    # D2: genuine notices that cite official public identifiers (helpline 1930, official portals)
+    "D2": ["Dear customer, to report a suspected fraudulent transaction call the National Cyber Crime Helpline 1930 or "
+           "visit cybercrime.gov.in. {bank} will never ask for your PIN.",
+           "{bank} reminder: if you notice unauthorised activity on your card, block it in the app and call the "
+           "helpline 1930. You can also file a complaint at cybercrime.gov.in.",
+           "Safety tip: before paying a stranger, check with the official helpline 1930. Your statement is available "
+           "at {bank_domain}. Never share your password.",
+           "Your complaint was recorded. You can track it at cybercrime.gov.in. For urgent help call 1930.",
+           "Dear customer, your new debit card is now active. For any queries visit {bank_domain} or call the "
+           "official helpline 1930."],
+    # D4: vague notes: no clear stage; some mention a number only in words, which cannot be extracted
+    "D4": ["Hello, I am calling about your parcel. Please check your details with the office and call us back.",
+           "This is a reminder about your account. There may be an issue, please contact the branch when you can. "
+           "You can reach me on {spoken_phone}.",
+           "I am from the department regarding a matter in your name. We will send the details later.",
+           "Sir, there was a delivery problem. Someone will contact you again about it. "
+           "Call {spoken_phone} if you want.",
+           "Your connection may need some verification soon. We will inform you about the next steps."],
+}
+DIGIT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+D3_CANONICAL = ["AUTH", "ALLEG", "THREAT", "ISOL", "URG", "DEMAND"]
+
+
+def _agreement(order: list[str]) -> float:
+    """Share of stage pairs that appear in the canonical relative order (1.0 = canonical order)."""
+    pos = {s: i for i, s in enumerate(D3_CANONICAL)}
+    pairs = [(order[i], order[j]) for i in range(len(order)) for j in range(i + 1, len(order))]
+    return sum(pos[x] < pos[y] for x, y in pairs) / len(pairs)
+
+
+def build_decoy_incident(rng, did: str, i: int, new_id) -> tuple[list[dict], str, dict]:
+    """Returns (utterances, channel, extras). `extras` carries stage sequence / identifiers for the record."""
+    slots = {"bank": rng.choice(BANKS)}
+    slots["bank_domain"] = BANK_DOMAIN[slots["bank"]]
+    extras: dict = {"sequence": [], "ids": {}, "institution": "UNKNOWN", "payment": "NONE"}
+
+    if did in ("D1", "D2"):
+        text = DECOY_POOLS[did][i % len(DECOY_POOLS[did])].format(**slots)
+        return ([{"speaker": "sender", "text": text, "tactic_labels": [], "t_start_sec": None}], "sms", extras)
+
+    if did == "D4":
+        digits = "".join(str(rng.randint(0, 9)) for _ in range(5))
+        slots["spoken_phone"] = " ".join(DIGIT_WORDS[int(d)] for d in "98765" + digits)
+        text = DECOY_POOLS["D4"][i % len(DECOY_POOLS["D4"])].format(**slots)
+        return ([{"speaker": "caller", "text": text, "tactic_labels": [], "t_start_sec": 0.0},
+                 {"speaker": "victim", "text": rng.choice(VICTIM["en"]), "tactic_labels": [], "t_start_sec": 12.0}],
+                "call", extras)
+
+    # D3: scam-like call (T1 wording) whose stages come in an incompatible order
+    while True:
+        order = list(D3_CANONICAL)
+        rng.shuffle(order)
+        if _agreement(order) <= 0.4:
+            break
+    ids = {"phone": new_id("phone"), "upi": new_id("upi")}
+    pools, slots = POOLS["T1"]["en"], {**slots, **slots_for(rng, ids, None)}
+    utterances, t = [], 0.0
+    for gi, stage in enumerate(order):
+        utterances.append({"speaker": "caller", "text": rng.choice(pools[stage]).format(**slots),
+                           "tactic_labels": [STAGE_LABEL[stage]], "t_start_sec": round(t, 1)})
+        t += rng.uniform(8, 25)
+        if gi < len(order) - 1:
+            utterances.append({"speaker": "victim", "text": rng.choice(VICTIM["en"]), "tactic_labels": [],
+                               "t_start_sec": round(t, 1)})
+            t += rng.uniform(4, 12)
+    extras.update(sequence=[STAGE_CANONICAL[s] for s in order], ids=ids, institution="CENTRAL_AGENCY", payment="UPI")
+    return utterances, "call", extras
+
+
 def mentions_in(text_all: str, ids: dict) -> list[dict]:
     out = []
     if ids.get("phone") and ids["phone"] in text_all:
@@ -393,11 +508,22 @@ def mentions_in(text_all: str, ids: dict) -> list[dict]:
     return out
 
 
-def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
+def generate(seed: int, rotation: float, variants: int = DEFAULT_VARIANTS) -> list[dict]:
     rng = random.Random(seed)
     base_date = date(2026, 8, 1)
     records: list[dict] = []
     counter = 0
+    used: set[str] = set()
+
+    def new_id(kind: str) -> str:
+        """A fresh synthetic identifier that no other incident in this dataset has, so a shared identifier is
+        always a deliberate one (rotation never reuses a value and two instances never collide by chance)."""
+        for _ in range(10_000):
+            value = fresh_id(rng, kind)
+            if value not in used:
+                used.add(value)
+                return value
+        raise RuntimeError(f"could not draw a unique {kind}")
 
     def next_id() -> str:
         nonlocal counter
@@ -408,7 +534,7 @@ def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
         langs = [lang for lang in POOLS[tid] if lang in ("en", "hi-Latn")]
         for inst in range(variants // 3):
             instance_id = f"{tid}-c{inst + 1}"
-            ids = {k: fresh_id(rng, k) for k in tpl["ids"]}
+            ids = {k: new_id(k) for k in tpl["ids"]}
             day0 = base_date + timedelta(days=rng.randint(0, 40))
             for k in range(3):
                 variant_index = inst * 3 + k
@@ -416,7 +542,7 @@ def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
                 if k > 0:
                     for field in tpl["ids"]:
                         if rng.random() < rotation:
-                            ids[field] = fresh_id(rng, field)
+                            ids[field] = new_id(field)
                             rotated.append(field)
                 # a handful of Devanagari Hindi (T2) and Marathi (T3) incidents; the rest English / Hinglish
                 if tid == "T2" and variant_index >= variants - 2:
@@ -432,7 +558,7 @@ def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
                 records.append({
                     "incident_id": incident_id, "conversation_id": f"conv_{incident_id[4:]}",
                     "scenario_type": tpl["scenario_type"], "campaign_template_id": tid,
-                    "campaign_instance_id": instance_id, "decoy_type": None,
+                    "campaign_instance_id": instance_id, "script_family": FAMILY_OF[tid], "decoy_type": None,
                     "source_channel": tpl["channel"], "language": lang,
                     "timestamp": (day0 + timedelta(days=rng.randint(0, 20) * k)).isoformat(),
                     "rotated_fields": rotated, "identifiers": dict(ids),
@@ -451,7 +577,7 @@ def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
             records.append({
                 "incident_id": incident_id, "conversation_id": f"conv_{incident_id[4:]}",
                 "scenario_type": "legitimate", "campaign_template_id": nid, "campaign_instance_id": None,
-                "decoy_type": None, "source_channel": channel, "language": "en",
+                "script_family": None, "decoy_type": None, "source_channel": channel, "language": "en",
                 "timestamp": (base_date + timedelta(days=rng.randint(0, 80))).isoformat(),
                 "rotated_fields": [], "identifiers": {}, "entity_mentions": [],
                 "expected_stage_sequence": (["AUTHORITY"] if nid == "N5" else []), "credential_requested": False,
@@ -459,6 +585,26 @@ def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
                 "payment_channel": "NONE", "utterances": utterances, "expected_associations": [],
                 "is_synthetic": True, "provenance": "generator", "generator_version": GENERATOR_VERSION,
                 "seed": seed, "rotation": rotation, "split": NEGATIVE_SPLIT[nid],
+            })
+
+    # Decoys come after the negatives, so adding them leaves everything above unchanged for a given seed.
+    for did, count in DECOY_COUNTS.items():
+        for i in range(count):
+            utterances, channel, extra = build_decoy_incident(rng, did, i, new_id)
+            incident_id = next_id()
+            all_text = " ".join(u["text"] for u in utterances)
+            records.append({
+                "incident_id": incident_id, "conversation_id": f"conv_{incident_id[4:]}",
+                "scenario_type": "decoy", "campaign_template_id": did, "campaign_instance_id": None,
+                "script_family": None, "decoy_type": DECOY_TYPES[did], "source_channel": channel,
+                "language": "en", "timestamp": (base_date + timedelta(days=rng.randint(0, 80))).isoformat(),
+                "rotated_fields": [], "identifiers": dict(extra["ids"]),
+                "entity_mentions": mentions_in(all_text, extra["ids"]),
+                "expected_stage_sequence": extra["sequence"], "credential_requested": False,
+                "institution_class": extra["institution"], "payment_channel": extra["payment"],
+                "utterances": utterances, "expected_associations": [],
+                "is_synthetic": True, "provenance": "generator", "generator_version": GENERATOR_VERSION,
+                "seed": seed, "rotation": rotation, "split": DECOY_SPLIT[did],
             })
 
     # Ground truth: two incidents are a true pair iff they share a campaign_instance_id
@@ -483,7 +629,7 @@ def generate(seed: int, rotation: float, variants: int = 12) -> list[dict]:
 # ---------------------------------------------------------------------------------------------
 
 REQUIRED = ["incident_id", "conversation_id", "scenario_type", "campaign_template_id", "campaign_instance_id",
-            "source_channel", "language", "timestamp", "rotated_fields", "identifiers", "entity_mentions",
+            "script_family", "decoy_type", "source_channel", "language", "timestamp", "rotated_fields", "identifiers", "entity_mentions",
             "expected_stage_sequence", "institution_class", "payment_channel", "utterances",
             "expected_associations", "is_synthetic", "provenance", "generator_version", "seed", "split"]
 LANGS = {"en", "hi", "hi-Latn", "mr", "mixed"}
@@ -512,10 +658,15 @@ def validate(records: list[dict]) -> list[str]:
         if r["split"] not in SPLITS:
             errors.append(f"{iid}: bad split {r['split']!r}")
         tid = r["campaign_template_id"]
-        if r["split"] != {**TEMPLATE_SPLIT, **NEGATIVE_SPLIT}.get(tid):
+        if r["split"] != ALL_SPLIT.get(tid):
             errors.append(f"{iid}: split {r['split']} does not match template {tid} (splits are by template)")
-        if (r["scenario_type"] == "legitimate") != (r["campaign_instance_id"] is None):
+        non_campaign = r["scenario_type"] in ("legitimate", "decoy")
+        if non_campaign != (r["campaign_instance_id"] is None):
             errors.append(f"{iid}: campaign_instance_id must be null exactly for non-campaign incidents")
+        if (r["scenario_type"] == "decoy") != (r["decoy_type"] is not None):
+            errors.append(f"{iid}: decoy_type must be set exactly for decoys")
+        if r["script_family"] != (None if non_campaign else FAMILY_OF.get(tid)):
+            errors.append(f"{iid}: script_family must be the template's family for campaign incidents, else null")
         for s in r["expected_stage_sequence"]:
             if s not in CANONICAL_STAGES:
                 errors.append(f"{iid}: bad stage {s!r}")
@@ -558,7 +709,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Generate the synthetic VIGIL dataset (JSONL).")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--rotation", type=float, default=0.5, help="identifier rotation probability 0.0-1.0")
-    ap.add_argument("--variants", type=int, default=12, help="incidents per campaign template (multiple of 3)")
+    ap.add_argument("--variants", type=int, default=DEFAULT_VARIANTS, help="incidents per campaign template (multiple of 3)")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--validate-only", action="store_true")
     args = ap.parse_args()
@@ -584,7 +735,9 @@ def main() -> int:
         print(f"Wrote {args.out} ({size} bytes)")
     n_utt = sum(len(r["utterances"]) for r in records)
     splits = {s: sum(1 for r in records if r["split"] == s) for s in ("train", "dev", "test")}
-    print(f"OK: {len(records)} incidents, {n_utt} utterances, splits {splits}, all validated")
+    kinds = {k: sum(1 for r in records if r["scenario_type"] == k) for k in ("legitimate", "decoy")}
+    print(f"OK: {len(records)} incidents ({kinds['legitimate']} legitimate, {kinds['decoy']} decoys), "
+          f"{n_utt} utterances, splits {splits}, all validated")
     return 0
 
 

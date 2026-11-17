@@ -5,12 +5,12 @@
  "command": "python scripts/evaluate_model.py --suite tactics --split dev",
  "dataset": {
   "path": "data\\scenarios.jsonl",
-  "sha256": "6876abef53ef3ad4da5c535d354e173235808674f91644b4543286f926e33798",
-  "generator_version": "gen@1.0",
+  "sha256": "58d67bb2e15d62ad206a43553b6c65ce13092fd81c996bbc689678e089f4c82d",
+  "generator_version": "gen@2.0",
   "seed": 1,
   "rotation": 0.5,
-  "incidents": 38,
-  "utterances": 199,
+  "incidents": 44,
+  "utterances": 220,
   "templates": [
    "N3",
    "N4",
@@ -25,7 +25,7 @@
   "threshold": 0.5
  },
  "metrics": {
-  "macro_f1_over_labels_with_support": 0.9913,
+  "macro_f1_over_labels_with_support": 0.9908,
   "labels_with_support": [
    "AUTHORITY_IMPERSONATION",
    "FALSE_ALLEGATION",
@@ -40,65 +40,65 @@
    "OTHER_SUSPICIOUS"
   ],
   "micro": {
-   "tp": 152,
-   "fp": 3,
+   "tp": 180,
+   "fp": 4,
    "fn": 0,
-   "support": 152,
-   "precision": 0.9806,
+   "support": 180,
+   "precision": 0.9783,
    "recall": 1.0,
-   "f1": 0.9902
+   "f1": 0.989
   },
   "per_label": {
    "AUTHORITY_IMPERSONATION": {
-    "tp": 24,
+    "tp": 30,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 30,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "FALSE_ALLEGATION": {
-    "tp": 24,
+    "tp": 30,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 30,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "THREAT_INTIMIDATION": {
-    "tp": 24,
+    "tp": 30,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 30,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "ISOLATION": {
-    "tp": 12,
+    "tp": 14,
     "fp": 0,
     "fn": 0,
-    "support": 12,
+    "support": 14,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "URGENCY": {
-    "tp": 23,
-    "fp": 3,
+    "tp": 29,
+    "fp": 4,
     "fn": 0,
-    "support": 23,
-    "precision": 0.8846,
+    "support": 29,
+    "precision": 0.8788,
     "recall": 1.0,
-    "f1": 0.9388
+    "f1": 0.9355
    },
    "FINANCIAL_DEMAND": {
-    "tp": 24,
+    "tp": 29,
     "fp": 0,
     "fn": 0,
-    "support": 24,
+    "support": 29,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
@@ -113,10 +113,10 @@
     "f1": null
    },
    "LEGITIMATE": {
-    "tp": 21,
+    "tp": 18,
     "fp": 0,
     "fn": 0,
-    "support": 21,
+    "support": 18,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
@@ -133,13 +133,13 @@
   },
   "per_language_micro": {
    "en": {
-    "tp": 134,
-    "fp": 3,
+    "tp": 150,
+    "fp": 4,
     "fn": 0,
-    "support": 134,
-    "precision": 0.9781,
+    "support": 150,
+    "precision": 0.974,
     "recall": 1.0,
-    "f1": 0.9889
+    "f1": 0.9868
    },
    "hi": {
     "tp": 12,
@@ -151,18 +151,23 @@
     "f1": 1.0
    },
    "hi-Latn": {
-    "tp": 6,
+    "tp": 18,
     "fp": 0,
     "fn": 0,
-    "support": 6,
+    "support": 18,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    }
   },
-  "incident_stage_sequence_exact_match": 1.0,
-  "institution_class_accuracy": 0.6579,
-  "payment_channel_accuracy": 0.9737
+  "incident_stage_sequence_exact_match": 0.9545,
+  "institution_class_accuracy": 0.7955,
+  "payment_channel_accuracy": 0.9091,
+  "decoy_utterances_labelled_despite_no_gold_label": {
+   "utterances_without_gold_labels": 5,
+   "of_which_labelled_by_extractor": 1,
+   "rate": 0.2
+  }
  },
  "error_examples": {
   "AUTHORITY_IMPERSONATION": {
@@ -184,17 +189,22 @@
   "URGENCY": {
    "false_positives": [
     {
-     "incident": "inc_0053",
+     "incident": "inc_0062",
      "language": "en",
      "text": "Your power connection will be disconnected tonight."
     },
     {
-     "incident": "inc_0055",
+     "incident": "inc_0066",
      "language": "en",
      "text": "Your power connection will be disconnected tonight."
     },
     {
-     "incident": "inc_0056",
+     "incident": "inc_0069",
+     "language": "en",
+     "text": "Your power connection will be disconnected tonight."
+    },
+    {
+     "incident": "inc_0070",
      "language": "en",
      "text": "Your power connection will be disconnected tonight."
     }

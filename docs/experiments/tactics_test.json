@@ -5,12 +5,12 @@
  "command": "python scripts/evaluate_model.py --suite tactics --split test",
  "dataset": {
   "path": "data\\scenarios.jsonl",
-  "sha256": "6876abef53ef3ad4da5c535d354e173235808674f91644b4543286f926e33798",
-  "generator_version": "gen@1.0",
+  "sha256": "58d67bb2e15d62ad206a43553b6c65ce13092fd81c996bbc689678e089f4c82d",
+  "generator_version": "gen@2.0",
   "seed": 1,
   "rotation": 0.5,
-  "incidents": 36,
-  "utterances": 210,
+  "incidents": 42,
+  "utterances": 236,
   "templates": [
    "N5",
    "N6",
@@ -25,7 +25,7 @@
   "threshold": 0.5
  },
  "metrics": {
-  "macro_f1_over_labels_with_support": 0.9645,
+  "macro_f1_over_labels_with_support": 0.9716,
   "labels_with_support": [
    "AUTHORITY_IMPERSONATION",
    "FALSE_ALLEGATION",
@@ -40,65 +40,65 @@
    "OTHER_SUSPICIOUS"
   ],
   "micro": {
-   "tp": 127,
-   "fp": 9,
-   "fn": 6,
-   "support": 133,
-   "precision": 0.9338,
-   "recall": 0.9549,
-   "f1": 0.9442
+   "tp": 151,
+   "fp": 6,
+   "fn": 8,
+   "support": 159,
+   "precision": 0.9618,
+   "recall": 0.9497,
+   "f1": 0.9557
   },
   "per_label": {
    "AUTHORITY_IMPERSONATION": {
-    "tp": 24,
+    "tp": 28,
     "fp": 0,
-    "fn": 6,
-    "support": 30,
+    "fn": 8,
+    "support": 36,
     "precision": 1.0,
-    "recall": 0.8,
-    "f1": 0.8889
+    "recall": 0.7778,
+    "f1": 0.875
    },
    "FALSE_ALLEGATION": {
-    "tp": 24,
-    "fp": 7,
+    "tp": 30,
+    "fp": 3,
     "fn": 0,
-    "support": 24,
-    "precision": 0.7742,
+    "support": 30,
+    "precision": 0.9091,
     "recall": 1.0,
-    "f1": 0.8727
+    "f1": 0.9524
    },
    "THREAT_INTIMIDATION": {
-    "tp": 11,
+    "tp": 14,
     "fp": 0,
     "fn": 0,
-    "support": 11,
+    "support": 14,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "ISOLATION": {
-    "tp": 10,
+    "tp": 14,
     "fp": 0,
     "fn": 0,
-    "support": 10,
+    "support": 14,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
    },
    "URGENCY": {
-    "tp": 21,
-    "fp": 2,
+    "tp": 26,
+    "fp": 3,
     "fn": 0,
-    "support": 21,
-    "precision": 0.913,
+    "support": 26,
+    "precision": 0.8966,
     "recall": 1.0,
-    "f1": 0.9545
+    "f1": 0.9455
    },
    "FINANCIAL_DEMAND": {
-    "tp": 21,
+    "tp": 23,
     "fp": 0,
     "fn": 0,
-    "support": 21,
+    "support": 23,
     "precision": 1.0,
     "recall": 1.0,
     "f1": 1.0
@@ -133,22 +133,22 @@
   },
   "per_language_micro": {
    "en": {
-    "tp": 95,
-    "fp": 7,
-    "fn": 6,
-    "support": 101,
-    "precision": 0.9314,
-    "recall": 0.9406,
-    "f1": 0.936
+    "tp": 112,
+    "fp": 5,
+    "fn": 8,
+    "support": 120,
+    "precision": 0.9573,
+    "recall": 0.9333,
+    "f1": 0.9451
    },
    "hi-Latn": {
-    "tp": 20,
-    "fp": 2,
+    "tp": 27,
+    "fp": 1,
     "fn": 0,
-    "support": 20,
-    "precision": 0.9091,
+    "support": 27,
+    "precision": 0.9643,
     "recall": 1.0,
-    "f1": 0.9524
+    "f1": 0.9818
    },
    "mr": {
     "tp": 12,
@@ -160,77 +160,67 @@
     "f1": 1.0
    }
   },
-  "incident_stage_sequence_exact_match": 0.8056,
-  "institution_class_accuracy": 0.75,
-  "payment_channel_accuracy": 0.9167
+  "incident_stage_sequence_exact_match": 0.7857,
+  "institution_class_accuracy": 0.7143,
+  "payment_channel_accuracy": 0.8333,
+  "decoy_utterances_labelled_despite_no_gold_label": {
+   "utterances_without_gold_labels": 5,
+   "of_which_labelled_by_extractor": 0,
+   "rate": 0.0
+  }
  },
  "error_examples": {
   "AUTHORITY_IMPERSONATION": {
    "false_positives": [],
    "false_negatives": [
     {
-     "incident": "inc_0025",
+     "incident": "inc_0031",
      "language": "en",
-     "text": "I am the nodal officer Prakash Joshi at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 84870."
+     "text": "Hello, I am Vikram Singh, a TRAI representative. Your call is being forwarded to the Cyber Police. If we get disconnected, call me back on +91 98765 67704."
     },
     {
-     "incident": "inc_0027",
+     "incident": "inc_0033",
      "language": "en",
-     "text": "Hello, I am Prakash Joshi, a TRAI representative. Your call is being forwarded to the Cyber Police. Your number is linked to a terror funding case under investigation. If we get disconnected, call me back on +91 98765 84870."
-    },
-    {
-     "incident": "inc_0028",
-     "language": "en",
-     "text": "I am the nodal officer Prakash Joshi at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 29608."
-    },
-    {
-     "incident": "inc_0030",
-     "language": "en",
-     "text": "Hello, I am Meera Nair, a TRAI representative. Your call is being forwarded to the Cyber Police. Your number is linked to a terror funding case under investigation. If we get disconnected, call me back on +91 98765 96151."
-    },
-    {
-     "incident": "inc_0032",
-     "language": "en",
-     "text": "Hello, I am Imran Khan, a TRAI representative. Your call is being forwarded to the Cyber Police. Illegal advertisements were posted using your SIM, and a complaint has been lodged against you. If we get disconnected, call me back on +91 98765 69128."
+     "text": "I am the nodal officer Imran Khan at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 42630."
     },
     {
      "incident": "inc_0034",
      "language": "en",
-     "text": "I am the nodal officer Meera Nair at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 45978."
+     "text": "Hello, I am Meera Nair, a TRAI representative. Your call is being forwarded to the Cyber Police. If we get disconnected, call me back on +91 98765 76653."
+    },
+    {
+     "incident": "inc_0035",
+     "language": "en",
+     "text": "Hello, I am Sanjay Patil, a TRAI representative. Your call is being forwarded to the Cyber Police. If we get disconnected, call me back on +91 98765 60034."
+    },
+    {
+     "incident": "inc_0038",
+     "language": "en",
+     "text": "I am the nodal officer Deepak Mehta at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 13437."
+    },
+    {
+     "incident": "inc_0039",
+     "language": "en",
+     "text": "Hello, I am Vikram Singh, a TRAI representative. Your call is being forwarded to the Cyber Police. Your number is linked to a terror funding case under investigation. If we get disconnected, call me back on +91 98765 13437."
     }
    ]
   },
   "FALSE_ALLEGATION": {
    "false_positives": [
     {
-     "incident": "inc_0061",
+     "incident": "inc_0082",
+     "language": "en",
+     "text": "Pay the customs duty of Rs 15000 to support58@ybl. Please share the OTP you receive to release the parcel."
+    },
+    {
+     "incident": "inc_0085",
      "language": "hi-Latn",
-     "text": "Customs duty ke liye 15000 rupaye refund95@okicici par transfer kijiye."
+     "text": "Customs duty ke liye 15000 rupaye refund16@oksbi par transfer kijiye."
     },
     {
-     "incident": "inc_0063",
+     "incident": "inc_0090",
      "language": "en",
-     "text": "Pay the customs duty of Rs 15000 to verify88@okhdfcbank."
-    },
-    {
-     "incident": "inc_0064",
-     "language": "hi-Latn",
-     "text": "15 minute ke andar karna hoga. Customs duty ke liye 75000 rupaye refund66@oksbi par transfer kijiye."
-    },
-    {
-     "incident": "inc_0066",
-     "language": "en",
-     "text": "Pay the customs duty of Rs 5000 to support80@okicici."
-    },
-    {
-     "incident": "inc_0067",
-     "language": "en",
-     "text": "Pay within 30 minutes or the parcel will be returned."
-    },
-    {
-     "incident": "inc_0068",
-     "language": "en",
-     "text": "Pay the customs duty of Rs 75000 to kyc56@paytm."
+     "text": "Pay within 45 minutes or the parcel will be returned."
     }
    ],
    "false_negatives": []
@@ -246,14 +236,19 @@
   "URGENCY": {
    "false_positives": [
     {
-     "incident": "inc_0029",
+     "incident": "inc_0031",
      "language": "en",
      "text": "Police will reach your address tonight to detain you."
     },
     {
-     "incident": "inc_0030",
+     "incident": "inc_0036",
      "language": "en",
-     "text": "Police will reach your address tonight to detain you."
+     "text": "Police will reach your address tonight to detain you. You are under surveillance, do not leave the camera."
+    },
+    {
+     "incident": "inc_0037",
+     "language": "en",
+     "text": "Illegal advertisements were posted using your SIM, and a complaint has been lodged against you. Police will reach your address tonight to detain you."
     }
    ],
    "false_negatives": []

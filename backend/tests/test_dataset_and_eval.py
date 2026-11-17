@@ -32,11 +32,53 @@ def test_generation_is_deterministic_and_seed_dependent(records):
 
 
 def test_composition_matches_the_plan(records):
-    campaign = [r for r in records if r["scenario_type"] != "legitimate"]
+    campaign = [r for r in records if r["scenario_type"] not in ("legitimate", "decoy")]
     negatives = [r for r in records if r["scenario_type"] == "legitimate"]
-    assert len(campaign) == 72 and len(negatives) == 40
-    assert Counter(r["campaign_template_id"] for r in campaign) == {t: 12 for t in gen.TEMPLATES}
+    decoys = [r for r in records if r["scenario_type"] == "decoy"]
+    assert (len(campaign), len(negatives), len(decoys)) == (90, 40, 20)
+    assert Counter(r["campaign_template_id"] for r in campaign) == {t: 15 for t in gen.TEMPLATES}
+    assert Counter(r["decoy_type"] for r in decoys) == {t: 5 for t in gen.DECOY_TYPES.values()}
     assert all(r["is_synthetic"] is True for r in records)
+
+
+def test_decoys_are_never_in_a_ground_truth_pair(records):
+    for r in records:
+        if r["scenario_type"] in ("legitimate", "decoy"):
+            assert r["campaign_instance_id"] is None and r["script_family"] is None
+            assert r["expected_associations"] == []
+
+
+def test_script_family_map_is_by_scam_type_and_fixed(records):
+    """Ground truth (b): decided before any experiment. T1+T2+T3 are one family; T4 and T5 are NOT merged."""
+    assert gen.FAMILY_OF == {"T1": "digital_arrest", "T2": "digital_arrest", "T3": "digital_arrest",
+                             "T4": "bank_kyc", "T5": "payment_link", "T6": "courier_customs"}
+    for r in records:
+        if r["campaign_instance_id"]:
+            assert r["script_family"] == gen.FAMILY_OF[r["campaign_template_id"]]
+
+
+def test_every_identifier_is_unique_per_instance_chain_and_never_shared_across_instances():
+    """A shared identifier must always be deliberate (r = 0 reuse within an instance), never a random collision."""
+    for rotation in (0.0, 0.5, 1.0):
+        owner: dict[str, str] = {}
+        for r in gen.generate(7, rotation):
+            for value in r["identifiers"].values():
+                assert owner.setdefault(value, r["campaign_instance_id"] or r["incident_id"]) == \
+                    (r["campaign_instance_id"] or r["incident_id"])
+
+
+def test_decoy_types_have_the_properties_the_blueprint_asks_for(records):
+    from ai_engine.fingerprint.similarity import order_consistency
+    d = {t: [r for r in records if r["decoy_type"] == name] for t, name in gen.DECOY_TYPES.items()}
+    # D3: scam-like stages in an order that is mostly incompatible with the canonical script
+    canonical = ["AUTHORITY", "ALLEGATION", "THREAT", "ISOLATION", "URGENCY", "DEMAND"]
+    for r in d["D3"]:
+        assert sorted(r["expected_stage_sequence"]) == sorted(canonical)
+        assert order_consistency(tuple(canonical), tuple(r["expected_stage_sequence"])) <= 0.4
+    # D2 cites an official public identifier; D4 has no extractable identifier and no clear stage
+    assert all("1930" in r["utterances"][0]["text"] or "cybercrime.gov.in" in r["utterances"][0]["text"] for r in d["D2"])
+    assert all(r["expected_stage_sequence"] == [] and r["entity_mentions"] == [] for r in d["D4"])
+    assert all(r["utterances"][0]["tactic_labels"] == [] for r in d["D1"] + d["D2"] + d["D4"] if r["utterances"])
 
 
 def test_validator_accepts_the_generated_data(records):
@@ -80,7 +122,7 @@ def test_ground_truth_pairs_are_symmetric_and_only_within_an_instance(records):
         for other in r["expected_associations"]:
             assert r["incident_id"] in by_id[other]["expected_associations"]
             assert by_id[other]["campaign_instance_id"] == r["campaign_instance_id"]
-        if r["scenario_type"] == "legitimate":
+        if r["scenario_type"] in ("legitimate", "decoy"):
             assert r["expected_associations"] == []
 
 
@@ -122,6 +164,8 @@ def test_validator_rejects_bad_structure():
     assert any("splits are by template" in e for e in mutate(recs, lambda r: r.update(split="test")))
     assert any("unknown labels" in e for e in mutate(recs, lambda r: r["utterances"][0].update(tactic_labels=["MADE_UP"])))
     assert any("language" in e for e in mutate(recs, lambda r: r.update(language="fr")))
+    assert any("script_family" in e for e in mutate(recs, lambda r: r.update(script_family="bank_kyc")))
+    assert any("decoy_type" in e for e in mutate(recs, lambda r: r.update(decoy_type="benign_shared_identifier")))
 
 
 # ---------------------------------------------------------------------------------------------
