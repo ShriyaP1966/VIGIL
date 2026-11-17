@@ -214,7 +214,7 @@ export const NewInvestigation: React.FC<NewInvestigationProps> = ({ apiMode, onS
             required
           />
           <div className="flex justify-between items-center text-[11px] text-text-muted mt-1.5">
-            <span>The original is SHA-256 hashed and kept unchanged; a normalised copy is used for matching.</span>
+            <span>OTPs, passwords, PINs, CVVs, card and Aadhaar numbers are removed before storage (best effort).</span>
             <span>{text.length} / {MAX_EVIDENCE_CHARS} characters</span>
           </div>
         </div>

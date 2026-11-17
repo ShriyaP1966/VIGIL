@@ -1,18 +1,73 @@
 import json
+from dataclasses import dataclass, replace
 from sqlalchemy.orm import Session
+from backend.app.core.errors import VigilException
 from backend.app.models.models import (
-    Incident, Evidence, Utterance, Entity, Mention, Analysis, RiskContribution, Association
+    Incident, Evidence, Utterance, Entity, Mention, Analysis, RiskContribution, Association, Redaction
 )
 from backend.app.schemas.schemas import IncidentCreate, EvidenceCreate
+from ai_engine.privacy.redaction import REDACTOR_VERSION, RedactionEvent, redact_evidence, redact_text
 from ai_engine.extraction.normalisation import normalise_text, compute_sha256, detect_language, mask_identifier
 from ai_engine.extraction.entity_extractor import extract_entities
 from backend.app.services.association_service import find_or_create_observed_matches
 from backend.app.services.risk_service import calculate_baseline_risk
 
 
+def _sanitise_failed() -> VigilException:
+    return VigilException(
+        "The submission could not be sanitised, so nothing was stored.",
+        code="REDACTION_FAILED", status_code=500,
+    )
+
+
+@dataclass
+class _PreparedEvidence:
+    text: str
+    speaker_turns: list[dict] | None
+    provenance: str
+    events: list[RedactionEvent]
+
+
+def _prepare_evidence(data: EvidenceCreate) -> _PreparedEvidence:
+    """Service-layer backup for the schema validator (§5.5): redact again (idempotent) before any row is
+    created, so callers that bypass validation (e.g. model_construct) still never store a secret.
+    Fails closed: on any error nothing is stored."""
+    try:
+        safe = redact_evidence(data.text, data.speaker_turns, data.provenance or "user_paste")
+    except Exception:
+        raise _sanitise_failed() from None
+    try:
+        earlier = list(data._redactions)  # events the schema validator already recorded
+    except AttributeError:
+        earlier = []
+    return _PreparedEvidence(safe.text, safe.speaker_turns, safe.provenance or "user_paste",
+                             earlier + list(safe.events))
+
+
+def _store_redactions(db: Session, incident_id: int, evidence_id: int | None, events: list[RedactionEvent]) -> None:
+    for ev in events:
+        db.add(Redaction(
+            incident_id=incident_id, evidence_id=evidence_id, field=ev.field, kind=ev.kind,
+            span_start=ev.span_start, span_end=ev.span_end, detector_version=REDACTOR_VERSION,
+        ))
+    if events:
+        db.commit()
+
+
 def create_incident(db: Session, data: IncidentCreate) -> Incident:
+    # Sanitise EVERYTHING before the first row is created, so a failure leaves nothing behind.
+    try:
+        title = redact_text(data.title)
+    except Exception:
+        raise _sanitise_failed() from None
+    try:
+        earlier = list(data._redactions)  # events the schema validator already recorded (title/notes)
+    except AttributeError:
+        earlier = []
+    prepared = [_prepare_evidence(ev) for ev in (data.evidence or [])]
+
     incident = Incident(
-        title=data.title,
+        title=title.text,
         source_channel=data.source_channel,
         language=data.language,
         status="open",
@@ -23,34 +78,40 @@ def create_incident(db: Session, data: IncidentCreate) -> Incident:
     db.commit()
     db.refresh(incident)
 
-    if data.evidence:
-        for ev_data in data.evidence:
-            add_evidence_to_incident(db, incident.id, ev_data)
+    _store_redactions(db, incident.id, None, earlier + [replace(e, field="title") for e in title.events])
+    for ev_data, prep in zip(data.evidence or [], prepared):
+        add_evidence_to_incident(db, incident.id, ev_data, _prepared=prep)
 
     return incident
 
 
-def add_evidence_to_incident(db: Session, incident_id: int, data: EvidenceCreate) -> Evidence:
-    norm_text = normalise_text(data.text)
-    sha = compute_sha256(data.text)
-    lang = detect_language(data.text)
+def add_evidence_to_incident(
+    db: Session, incident_id: int, data: EvidenceCreate, _prepared: _PreparedEvidence | None = None
+) -> Evidence:
+    prep = _prepared or _prepare_evidence(data)
+    norm_text = normalise_text(prep.text)
+    # The stored "original" is the text AFTER redaction, and the hash covers that text: hashing a raw
+    # text containing a 4-6 digit OTP would let anyone recover it by brute force (§5.5 over §6.1).
+    sha = compute_sha256(prep.text)
+    lang = detect_language(prep.text)
 
     evidence = Evidence(
         incident_id=incident_id,
         type=data.type,
-        original_text=data.text,
+        original_text=prep.text,
         normalised_text=norm_text,
         sha256=sha,
-        provenance=data.provenance or "user_paste",
+        provenance=prep.provenance,
         timestamp=data.timestamp or None
     )
     db.add(evidence)
     db.commit()
     db.refresh(evidence)
+    _store_redactions(db, incident_id, evidence.id, prep.events)
 
     # If speaker turns provided, create utterances
-    if data.speaker_turns:
-        for idx, turn in enumerate(data.speaker_turns):
+    if prep.speaker_turns:
+        for idx, turn in enumerate(prep.speaker_turns):
             utt = Utterance(
                 evidence_id=evidence.id,
                 idx=idx,
@@ -67,7 +128,7 @@ def add_evidence_to_incident(db: Session, incident_id: int, data: EvidenceCreate
             evidence_id=evidence.id,
             idx=0,
             speaker="speaker",
-            text=data.text,
+            text=prep.text,
             language=lang
         )
         db.add(utt)

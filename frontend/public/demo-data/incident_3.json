@@ -5,7 +5,7 @@
   "language": "en",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T12:14:27.799236",
+  "created_at": "2026-11-17T12:39:08.217886",
   "evidence_items": [
     {
       "id": 3,
@@ -14,7 +14,7 @@
       "normalised_text": "Dear Customer, your monthly bank statement has been dispatched to your registered email address. For inquiries, visit your nearest bank branch with original photo ID or call official national helpline 1930. Never share passwords or PINs.",
       "sha256": "5065767a25d7d4e99ff2169faaf747cf3b7372885ca58d3d0cac834fc79f4b6f",
       "provenance": "seed:scenario_03",
-      "timestamp": "2026-11-17T12:14:27.801514",
+      "timestamp": "2026-11-17T12:39:08.220806",
       "entities": []
     }
   ],
@@ -32,5 +32,6 @@
       "stage_sequence": []
     },
     "contributions": []
-  }
+  },
+  "redactions": []
 }

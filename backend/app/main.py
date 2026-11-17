@@ -16,7 +16,7 @@ from backend.app.core.errors import (
 from backend.app.api.v1 import health, incidents, graph, associations
 from backend.app.models.models import (
     Incident, Evidence, Utterance, Entity, Mention, Relationship, TacticEvent, Association,
-    Analysis, RiskContribution, CounterEvidence, Review, Campaign, CampaignMember,
+    Analysis, RiskContribution, CounterEvidence, Review, Campaign, CampaignMember, Redaction,
 )
 
 # Create tables
@@ -81,6 +81,7 @@ def clear_all_data(confirm: bool = Query(False), db: Session = Depends(get_db)):
     db.query(Association).delete()
     db.query(CampaignMember).delete()
     db.query(Campaign).delete()
+    db.query(Redaction).delete()
     db.query(TacticEvent).delete()
     db.query(Relationship).delete()
     db.query(Mention).delete()

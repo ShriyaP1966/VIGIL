@@ -63,6 +63,12 @@ export interface IncidentAnalysis {
   contributions: RiskContribution[];
 }
 
+/** Secrets removed before storage, by kind. Counts only; the values are never kept (blueprint §5.5). */
+export interface RedactionSummary {
+  kind: string;
+  count: number;
+}
+
 export interface IncidentDetail {
   id: number;
   title: string;
@@ -73,6 +79,7 @@ export interface IncidentDetail {
   created_at: string;
   evidence_items: EvidenceItem[];
   analysis?: IncidentAnalysis;
+  redactions?: RedactionSummary[];
 }
 
 export interface IncidentListItem {

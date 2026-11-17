@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Network, CheckCircle, Info, Lock, AlertCircle, Link2 } from 'lucide-react';
+import { ArrowLeft, Network, CheckCircle, Info, Lock, AlertCircle, Link2, ShieldCheck } from 'lucide-react';
 import { apiClient } from '../services/api/client';
 import { GraphEdge, IncidentDetail } from '../types';
 import { associationIdOf, isAssociationEdge } from '../components/graph/graph_layout';
@@ -80,6 +80,8 @@ export const InvestigationDetail: React.FC<InvestigationDetailProps> = ({
     ? analysis!.fingerprint.stage_sequence
     : [];
   const contributionSum = contributions.reduce((s, c) => s + c.contribution, 0);
+  const redactions = incident.redactions ?? [];
+  const redactedTotal = redactions.reduce((s, r) => s + r.count, 0);
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
@@ -132,6 +134,19 @@ export const InvestigationDetail: React.FC<InvestigationDetailProps> = ({
           <div className="text-[10px] text-text-muted mt-0.5 italic">Experimental heuristic, not a probability.</div>
         </div>
       </div>
+
+      {redactedTotal > 0 && (
+        <div role="note" className="bg-accent-secondary/10 border border-accent-secondary/30 rounded-lg p-3 text-xs text-text-secondary flex gap-2">
+          <ShieldCheck className="w-4 h-4 shrink-0 text-accent-secondary mt-0.5" aria-hidden="true" />
+          <span>
+            <strong className="text-text-primary">
+              {redactedTotal} sensitive value{redactedTotal === 1 ? ' was' : 's were'} removed before storage
+            </strong>{' '}
+            ({redactions.map(r => `${r.kind.replace('_', ' ').toLowerCase()} ×${r.count}`).join(', ')}).
+            They appear as [REDACTED:…] below. Detection is best effort, so avoid pasting real secrets.
+          </span>
+        </div>
+      )}
 
       {/* Tactic timeline placeholder (Phase 2). Never shows stages that were not detected. */}
       <div className="bg-bg-card border border-border-subtle rounded-lg p-4 space-y-2">

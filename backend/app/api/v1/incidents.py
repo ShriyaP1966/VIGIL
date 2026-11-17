@@ -1,12 +1,13 @@
 import json
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from backend.app.core.database import get_db
-from backend.app.models.models import Incident, Evidence, Mention, Entity, Analysis, RiskContribution
+from backend.app.models.models import Incident, Evidence, Mention, Entity, Analysis, RiskContribution, Redaction
 from backend.app.schemas.schemas import (
     IncidentCreate, IncidentDetailResponse, IncidentListItem, EvidenceCreate, EvidenceSchema,
-    EntityMentionSchema, AnalysisSchema, RiskContributionSchema
+    EntityMentionSchema, AnalysisSchema, RiskContributionSchema, RedactionSummary
 )
 from backend.app.services.incident_service import create_incident, add_evidence_to_incident, run_incident_analysis
 
@@ -158,6 +159,14 @@ def get_incident_detail_helper(db: Session, incident_id: int) -> IncidentDetailR
             contributions=c_schemas
         )
 
+    redaction_counts = (
+        db.query(Redaction.kind, func.count(Redaction.id))
+        .filter(Redaction.incident_id == incident_id)
+        .group_by(Redaction.kind)
+        .order_by(Redaction.kind)
+        .all()
+    )
+
     return IncidentDetailResponse(
         id=inc.id,
         title=inc.title,
@@ -167,5 +176,6 @@ def get_incident_detail_helper(db: Session, incident_id: int) -> IncidentDetailR
         is_synthetic=inc.is_synthetic,
         created_at=inc.created_at,
         evidence_items=ev_schemas,
-        analysis=analysis_schema
+        analysis=analysis_schema,
+        redactions=[RedactionSummary(kind=k, count=c) for k, c in redaction_counts],
     )

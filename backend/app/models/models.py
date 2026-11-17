@@ -43,6 +43,22 @@ class Evidence(Base):
     mentions = relationship("Mention", back_populates="evidence", cascade="all, delete-orphan")
 
 
+class Redaction(Base):
+    """Audit record that a secret was removed at ingestion (blueprint §5.5).
+    Never holds the secret itself: only its kind and the placeholder's span in the stored text."""
+    __tablename__ = "redactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    incident_id = Column(Integer, ForeignKey("incidents.id", ondelete="CASCADE"), nullable=False, index=True)
+    evidence_id = Column(Integer, ForeignKey("evidence.id", ondelete="CASCADE"), nullable=True, index=True)
+    field = Column(String(50), nullable=False)  # text | turn:<n> | provenance | title | notes
+    kind = Column(String(30), nullable=False)   # OTP | PIN | CVV | PASSWORD | CARD | CARD_EXPIRY | AADHAAR
+    span_start = Column(Integer, default=0)
+    span_end = Column(Integer, default=0)
+    detector_version = Column(String(30), nullable=False)
+    created_at = Column(DateTime, default=utcnow)
+
+
 class Utterance(Base):
     __tablename__ = "utterances"
 

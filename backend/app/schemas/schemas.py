@@ -1,6 +1,9 @@
+from dataclasses import replace
 from typing import List, Literal, Optional, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr, model_validator
+
+from ai_engine.privacy.redaction import RedactionEvent, redact_evidence, redact_text
 
 
 class HealthResponse(BaseModel):
@@ -18,12 +21,32 @@ SourceChannel = Literal["call", "sms", "email", "web"]
 LanguageCode = Literal["en", "hi", "hi-Latn", "mr", "mixed"]
 
 
+SANITISE_FAILED = "The submission could not be sanitised, so nothing was stored."
+
+
 class EvidenceCreate(BaseModel):
     type: EvidenceType = "transcript"
     text: str = Field(min_length=1, max_length=MAX_EVIDENCE_CHARS)
     timestamp: Optional[datetime] = None
     provenance: Optional[str] = Field(default="user_paste", max_length=255)
     speaker_turns: Optional[List[Dict[str, Any]]] = Field(default=None, max_length=MAX_SPEAKER_TURNS)
+
+    # Redaction events recorded by the validator below (never serialised, never sent by clients).
+    _redactions: List[RedactionEvent] = PrivateAttr(default_factory=list)
+
+    @model_validator(mode="after")
+    def _redact_secrets(self):
+        """Schema-boundary redaction (§5.5): runs before any service, DB, log or extractor sees the text.
+        Fails closed: if redaction itself errors, the request is rejected and nothing is stored."""
+        try:
+            safe = redact_evidence(self.text, self.speaker_turns, self.provenance)
+        except Exception:
+            raise ValueError(SANITISE_FAILED) from None
+        self.text = safe.text
+        self.speaker_turns = safe.speaker_turns
+        self.provenance = safe.provenance
+        self._redactions = list(safe.events)
+        return self
 
 
 class IncidentCreate(BaseModel):
@@ -33,6 +56,24 @@ class IncidentCreate(BaseModel):
     notes: Optional[str] = Field(default=None, max_length=2000)
     scenario_id: Optional[str] = Field(default=None, max_length=100)
     evidence: Optional[List[EvidenceCreate]] = Field(default=None, max_length=20)
+
+    _redactions: List[RedactionEvent] = PrivateAttr(default_factory=list)
+
+    @model_validator(mode="after")
+    def _redact_secrets(self):
+        try:
+            events: List[RedactionEvent] = []
+            title = redact_text(self.title)
+            self.title = title.text
+            events += [replace(e, field="title") for e in title.events]
+            if self.notes:
+                notes = redact_text(self.notes)
+                self.notes = notes.text
+                events += [replace(e, field="notes") for e in notes.events]
+        except Exception:
+            raise ValueError(SANITISE_FAILED) from None
+        self._redactions = events
+        return self
 
 
 class EntityMentionSchema(BaseModel):
@@ -80,6 +121,11 @@ class EvidenceSchema(BaseModel):
     entities: List[EntityMentionSchema] = []
 
 
+class RedactionSummary(BaseModel):
+    kind: str
+    count: int
+
+
 class IncidentDetailResponse(BaseModel):
     id: int
     title: str
@@ -90,6 +136,8 @@ class IncidentDetailResponse(BaseModel):
     created_at: datetime
     evidence_items: List[EvidenceSchema]
     analysis: Optional[AnalysisSchema] = None
+    # Secrets removed before storage, by kind. Counts only: the values are never kept.
+    redactions: List[RedactionSummary] = []
 
 
 class IncidentListItem(BaseModel):

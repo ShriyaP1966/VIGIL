@@ -1,5 +1,12 @@
-import pytest
-from fastapi.testclient import TestClient
+import os
+
+# Tests must never touch the developer's ./vigil.db: importing the app runs create_all on the default
+# engine, so point that engine at a throwaway in-memory database BEFORE the app is imported.
+os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["SEED_ON_START"] = "false"
+
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
