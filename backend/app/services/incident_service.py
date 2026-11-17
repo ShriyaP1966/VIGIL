@@ -9,7 +9,7 @@ from backend.app.models.models import (
 from ai_engine.extraction.interface import ExtractionResult, UtteranceInput
 from ai_engine.guard.injection import detect_injection, flag_ids, mask_spans
 from ai_engine.extraction.rule_extractor import get_default_extractor
-from ai_engine.extraction.tactics import CANONICAL_STAGES, STAGE_OF_LABEL
+from ai_engine.extraction.tactics import stage_sequence_from_labels
 from ai_engine.extraction.turns import parse_labelled_turns
 from backend.app.schemas.schemas import IncidentCreate, EvidenceCreate
 from ai_engine.privacy.redaction import REDACTOR_VERSION, RedactionEvent, redact_evidence, redact_text
@@ -219,14 +219,8 @@ def _extract_and_store_tactics(db: Session, incident_id: int) -> tuple[Extractio
     db.commit()
 
     # First-cut fingerprint: stages in order of first appearance. The full temporal engine is Phase 3.
-    sequence: list[str] = []
-    for ur in result.utterances:
-        stages = {STAGE_OF_LABEL[lab] for lab in ur.tactic_labels if lab in STAGE_OF_LABEL}
-        for stage in CANONICAL_STAGES:
-            if stage in stages and stage not in sequence:
-                sequence.append(stage)
     fingerprint = {
-        "stage_sequence": sequence,
+        "stage_sequence": stage_sequence_from_labels([ur.tactic_labels for ur in result.utterances]),
         "credential_requested": any("CREDENTIAL_REQUEST" in ur.tactic_labels for ur in result.utterances),
         "institution_class": result.institution_class,
         "payment_channel": result.payment_channel,

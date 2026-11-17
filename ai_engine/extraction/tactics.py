@@ -25,7 +25,19 @@ STAGE_WEIGHTS = {
     "URGENCY": 8, "DEMAND": 18, "CREDENTIAL": 18,
 }
 
-INSTITUTION_CLASSES = ["CENTRAL_AGENCY", "POLICE", "BANK", "TELECOM", "COURIER_CUSTOMS", "GOVT_OTHER", "UNKNOWN"]
+def stage_sequence_from_labels(label_lists: list[list[str]]) -> list[str]:
+    """Canonical stages in order of first appearance. `label_lists` holds the tactic labels of each
+    utterance in order; stages that appear in the same utterance are ordered canonically."""
+    sequence: list[str] = []
+    for labels in label_lists:
+        stages = {STAGE_OF_LABEL[lab] for lab in labels if lab in STAGE_OF_LABEL}
+        for stage in CANONICAL_STAGES:
+            if stage in stages and stage not in sequence:
+                sequence.append(stage)
+    return sequence
+
+
+INSTITUTION_CLASSES =["CENTRAL_AGENCY", "POLICE", "BANK", "TELECOM", "COURIER_CUSTOMS", "GOVT_OTHER", "UNKNOWN"]
 PAYMENT_CHANNELS = ["UPI", "BANK_TRANSFER", "CRYPTO", "GIFT_CARD", "LINK_PAYMENT", "NONE", "UNKNOWN"]
 
 # Speakers whose turns are never scored for scam tactics (a victim cannot run the playbook).

@@ -1,0 +1,226 @@
+{
+ "suite": "tactics",
+ "experiment": "E1",
+ "split": "dev",
+ "command": "python scripts/evaluate_model.py --suite tactics --split dev",
+ "dataset": {
+  "path": "data\\scenarios.jsonl",
+  "sha256": "6876abef53ef3ad4da5c535d354e173235808674f91644b4543286f926e33798",
+  "generator_version": "gen@1.0",
+  "seed": 1,
+  "rotation": 0.5,
+  "incidents": 38,
+  "utterances": 199,
+  "templates": [
+   "N3",
+   "N4",
+   "T2",
+   "T5"
+  ]
+ },
+ "extractor": {
+  "name": "rules",
+  "version": "rules@1.0",
+  "lexicon_sha256": "13ef949f7c45772c74c1e981f8e624dfb5d891359fdf4587716637f4085c47f7",
+  "threshold": 0.5
+ },
+ "metrics": {
+  "macro_f1_over_labels_with_support": 0.9913,
+  "labels_with_support": [
+   "AUTHORITY_IMPERSONATION",
+   "FALSE_ALLEGATION",
+   "THREAT_INTIMIDATION",
+   "ISOLATION",
+   "URGENCY",
+   "FINANCIAL_DEMAND",
+   "LEGITIMATE"
+  ],
+  "labels_without_support": [
+   "CREDENTIAL_REQUEST",
+   "OTHER_SUSPICIOUS"
+  ],
+  "micro": {
+   "tp": 152,
+   "fp": 3,
+   "fn": 0,
+   "support": 152,
+   "precision": 0.9806,
+   "recall": 1.0,
+   "f1": 0.9902
+  },
+  "per_label": {
+   "AUTHORITY_IMPERSONATION": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "FALSE_ALLEGATION": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "THREAT_INTIMIDATION": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "ISOLATION": {
+    "tp": 12,
+    "fp": 0,
+    "fn": 0,
+    "support": 12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "URGENCY": {
+    "tp": 23,
+    "fp": 3,
+    "fn": 0,
+    "support": 23,
+    "precision": 0.8846,
+    "recall": 1.0,
+    "f1": 0.9388
+   },
+   "FINANCIAL_DEMAND": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "CREDENTIAL_REQUEST": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "support": 0,
+    "precision": null,
+    "recall": null,
+    "f1": null
+   },
+   "LEGITIMATE": {
+    "tp": 21,
+    "fp": 0,
+    "fn": 0,
+    "support": 21,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "OTHER_SUSPICIOUS": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "support": 0,
+    "precision": null,
+    "recall": null,
+    "f1": null
+   }
+  },
+  "per_language_micro": {
+   "en": {
+    "tp": 134,
+    "fp": 3,
+    "fn": 0,
+    "support": 134,
+    "precision": 0.9781,
+    "recall": 1.0,
+    "f1": 0.9889
+   },
+   "hi": {
+    "tp": 12,
+    "fp": 0,
+    "fn": 0,
+    "support": 12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "hi-Latn": {
+    "tp": 6,
+    "fp": 0,
+    "fn": 0,
+    "support": 6,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   }
+  },
+  "incident_stage_sequence_exact_match": 1.0,
+  "institution_class_accuracy": 0.6579,
+  "payment_channel_accuracy": 0.9737
+ },
+ "error_examples": {
+  "AUTHORITY_IMPERSONATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "FALSE_ALLEGATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "THREAT_INTIMIDATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "ISOLATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "URGENCY": {
+   "false_positives": [
+    {
+     "incident": "inc_0053",
+     "language": "en",
+     "text": "Your power connection will be disconnected tonight."
+    },
+    {
+     "incident": "inc_0055",
+     "language": "en",
+     "text": "Your power connection will be disconnected tonight."
+    },
+    {
+     "incident": "inc_0056",
+     "language": "en",
+     "text": "Your power connection will be disconnected tonight."
+    }
+   ],
+   "false_negatives": []
+  },
+  "FINANCIAL_DEMAND": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "CREDENTIAL_REQUEST": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "LEGITIMATE": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "OTHER_SUSPICIOUS": {
+   "false_positives": [],
+   "false_negatives": []
+  }
+ },
+ "caveat": "All data is synthetic and written by the same author as the rules, so these scores are optimistic and do not predict real-world performance. The owner's hand-written held-out set is the unbiased check.",
+ "environment": {
+  "python": "3.13.15",
+  "platform": "Windows-11-10.0.26200-SP0"
+ }
+}

@@ -24,6 +24,15 @@ DEFAULT_LEXICON = Path(__file__).resolve().parents[2] / "data" / "lexicon.json"
 DEFAULT_THRESHOLD = 0.5  # a label fires when its best rule confidence is >= this
 
 
+_URL = re.compile(r"https?://\S+", re.IGNORECASE)
+
+
+def _mask_urls(norm: str) -> str:
+    """Blank out URLs (same length) so words inside a domain or path, e.g. 'duty-pay-748.example', are
+    never read as tactic cues. The URL itself is still extracted as an entity elsewhere."""
+    return _URL.sub(lambda m: "x" * len(m.group()), norm)
+
+
 def _merge(spans: list[tuple[int, int]]) -> list[tuple[int, int]]:
     merged: list[tuple[int, int]] = []
     for s, e in sorted(spans):
@@ -68,6 +77,8 @@ class RuleExtractor:
         for u in utterances:
             text = u.text or ""
             norm, idx = normalised_view(text)
+            raw_norm = norm              # entities are extracted from the unmasked view
+            norm = _mask_urls(norm)
             if text.strip():
                 languages.add(detect_language(text))
             speaker_is_victim = (u.speaker or "").strip().lower() in VICTIM_SPEAKERS
@@ -75,7 +86,7 @@ class RuleExtractor:
             confidence: dict[str, float] = {}
             spans: dict[str, list[tuple[int, int]]] = {}
             if not speaker_is_victim and norm:
-                scored_text.append(norm)
+                scored_text.append(raw_norm)   # institution / payment cues need to see URLs
                 for label, rules in self._rules.items():
                     for _rid, conf, pattern in rules:
                         for m in pattern.finditer(norm):
@@ -93,8 +104,8 @@ class RuleExtractor:
                 evidence_spans=_merge([s for lab in labels for s in merged[lab]]),
                 label_spans=merged,
             ))
-            if norm:
-                entities.extend(extract_entities(norm))
+            if raw_norm:
+                entities.extend(extract_entities(raw_norm))
 
         joined = "\n".join(scored_text)
         has_demand = any(

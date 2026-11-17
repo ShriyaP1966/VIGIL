@@ -42,12 +42,12 @@ LABELS = {
     ],
     "FALSE_ALLEGATION": [
         ("alleg_linked_crime", 0.9, r"\b(?:aadhaar|aadhar|pan|sim|mobile|phone|number|account|passport|parcel|package|courier|card)\b[^.\n]{0,60}?\b(?:linked|used|involved|registered|found|connected|misused|seized|flagged|suspicious|implicated|mentioned)\b[^.\n]{0,60}?\b(?:crime|illegal|fraud|laundering|drugs?|narcotics|terror\w*|criminal|contraband|counterfeit|trafficking|harass\w+|obscene)"),
-        ("alleg_keywords", 0.85, r"\b(?:money\s+laundering|illegal\s+(?:items?|parcel|package|transactions?|activit\w+)|human\s+trafficking|narcotics|drugs?\s+(?:were\s+)?(?:found|seized|in\s+the)|contraband|counterfeit|fake\s+passports?|terror(?:ist|ism)?\s+(?:funding|links?)|cyber\s*crime\s+case|criminal\s+(?:activity|case))\b"),
+        ("alleg_keywords", 0.85, r"\b(?:money\s+laundering|illegal\s+(?:items?|parcel|package|transactions?|activit\w+)|human\s+trafficking|narcotics(?!\s+(?:control|bureau|act))|drugs?\s+(?:were\s+)?(?:found|seized|in\s+the)|contraband|counterfeit|fake\s+passports?|terror(?:ist|ism)?\s+(?:funding|links?)|cyber\s*crime\s+case|criminal\s+(?:activity|case))\b"),
         ("alleg_case_registered", 0.85, r"\b(?:case|complaint|fir|report)\s+(?:has\s+been\s+|is\s+|was\s+|have\s+been\s+)?(?:registered|filed|lodged|booked)\s+(?:against|on|in|under)"),
         ("alleg_hinglish", 0.85, r"(?:aapke|aapka|apke|apka|tumhare)\s+(?:naam|number|aadhaar|aadhar|account|sim|parcel)\b[^.\n]{0,60}?(?:case|fir|complaint|illegal|fraud|drugs|parcel|crime|laundering)|\b(?:illegal|nashili|nasheele|dhokha|fraud)\s+(?:parcel|saman|transaction|activity|case|package)"),
         ("alleg_devanagari", 0.85, r"मनी\s*लॉन्ड्रिंग|अवैध|ड्रग्स|केस\s*दर्ज|गैरकानूनी|आपके\s*नाम\s*पर|गुन्हा\s*दाखल|बेकायदेशीर|अमली\s*पदार्थ|तुमच्या\s*नावावर"),
         ("alleg_kyc", 0.8, r"\b(?:kyc|pan|aadhaar|documents?)\s+(?:is\s+|are\s+|has\s+|have\s+)?(?:expired|pending|incomplete|not\s+(?:updated|verified)|invalid|mismatch\w*)"),
-        ("alleg_parcel_held", 0.8, r"\b(?:parcel|package|shipment|consignment|courier)\b[^.\n]{0,40}?\b(?:held|stuck|seized|detained|on\s+hold|intercepted|returned|undelivered|rejected)\b|\b(?:customs\s+duty|unpaid\s+(?:duty|bill|dues)|bill\s+(?:is\s+)?(?:unpaid|overdue|pending))\b"),
+        ("alleg_parcel_held", 0.8, r"\b(?:parcel|package|shipment|consignment|courier)\b[^.\n]{0,40}?\b(?:held|stuck|seized|detained|on\s+hold|intercepted|returned|undelivered|rejected)\b|\b(?:customs\s+duty|unpaid\s+(?:duty|bill|dues)|bill\s+(?:is\s+)?(?:unpaid|overdue|pending)|dues\s+(?:are\s+)?(?:pending|outstanding|unpaid|overdue)|(?:pending|outstanding|overdue)\s+dues)\b"),
         ("alleg_suspicious_activity", 0.75, r"\bsuspicious\s+(?:activity|transactions?|login)\b|\bunauthori[sz]ed\s+(?:transactions?|access|login)\b"),
     ],
     "THREAT_INTIMIDATION": [
@@ -69,6 +69,7 @@ LABELS = {
     "URGENCY": [
         ("urg_minutes", 0.9, r"\b(?:within|in|next|before)\s+(?:the\s+next\s+)?(?:\d+|an?|one|two|ten|fifteen|thirty|forty|sixty)\s*(?:minutes?|mins?)\b|\bwithin\s+(?:an?\s+)?hour\b"),
         ("urg_hours_with_demand", 0.8, r"\b(?:pay|transfer|send|deposit|verify|respond|comply|report|appear|complete|update|submit)\b[^.\n]{0,50}?\b(?:within|in|before)\s+(?:the\s+next\s+)?\d+\s*(?:hours?|hrs?)\b"),
+        ("urg_time_left", 0.85, r"\b(?:only\s+)?\d+\s*(?:minutes?|mins?)\s+(?:left|remaining|more)\b|\bonly\s+(?:\d+|a\s+few)\s*(?:minutes?|mins?)\b"),
         ("urg_words", 0.85, r"\b(?:immediately|right\s+now|at\s+once|without\s+delay|urgent(?:ly)?|last\s+(?:warning|chance|notice|opportunity)|final\s+(?:warning|notice|reminder)|today\s+(?:itself|only)|(?:by|before)\s+(?:today|tonight|end\s+of\s+(?:the\s+)?day)|tonight|time\s+is\s+running\s+out|asap|expires?\s+(?:today|tonight|in)|deadline)\b"),
         ("urg_hinglish", 0.9, r"\b(?:turant|foran|jaldi\s+se|jaldi|der\s+mat|bina\s+der|aaj\s+hi|abhi\s+(?:turant|ke\s+abhi|hi))\b|\b\d+\s*(?:minute|minat|ghante|ghanta)\s*(?:ke\s+andar|mein|me)\b|\babhi\s+(?:paise|payment|transfer)\b"),
         ("urg_devanagari", 0.9, r"तुरंत|फौरन|फ़ौरन|अभी\s*के\s*अभी|जल्दी|ताबडतोब|लगेच|त्वरित|लवकरात\s*लवकर|\d+\s*(?:मिनट|मिनिटांत|मिनिटात|मिनटों)"),
@@ -94,7 +95,7 @@ LABELS = {
         ("legit_visit_branch", 0.85, r"\b(?:visit|come\s+to|reach|go\s+to|approach)\s+(?:your\s+|the\s+|our\s+)?(?:nearest\s+|home\s+|local\s+)?(?:bank\s+)?(?:branch|station|office)\b"),
         ("legit_official_channel", 0.85, r"\b(?:call|contact|dial|use)\s+(?:our\s+|the\s+)?(?:official|toll[\s-]?free|customer\s+care|national)\s+(?:helpline|number|website|app|portal|care)\b|\b(?:official\s+(?:app|website|helpline|number|portal)|helpline\s+1930|national\s+helpline)\b"),
         ("legit_no_action", 0.85, r"\b(?:no|not)\s+(?:any\s+)?(?:action|payment|fee|fees|charges?)\s+(?:is\s+|are\s+)?(?:required|needed|necessary|payable)\b|\bno\s+payment\s+is\b|\bfree\s+of\s+charge\b"),
-        ("legit_info", 0.8, r"\b(?:has\s+been|have\s+been|is|was)\s+(?:successfully\s+)?(?:dispatched|delivered|shipped|credited|debited|generated|sent|processed|scheduled|ready)\b|\bout\s+for\s+delivery\b|\bfor\s+your\s+information\b|\bthank\s+you\s+for\s+(?:banking|choosing|shopping|using)\b|\bif\s+(?:this\s+was\s+)?not\s+(?:you|done\s+by\s+you),?\s+(?:call|contact|visit)"),
+        ("legit_info", 0.8, r"\b(?:has\s+been|have\s+been|was)\s+(?:successfully\s+)?(?:dispatched|delivered|shipped|credited|debited|generated|processed|scheduled)\b|\b(?:card|statement|cheque\s*book|passport|order|parcel|package)\s+(?:is|has\s+been)\s+(?:ready|out\s+for\s+delivery)\b|\bout\s+for\s+delivery\b|\bfor\s+your\s+information\b|\bthank\s+you\s+for\s+(?:banking|choosing|shopping|using)\b|\bif\s+(?:this\s+was\s+)?not\s+(?:you|done\s+by\s+you),?\s+(?:call|contact|visit)"),
         ("legit_devanagari", 0.8, r"किसी\s*को\s*(?:ओटीपी|पिन)\s*(?:न|ना|नहीं)\s*(?:बताएं|बताएँ|दें)|शाखा\s*(?:में|पर)\s*(?:आएं|जाएं)|कोणाला\s*(?:ओटीपी|पिन)\s*(?:देऊ\s*नका|सांगू\s*नका)"),
     ],
     "OTHER_SUSPICIOUS": [
@@ -110,7 +111,7 @@ INSTITUTION_CUES = [
     ("TELECOM", r"(?-i:TRAI|DOT)|telecom|\bsim\b|ट्राई"),
     ("COURIER_CUSTOMS", r"customs|fedex|dhl|blue\s*dart|india\s+post|courier|कस्टम"),
     ("GOVT_OTHER", r"government|ministry|supreme\s+court|high\s+court|electricity\s+board|court|municipal"),
-    ("BANK", r"\bbank\b|(?-i:SBI|HDFC|ICICI|PNB|RBI)|\bkyc\b|reserve\s+bank"),
+    ("BANK", r"\bbank\b|(?-i:SBI|HDFC|ICICI|PNB|RBI)|\bkyc\b|reserve\s+bank|\bbranch\b|\bcheque\b|(?:debit|credit)\s+card|net\s*banking"),
 ]
 
 # Ordered: first match wins; only consulted when a demand or credential request was detected.

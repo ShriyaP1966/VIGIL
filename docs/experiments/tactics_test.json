@@ -1,0 +1,283 @@
+{
+ "suite": "tactics",
+ "experiment": "E1",
+ "split": "test",
+ "command": "python scripts/evaluate_model.py --suite tactics --split test",
+ "dataset": {
+  "path": "data\\scenarios.jsonl",
+  "sha256": "6876abef53ef3ad4da5c535d354e173235808674f91644b4543286f926e33798",
+  "generator_version": "gen@1.0",
+  "seed": 1,
+  "rotation": 0.5,
+  "incidents": 36,
+  "utterances": 210,
+  "templates": [
+   "N5",
+   "N6",
+   "T3",
+   "T6"
+  ]
+ },
+ "extractor": {
+  "name": "rules",
+  "version": "rules@1.0",
+  "lexicon_sha256": "13ef949f7c45772c74c1e981f8e624dfb5d891359fdf4587716637f4085c47f7",
+  "threshold": 0.5
+ },
+ "metrics": {
+  "macro_f1_over_labels_with_support": 0.9645,
+  "labels_with_support": [
+   "AUTHORITY_IMPERSONATION",
+   "FALSE_ALLEGATION",
+   "THREAT_INTIMIDATION",
+   "ISOLATION",
+   "URGENCY",
+   "FINANCIAL_DEMAND",
+   "CREDENTIAL_REQUEST",
+   "LEGITIMATE"
+  ],
+  "labels_without_support": [
+   "OTHER_SUSPICIOUS"
+  ],
+  "micro": {
+   "tp": 127,
+   "fp": 9,
+   "fn": 6,
+   "support": 133,
+   "precision": 0.9338,
+   "recall": 0.9549,
+   "f1": 0.9442
+  },
+  "per_label": {
+   "AUTHORITY_IMPERSONATION": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 6,
+    "support": 30,
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1": 0.8889
+   },
+   "FALSE_ALLEGATION": {
+    "tp": 24,
+    "fp": 7,
+    "fn": 0,
+    "support": 24,
+    "precision": 0.7742,
+    "recall": 1.0,
+    "f1": 0.8727
+   },
+   "THREAT_INTIMIDATION": {
+    "tp": 11,
+    "fp": 0,
+    "fn": 0,
+    "support": 11,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "ISOLATION": {
+    "tp": 10,
+    "fp": 0,
+    "fn": 0,
+    "support": 10,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "URGENCY": {
+    "tp": 21,
+    "fp": 2,
+    "fn": 0,
+    "support": 21,
+    "precision": 0.913,
+    "recall": 1.0,
+    "f1": 0.9545
+   },
+   "FINANCIAL_DEMAND": {
+    "tp": 21,
+    "fp": 0,
+    "fn": 0,
+    "support": 21,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "CREDENTIAL_REQUEST": {
+    "tp": 10,
+    "fp": 0,
+    "fn": 0,
+    "support": 10,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "LEGITIMATE": {
+    "tp": 6,
+    "fp": 0,
+    "fn": 0,
+    "support": 6,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "OTHER_SUSPICIOUS": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "support": 0,
+    "precision": null,
+    "recall": null,
+    "f1": null
+   }
+  },
+  "per_language_micro": {
+   "en": {
+    "tp": 95,
+    "fp": 7,
+    "fn": 6,
+    "support": 101,
+    "precision": 0.9314,
+    "recall": 0.9406,
+    "f1": 0.936
+   },
+   "hi-Latn": {
+    "tp": 20,
+    "fp": 2,
+    "fn": 0,
+    "support": 20,
+    "precision": 0.9091,
+    "recall": 1.0,
+    "f1": 0.9524
+   },
+   "mr": {
+    "tp": 12,
+    "fp": 0,
+    "fn": 0,
+    "support": 12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   }
+  },
+  "incident_stage_sequence_exact_match": 0.8056,
+  "institution_class_accuracy": 0.75,
+  "payment_channel_accuracy": 0.9167
+ },
+ "error_examples": {
+  "AUTHORITY_IMPERSONATION": {
+   "false_positives": [],
+   "false_negatives": [
+    {
+     "incident": "inc_0025",
+     "language": "en",
+     "text": "I am the nodal officer Prakash Joshi at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 84870."
+    },
+    {
+     "incident": "inc_0027",
+     "language": "en",
+     "text": "Hello, I am Prakash Joshi, a TRAI representative. Your call is being forwarded to the Cyber Police. Your number is linked to a terror funding case under investigation. If we get disconnected, call me back on +91 98765 84870."
+    },
+    {
+     "incident": "inc_0028",
+     "language": "en",
+     "text": "I am the nodal officer Prakash Joshi at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 29608."
+    },
+    {
+     "incident": "inc_0030",
+     "language": "en",
+     "text": "Hello, I am Meera Nair, a TRAI representative. Your call is being forwarded to the Cyber Police. Your number is linked to a terror funding case under investigation. If we get disconnected, call me back on +91 98765 96151."
+    },
+    {
+     "incident": "inc_0032",
+     "language": "en",
+     "text": "Hello, I am Imran Khan, a TRAI representative. Your call is being forwarded to the Cyber Police. Illegal advertisements were posted using your SIM, and a complaint has been lodged against you. If we get disconnected, call me back on +91 98765 69128."
+    },
+    {
+     "incident": "inc_0034",
+     "language": "en",
+     "text": "I am the nodal officer Meera Nair at the Department of Telecommunications. If we get disconnected, call me back on +91 98765 45978."
+    }
+   ]
+  },
+  "FALSE_ALLEGATION": {
+   "false_positives": [
+    {
+     "incident": "inc_0061",
+     "language": "hi-Latn",
+     "text": "Customs duty ke liye 15000 rupaye refund95@okicici par transfer kijiye."
+    },
+    {
+     "incident": "inc_0063",
+     "language": "en",
+     "text": "Pay the customs duty of Rs 15000 to verify88@okhdfcbank."
+    },
+    {
+     "incident": "inc_0064",
+     "language": "hi-Latn",
+     "text": "15 minute ke andar karna hoga. Customs duty ke liye 75000 rupaye refund66@oksbi par transfer kijiye."
+    },
+    {
+     "incident": "inc_0066",
+     "language": "en",
+     "text": "Pay the customs duty of Rs 5000 to support80@okicici."
+    },
+    {
+     "incident": "inc_0067",
+     "language": "en",
+     "text": "Pay within 30 minutes or the parcel will be returned."
+    },
+    {
+     "incident": "inc_0068",
+     "language": "en",
+     "text": "Pay the customs duty of Rs 75000 to kyc56@paytm."
+    }
+   ],
+   "false_negatives": []
+  },
+  "THREAT_INTIMIDATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "ISOLATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "URGENCY": {
+   "false_positives": [
+    {
+     "incident": "inc_0029",
+     "language": "en",
+     "text": "Police will reach your address tonight to detain you."
+    },
+    {
+     "incident": "inc_0030",
+     "language": "en",
+     "text": "Police will reach your address tonight to detain you."
+    }
+   ],
+   "false_negatives": []
+  },
+  "FINANCIAL_DEMAND": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "CREDENTIAL_REQUEST": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "LEGITIMATE": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "OTHER_SUSPICIOUS": {
+   "false_positives": [],
+   "false_negatives": []
+  }
+ },
+ "caveat": "All data is synthetic and written by the same author as the rules, so these scores are optimistic and do not predict real-world performance. The owner's hand-written held-out set is the unbiased check.",
+ "environment": {
+  "python": "3.13.15",
+  "platform": "Windows-11-10.0.26200-SP0"
+ }
+}

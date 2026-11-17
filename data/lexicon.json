@@ -66,7 +66,7 @@
    {
     "id": "alleg_keywords",
     "confidence": 0.85,
-    "pattern": "\\b(?:money\\s+laundering|illegal\\s+(?:items?|parcel|package|transactions?|activit\\w+)|human\\s+trafficking|narcotics|drugs?\\s+(?:were\\s+)?(?:found|seized|in\\s+the)|contraband|counterfeit|fake\\s+passports?|terror(?:ist|ism)?\\s+(?:funding|links?)|cyber\\s*crime\\s+case|criminal\\s+(?:activity|case))\\b"
+    "pattern": "\\b(?:money\\s+laundering|illegal\\s+(?:items?|parcel|package|transactions?|activit\\w+)|human\\s+trafficking|narcotics(?!\\s+(?:control|bureau|act))|drugs?\\s+(?:were\\s+)?(?:found|seized|in\\s+the)|contraband|counterfeit|fake\\s+passports?|terror(?:ist|ism)?\\s+(?:funding|links?)|cyber\\s*crime\\s+case|criminal\\s+(?:activity|case))\\b"
    },
    {
     "id": "alleg_case_registered",
@@ -91,7 +91,7 @@
    {
     "id": "alleg_parcel_held",
     "confidence": 0.8,
-    "pattern": "\\b(?:parcel|package|shipment|consignment|courier)\\b[^.\\n]{0,40}?\\b(?:held|stuck|seized|detained|on\\s+hold|intercepted|returned|undelivered|rejected)\\b|\\b(?:customs\\s+duty|unpaid\\s+(?:duty|bill|dues)|bill\\s+(?:is\\s+)?(?:unpaid|overdue|pending))\\b"
+    "pattern": "\\b(?:parcel|package|shipment|consignment|courier)\\b[^.\\n]{0,40}?\\b(?:held|stuck|seized|detained|on\\s+hold|intercepted|returned|undelivered|rejected)\\b|\\b(?:customs\\s+duty|unpaid\\s+(?:duty|bill|dues)|bill\\s+(?:is\\s+)?(?:unpaid|overdue|pending)|dues\\s+(?:are\\s+)?(?:pending|outstanding|unpaid|overdue)|(?:pending|outstanding|overdue)\\s+dues)\\b"
    },
    {
     "id": "alleg_suspicious_activity",
@@ -168,6 +168,11 @@
     "id": "urg_hours_with_demand",
     "confidence": 0.8,
     "pattern": "\\b(?:pay|transfer|send|deposit|verify|respond|comply|report|appear|complete|update|submit)\\b[^.\\n]{0,50}?\\b(?:within|in|before)\\s+(?:the\\s+next\\s+)?\\d+\\s*(?:hours?|hrs?)\\b"
+   },
+   {
+    "id": "urg_time_left",
+    "confidence": 0.85,
+    "pattern": "\\b(?:only\\s+)?\\d+\\s*(?:minutes?|mins?)\\s+(?:left|remaining|more)\\b|\\bonly\\s+(?:\\d+|a\\s+few)\\s*(?:minutes?|mins?)\\b"
    },
    {
     "id": "urg_words",
@@ -273,7 +278,7 @@
    {
     "id": "legit_info",
     "confidence": 0.8,
-    "pattern": "\\b(?:has\\s+been|have\\s+been|is|was)\\s+(?:successfully\\s+)?(?:dispatched|delivered|shipped|credited|debited|generated|sent|processed|scheduled|ready)\\b|\\bout\\s+for\\s+delivery\\b|\\bfor\\s+your\\s+information\\b|\\bthank\\s+you\\s+for\\s+(?:banking|choosing|shopping|using)\\b|\\bif\\s+(?:this\\s+was\\s+)?not\\s+(?:you|done\\s+by\\s+you),?\\s+(?:call|contact|visit)"
+    "pattern": "\\b(?:has\\s+been|have\\s+been|was)\\s+(?:successfully\\s+)?(?:dispatched|delivered|shipped|credited|debited|generated|processed|scheduled)\\b|\\b(?:card|statement|cheque\\s*book|passport|order|parcel|package)\\s+(?:is|has\\s+been)\\s+(?:ready|out\\s+for\\s+delivery)\\b|\\bout\\s+for\\s+delivery\\b|\\bfor\\s+your\\s+information\\b|\\bthank\\s+you\\s+for\\s+(?:banking|choosing|shopping|using)\\b|\\bif\\s+(?:this\\s+was\\s+)?not\\s+(?:you|done\\s+by\\s+you),?\\s+(?:call|contact|visit)"
    },
    {
     "id": "legit_devanagari",
@@ -317,7 +322,7 @@
   },
   {
    "class": "BANK",
-   "pattern": "\\bbank\\b|(?-i:SBI|HDFC|ICICI|PNB|RBI)|\\bkyc\\b|reserve\\s+bank"
+   "pattern": "\\bbank\\b|(?-i:SBI|HDFC|ICICI|PNB|RBI)|\\bkyc\\b|reserve\\s+bank|\\bbranch\\b|\\bcheque\\b|(?:debit|credit)\\s+card|net\\s*banking"
   }
  ],
  "payment_cues": [

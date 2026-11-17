@@ -1,0 +1,228 @@
+{
+ "suite": "tactics",
+ "experiment": "E1",
+ "split": "train",
+ "command": "python scripts/evaluate_model.py --suite tactics --split train",
+ "dataset": {
+  "path": "data\\scenarios.jsonl",
+  "sha256": "6876abef53ef3ad4da5c535d354e173235808674f91644b4543286f926e33798",
+  "generator_version": "gen@1.0",
+  "seed": 1,
+  "rotation": 0.5,
+  "incidents": 38,
+  "utterances": 162,
+  "templates": [
+   "N1",
+   "N2",
+   "T1",
+   "T4"
+  ]
+ },
+ "extractor": {
+  "name": "rules",
+  "version": "rules@1.0",
+  "lexicon_sha256": "13ef949f7c45772c74c1e981f8e624dfb5d891359fdf4587716637f4085c47f7",
+  "threshold": 0.5
+ },
+ "metrics": {
+  "macro_f1_over_labels_with_support": 0.9725,
+  "labels_with_support": [
+   "AUTHORITY_IMPERSONATION",
+   "FALSE_ALLEGATION",
+   "THREAT_INTIMIDATION",
+   "ISOLATION",
+   "URGENCY",
+   "FINANCIAL_DEMAND",
+   "CREDENTIAL_REQUEST",
+   "LEGITIMATE"
+  ],
+  "labels_without_support": [
+   "OTHER_SUSPICIOUS"
+  ],
+  "micro": {
+   "tp": 135,
+   "fp": 5,
+   "fn": 0,
+   "support": 135,
+   "precision": 0.9643,
+   "recall": 1.0,
+   "f1": 0.9818
+  },
+  "per_label": {
+   "AUTHORITY_IMPERSONATION": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "FALSE_ALLEGATION": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "THREAT_INTIMIDATION": {
+    "tp": 22,
+    "fp": 2,
+    "fn": 0,
+    "support": 22,
+    "precision": 0.9167,
+    "recall": 1.0,
+    "f1": 0.9565
+   },
+   "ISOLATION": {
+    "tp": 7,
+    "fp": 3,
+    "fn": 0,
+    "support": 7,
+    "precision": 0.7,
+    "recall": 1.0,
+    "f1": 0.8235
+   },
+   "URGENCY": {
+    "tp": 19,
+    "fp": 0,
+    "fn": 0,
+    "support": 19,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "FINANCIAL_DEMAND": {
+    "tp": 7,
+    "fp": 0,
+    "fn": 0,
+    "support": 7,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "CREDENTIAL_REQUEST": {
+    "tp": 12,
+    "fp": 0,
+    "fn": 0,
+    "support": 12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "LEGITIMATE": {
+    "tp": 20,
+    "fp": 0,
+    "fn": 0,
+    "support": 20,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "OTHER_SUSPICIOUS": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "support": 0,
+    "precision": null,
+    "recall": null,
+    "f1": null
+   }
+  },
+  "per_language_micro": {
+   "en": {
+    "tp": 111,
+    "fp": 5,
+    "fn": 0,
+    "support": 111,
+    "precision": 0.9569,
+    "recall": 1.0,
+    "f1": 0.978
+   },
+   "hi-Latn": {
+    "tp": 24,
+    "fp": 0,
+    "fn": 0,
+    "support": 24,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   }
+  },
+  "incident_stage_sequence_exact_match": 0.9211,
+  "institution_class_accuracy": 0.7105,
+  "payment_channel_accuracy": 0.6579
+ },
+ "error_examples": {
+  "AUTHORITY_IMPERSONATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "FALSE_ALLEGATION": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "THREAT_INTIMIDATION": {
+   "false_positives": [
+    {
+     "incident": "inc_0003",
+     "language": "en",
+     "text": "You are under digital arrest. Stay on the video call and do not disconnect."
+    },
+    {
+     "incident": "inc_0004",
+     "language": "en",
+     "text": "You are under digital arrest. Stay on the video call and do not disconnect."
+    }
+   ],
+   "false_negatives": []
+  },
+  "ISOLATION": {
+   "false_positives": [
+    {
+     "incident": "inc_0082",
+     "language": "en",
+     "text": "Your one time password for login has been sent to your registered mobile. Never share it with anyone."
+    },
+    {
+     "incident": "inc_0083",
+     "language": "en",
+     "text": "Your verification code is valid for 10 minutes. Never share it with anyone."
+    },
+    {
+     "incident": "inc_0086",
+     "language": "en",
+     "text": "Your one time password for login has been sent to your registered mobile. Never share it with anyone."
+    }
+   ],
+   "false_negatives": []
+  },
+  "URGENCY": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "FINANCIAL_DEMAND": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "CREDENTIAL_REQUEST": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "LEGITIMATE": {
+   "false_positives": [],
+   "false_negatives": []
+  },
+  "OTHER_SUSPICIOUS": {
+   "false_positives": [],
+   "false_negatives": []
+  }
+ },
+ "caveat": "All data is synthetic and written by the same author as the rules, so these scores are optimistic and do not predict real-world performance. The owner's hand-written held-out set is the unbiased check.",
+ "environment": {
+  "python": "3.13.15",
+  "platform": "Windows-11-10.0.26200-SP0"
+ }
+}
