@@ -11,7 +11,7 @@
 | Phase | Description | Target Date | Status | Deployment Milestone |
 |---|---|---|---|---|
 | **Phase 0** | Foundation & Guardrails | 17 Nov 2026 | ✅ Done (browser walk-through of placeholder pages not recorded) | Deployment scaffold (`deployment/`) |
-| **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | 🟡 Code complete, 3 items open: public deployment (needs Vercel/Render sign-in), Antigravity quota log, in-browser walk-through | **First Slice Deployed** (Vercel + Render): *not yet* |
+| **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | 🟡 Code complete, 2 items open: public deployment (needs Vercel/Render sign-in), in-browser walk-through. Antigravity quota log waived by owner (build moved to Claude Code) | **First Slice Deployed** (Vercel + Render): *not yet* |
 | **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ⚪ Pending | - |
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ⚪ Pending | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ⚪ Pending | - |
@@ -80,7 +80,7 @@
 - [x] Clicking the edge opens the inspector, displaying the shared identifier and source evidence excerpts. *(Inspector payload verified by API test; click wiring type-checked and built, not yet clicked in a browser.)*
 - [x] The third unrelated incident remains disconnected in the graph. *(API test and layout test.)*
 - [x] Unit tests pass verifying entity extraction and invariant I1 (no `OBSERVED_MATCH` without exact normalized equality).
-- [ ] Antigravity weekly quota inspected in **Settings → Models** and logged. *(Owner action; cannot be done from this environment.)*
+- [x] ~~Antigravity weekly quota inspected in **Settings → Models** and logged.~~ **Waived by owner: build moved to Claude Code.**
 - [ ] **First slice deployed publicly:** Deployed link opens on an external device and renders the interactive slice. *(Blocked on sign-in, see above.)*
 
 ---
@@ -89,6 +89,7 @@
 **Objective:** Evidence-grounded tactic classification, prompt-injection defense, and the initial synthetic dataset.
 
 #### Tasks
+- [x] **Secret redaction at ingestion (§5.5), done first as agreed on 17 Nov** (owner-approved scope: OTP, PIN, CVV, passwords, card and Aadhaar numbers; phones, UPI handles and bank account numbers kept). `ai_engine/privacy/redaction.py`, schema-boundary validators plus a fail-closed service backup, `redactions` table, UI note, leak tests for DB, API responses, logs and error paths. Best effort; limits are documented in the README.
 - [ ] Define `Extractor` Protocol and Pydantic data schemas in `ai_engine/extraction/interface.py`.
 - [ ] Implement `RuleMLExtractor`: Appendix A lexicon matching + scikit-learn TF-IDF (word + char n-grams) and Logistic Regression.
 - [ ] Seed lexicon authored in `data/lexicon.json` with English and Hinglish phrases.

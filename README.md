@@ -27,6 +27,7 @@ This README describes the full v3.1 design. **Only the Phase 1 vertical slice is
 |---|---|
 | Paste evidence, SHA-256 provenance, NFKC normalisation | Tactic classification, injection guard (Phase 2) |
 | Phone / UPI / email / URL / domain / organisation extraction, masked display | Playbook fingerprint, candidate associations, campaign hypotheses (Phase 3) |
+| Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | |
 | `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | Counter-evidence engine, full inspector, analyst review (Phase 4) |
 | Placeholder risk indicator with an exact contribution ledger | Evaluation and the rotation experiment (Phase 5) |
 | Graph (React Flow), evidence inspector, static precomputed demo mode | Simulated live call, reports, scenario lab UI (Phase 6) |
@@ -186,7 +187,7 @@ Developed in partnership with **Google Antigravity**:
 ## 11. Security & Responsible Use
 
 - **Prompt-Injection Defense:** Untrusted transcripts are strictly bounded, validated against rigid Pydantic schemas, and analyzed by regex injection detectors. Flagged input cannot lower risk scores.
-- **Privacy by Design:** Phone numbers and UPI handles are masked in the UI (canonical values are stored for exact matching). Redaction of OTPs, passwords and card numbers at ingestion is specified in the blueprint (§5.5) but **not implemented yet**; use synthetic data only.
+- **Privacy by Design:** Phone numbers and UPI handles are masked in the UI (canonical values are stored for exact matching). OTPs, passwords, PINs, CVVs, card numbers and Aadhaar numbers are removed at ingestion (before hashing, storage or logging) and replaced with `[REDACTED:…]`; this is rule-based and **best effort** (see Known Limitations). Phones, UPI handles, emails, domains and bank account numbers are kept because VIGIL matches on them. Use synthetic data only.
 - **Size Budget & Hygiene:** Enforced by `scripts/preflight.py` to ensure repository size remains under 10 MB on a single `main` branch.
 
 ---
@@ -214,6 +215,7 @@ Developed in partnership with **Google Antigravity**:
 
 ## 14. Known Limitations
 
+- Secret redaction is rule-based and best effort. It does **not** catch spelled-out digits ("four eight two…"), secrets with no cue word nearby ("the number from the sms is 482913"), or non-Luhn card numbers with no "card" cue. Amount-like values right after a currency marker are treated as amounts. A 4-6 digit value after "PIN" is redacted even if it was a postal code ("PIN code" itself is left alone). Plain text sent by the browser reaches the server before it is redacted, so use HTTPS and synthetic data.
 - High dependence on transcription quality when operating on noisy audio.
 - Heuristic weights in risk and playbook similarity are design priors, not trained Bayesian posterior probabilities.
 - Hindi and Hinglish nuance requires continuous lexicon expansion for regional slang variations.

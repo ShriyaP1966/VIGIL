@@ -50,7 +50,33 @@
 - `npm test`: 19 passed. `npm run build` (tsc + vite): succeeded.
 - Render-style boot (`uvicorn backend.app.main:app` from the repo root, `SEED_ON_START=true`, real socket): `/health` ok, 3 incidents (risk 0/60/60), one `OBSERVED_MATCH` edge, CORS restricted to the configured origin, standard 404 body.
 - `python scripts/preflight.py --quick`: all checks passed before every commit (M1 about 0.5 MB, M2 about 0.2 MB).
-- **Not verified:** no browser was available, so the UI has not been clicked through; public deployment not done (needs the owner's Vercel/Render sign-in); Antigravity quota not logged (owner action).
+- **Not verified:** no browser was available, so the UI has not been clicked through; public deployment not done (needs the owner's Vercel/Render sign-in); Antigravity quota log: **waived by owner: build moved to Claude Code**.
 
-### Next Step
-- Owner pushes the local commits, deploys the slice (see `deployment/DEPLOY.md`), logs the Antigravity quota, and approves before Phase 2 starts.
+### Next Step (end of Session 2)
+- Owner pushes the local commits, deploys the slice (see `deployment/DEPLOY.md`), and approves before Phase 2 starts.
+
+---
+
+## Session 3: 17 Nov 2026 — Secret redaction at ingestion (§5.5), first Phase 2 task
+
+### Prompt used
+Owner asked for a plan, then approved it with these decisions: (1) add Aadhaar numbers; (2) keep bank account numbers, UPI handles and phone numbers un-redacted so matching and CE-2 keep working; (3) hash the redacted text and log the §6.1 departure; (4) schema-boundary redaction plus a service-layer backup, failing closed; (5) new `redactions` table, leave the existing `vigil.db` alone; (6) keep no last-4 digits of cards. Scope kept tight (deadline); stop after redaction and propose a Phase 2 plan. The Antigravity quota item was marked "waived by owner: build moved to Claude Code".
+
+### Decision logged: departure from blueprint §6.1
+§6.1 says to "keep the original text unchanged and hash it (SHA-256)". §5.5 says never to store OTPs, passwords, full card numbers or bank credentials. They conflict for text that contains a secret. **§5.5 wins for secrets:** `evidence.original_text` is now the text *as stored, after redaction*, and `sha256` covers that stored text. Hashing the raw text would let anyone recover a 4-6 digit OTP by brute force, and the raw text is not retained, so the hash cannot be checked against the raw source. Text without secrets is stored unchanged.
+
+### What was built
+- `ai_engine/privacy/redaction.py`: pure Python (`re`, `unicodedata`), offline, no API key, no new dependency. Kinds: OTP, PIN, CVV, PASSWORD, CARD (Luhn, or a card cue), CARD_EXPIRY, AADHAAR (Verhoeff 4-4-4, or an Aadhaar cue), plus short replies to "tell me the OTP/PIN/password" across lines and speaker turns. Detection runs on an NFKC / zero-width-stripped / digit-script-normalised view; only the secret's span is replaced in the original text. Placeholders carry no length or last-4.
+- Schema-boundary validators on `EvidenceCreate` (text, speaker turns, provenance) and `IncidentCreate` (title, notes); service-layer backup in `incident_service` that redacts again before any row is created. Both fail closed (nothing stored on error). Seeds and the exporter go through the same path.
+- `redactions` table (kind, field, span in stored text, detector version; never the secret) and `redactions` counts on the incident API; UI note on the detail page and the intake form.
+- Tests: 83 in `test_redaction.py` (positive and negative tables, idempotence, spans, property test over 400 random secrets, documented limitations) and 8 in `test_redaction_leaks.py` (DB dump of every table, every API response, all logs and stdout/stderr at DEBUG, 422 / forced-500 / fail-closed / validation-bypass paths, demo data).
+- **Mutation check:** with detection disabled, 35 tests failed, including the DB, response and log leak tests; the check was reverted.
+
+### Known limitations (best effort, also in the README)
+Spelled-out digits; secrets with no cue word nearby; non-Luhn card numbers without a "card" cue; values after a currency marker are treated as amounts; a 4-6 digit value after "PIN" is redacted even if it was a postal code; a 12-digit-looking value after an Aadhaar cue is redacted even if it is not an Aadhaar; random numbers that happen to pass Luhn/Verhoeff may be redacted. The raw text reaches the server before redaction (use HTTPS, synthetic data); a client-side pass was deliberately not built.
+
+### Incident: test runs touched `vigil.db`
+Importing the app in tests ran `create_all` on the default `./vigil.db`, which added one **empty** `redactions` table to the owner's existing database (existing rows were unchanged: 3 incidents, 3 evidence, 1 association). Fixed: `conftest.py` now sets an in-memory `DATABASE_URL` before the app is imported, and a re-run left the file's modified time unchanged. Starting the real backend will add the same empty table (no migration tool by design).
+
+### Verification
+`pytest -q`: 145 passed. `ruff check`: clean. `npm test`: 19 passed. `tsc` and `vite build`: succeeded. Demo data regenerated from the real pipeline (now includes `redactions`). (Antigravity quota log: waived by owner: build moved to Claude Code.)
