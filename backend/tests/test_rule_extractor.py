@@ -217,10 +217,15 @@ def test_parse_labelled_turns():
     assert turns[1]["text"] == "What?\nthat is all"
 
 
+def test_one_sided_transcripts_are_still_split():
+    turns = parse_labelled_turns("Caller: You will be arrested.\nCaller: Pay now.")
+    assert [t["speaker"] for t in turns] == ["caller", "caller"]
+
+
 @pytest.mark.parametrize("text", [
     "Just a plain pasted message with no labels.",
     "Note: this has only one label line\nand more text",
-    "Caller: only the caller speaks\nCaller: again",
+    "Caller: a single labelled line is not a transcript",
     "intro line before any label\nCaller: hi\nVictim: hello",
 ])
 def test_non_transcripts_are_not_split(text):

@@ -15,7 +15,7 @@ from ai_engine.privacy.redaction import REDACTOR_VERSION, RedactionEvent, redact
 from ai_engine.extraction.normalisation import normalise_text, compute_sha256, detect_language, mask_identifier
 from ai_engine.extraction.entity_extractor import extract_entities
 from backend.app.services.association_service import find_or_create_observed_matches
-from backend.app.services.risk_service import calculate_baseline_risk
+from backend.app.services.risk_service import RISK_VERSION, calculate_risk
 
 
 def _sanitise_failed() -> VigilException:
@@ -246,8 +246,8 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
     # 2. Tactic extraction (rules) -> tactic_events + first-cut fingerprint
     extraction, fingerprint = _extract_and_store_tactics(db, incident_id)
 
-    # 3. Calculate risk heuristic
-    risk_score, risk_band, contributions = calculate_baseline_risk(db, incident_id)
+    # 3. Calculate risk heuristic from the persisted tactic events
+    risk_score, risk_band, contributions = calculate_risk(db, incident_id)
 
     # 4. Create Analysis record
     analysis = Analysis(
@@ -258,7 +258,7 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
         fingerprint_json=json.dumps(fingerprint),
         risk_score=risk_score,
         risk_band=risk_band,
-        risk_version="risk@3.1.0",
+        risk_version=RISK_VERSION,
         injection_flags_json="[]"
     )
     db.add(analysis)

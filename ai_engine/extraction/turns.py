@@ -8,8 +8,9 @@ _TURN = re.compile(r"^\s*([A-Za-z][A-Za-z ]{0,19}?)\s*:\s*(.*?)\s*$")
 def parse_labelled_turns(text: str) -> list[dict] | None:
     """Return [{"speaker", "text"}, ...] when `text` looks like a labelled transcript, else None.
 
-    A transcript needs at least two labelled lines from at least two different speakers, and no
-    unlabelled text before the first label. Unlabelled lines continue the previous turn.
+    A transcript needs at least two labelled lines and no unlabelled text before the first label.
+    Unlabelled lines continue the previous turn. (A one-sided transcript, e.g. only the caller's lines,
+    is still split so that the order of tactics is preserved.)
     """
     turns: list[dict] = []
     for line in text.splitlines():
@@ -22,6 +23,6 @@ def parse_labelled_turns(text: str) -> list[dict] | None:
             turns[-1]["text"] = (turns[-1]["text"] + "\n" + line.strip()).strip()
         else:
             return None
-    if len(turns) < 2 or len({t["speaker"] for t in turns}) < 2:
+    if len(turns) < 2:
         return None
     return turns

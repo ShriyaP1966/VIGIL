@@ -1,30 +1,24 @@
-import re
+"""Incident risk indicator (blueprint §6.9): an EXPERIMENTAL HEURISTIC, not a probability and not calibrated.
+
+risk = clip( sum(supporting) - sum(mitigating), 0, 100 ). Every factor is returned as a ledger entry with
+its evidence reference, rule version, signed contribution, effect and a plain-language explanation, and the
+entries always sum exactly to the score. Weights are a-priori priors (not learned) and live in
+ai_engine/extraction/tactics.py. Phase 4 moves them to config/risk_weights.json.
+"""
+
 from sqlalchemy.orm import Session
-from backend.app.models.models import Evidence, Mention, Entity, Association, Analysis
-from ai_engine.extraction.entity_extractor import ORG_CLASS_BY_CANONICAL
 
-RISK_VERSION = "risk@3.1.0"
+from ai_engine.extraction.tactics import ALL_STAGES, CANONICAL_STAGES, STAGE_OF_LABEL, STAGE_WEIGHTS
+from backend.app.models.models import Analysis, Association, Evidence, Mention, TacticEvent
 
-# Phase 1 placeholder cues (blueprint §15 Phase 1: "placeholder risk, simple rule, stores contributions").
-# Phase 2 replaces keyword cues with the tactic classifier. Cues use word boundaries so that
-# e.g. "fir" does not match "confirm".
-URGENCY_RE = re.compile(
-    r"\b(immediately|turant|abhi turant|urgent(ly)?|last warning|within \d+ ?(minutes?|mins?|hours?))\b",
-    re.IGNORECASE,
-)
-THREAT_RE = re.compile(
-    r"\b(arrest(ed)?|warrant|giraftaar|jail|fir|money laundering)\b",
-    re.IGNORECASE,
-)
-BENIGN_RE = re.compile(
-    r"(visit (your )?(nearest )?(bank )?branch|helpline 1930|official (bank )?website|never share)",
-    re.IGNORECASE,
-)
+RISK_VERSION = "risk@3.1.1"
 
-# Institution classes treated as "claimed authority" for the placeholder F1 authority factor.
-# A bank or courier brand merely being mentioned (e.g. a genuine HDFC alert) is not impersonation.
-AUTHORITY_CLASSES = {"CENTRAL_AGENCY", "POLICE", "TELECOM"}
-AUTHORITY_NAMES = {"Reserve Bank of India", "Indian Customs"}
+F1_CAP = 70            # maximum total of the per-stage presence factors
+F2_ORDER_BONUS = 10    # >= 3 stages observed in canonical order
+F3_PER_LINK, F3_CAP = 6, 12
+M1_BENIGN, M2_WEAK, M3_UNCERTAIN = 15, 10, 5
+WEAK_CONFIDENCE = 0.8       # "low confidence" for M2: only the weakest rule tier falls below this
+UNCERTAIN_ENTITY_CONFIDENCE = 0.7
 
 BAND_ORDER = {"LOW": 0, "ELEVATED": 1, "HIGH": 2, "CRITICAL": 3}
 
@@ -40,85 +34,71 @@ def risk_band_for(score: int) -> str:
     return "LOW"
 
 
-def _is_authority(canonical_name: str) -> bool:
-    return (
-        ORG_CLASS_BY_CANONICAL.get(canonical_name) in AUTHORITY_CLASSES
-        or canonical_name in AUTHORITY_NAMES
-    )
+def _longest_canonical_run(first_utterance: dict[str, int]) -> tuple[int, str | None]:
+    """Longest strictly increasing run (by canonical stage order) in the order stages first appeared.
+    Returns (length, last stage of one longest run)."""
+    appeared = sorted((s for s in first_utterance if s in CANONICAL_STAGES),
+                      key=lambda s: (first_utterance[s], CANONICAL_STAGES.index(s)))
+    pos = [CANONICAL_STAGES.index(s) for s in appeared]
+    best, best_end = 0, None
+    lengths = [1] * len(pos)
+    for i in range(len(pos)):
+        for j in range(i):
+            if pos[j] < pos[i]:
+                lengths[i] = max(lengths[i], lengths[j] + 1)
+        if lengths[i] > best:
+            best, best_end = lengths[i], appeared[i]
+    return best, best_end
 
 
-def _first_evidence_matching(evidence_items: list[Evidence], pattern: re.Pattern) -> Evidence | None:
-    for ev in evidence_items:
-        if pattern.search(ev.normalised_text or ev.original_text):
-            return ev
-    return None
+def calculate_risk(db: Session, incident_id: int, injection_flagged: bool = False) -> tuple[int, str, list[dict]]:
+    """Return (score, band, ledger). If `injection_flagged`, no mitigating factor is applied: a manipulation
+    attempt can never lower the score (§6.4 safety floor)."""
+    events = db.query(TacticEvent).filter(TacticEvent.incident_id == incident_id).all()
 
+    # Best event per stage (highest confidence, then earliest utterance) and first appearance per stage
+    best: dict[str, TacticEvent] = {}
+    first_utterance: dict[str, int] = {}
+    legitimate_seen = False
+    for ev in events:
+        if ev.label == "LEGITIMATE":
+            legitimate_seen = True
+        stage = STAGE_OF_LABEL.get(ev.label)
+        if stage is None:
+            continue
+        if stage not in best or (-ev.confidence, ev.utterance_id) < (-best[stage].confidence, best[stage].utterance_id):
+            best[stage] = ev
+        first_utterance[stage] = min(first_utterance.get(stage, ev.utterance_id), ev.utterance_id)
 
-def calculate_baseline_risk(db: Session, incident_id: int) -> tuple[int, str, list[dict]]:
-    """
-    Calculate baseline risk heuristic (0-100) and construct contribution ledger (§6.9).
-    Risk is an experimental heuristic, NOT a probability of fraud, and is NOT calibrated.
-    Contributions sum exactly to the displayed score.
-    """
-    evidence_items = (
-        db.query(Evidence).filter(Evidence.incident_id == incident_id).order_by(Evidence.id).all()
-    )
-    if not evidence_items:
-        return 0, "LOW", []
+    ledger: list[dict] = []
 
-    contributions: list[dict] = []
-
-    def add(factor: str, ev_ref: str, value: int, explanation: str) -> None:
-        contributions.append({
-            "factor": factor,
-            "evidence_ref": ev_ref,
-            "rule_version": RISK_VERSION,
-            "contribution": value,
-            "effect": "SUPPORTING" if value > 0 else "MITIGATING",
-            "explanation": explanation,
+    def add(factor: str, ref: str, value: int, explanation: str) -> None:
+        ledger.append({
+            "factor": factor, "evidence_ref": ref, "rule_version": RISK_VERSION, "contribution": value,
+            "effect": "SUPPORTING" if value > 0 else "MITIGATING", "explanation": explanation,
         })
 
-    # First mention (evidence id) of each entity type, plus authority organisations.
-    mention_rows = (
-        db.query(Mention, Entity)
-        .join(Evidence, Mention.evidence_id == Evidence.id)
-        .join(Entity, Mention.entity_id == Entity.id)
-        .filter(Evidence.incident_id == incident_id)
-        .order_by(Mention.id)
-        .all()
-    )
-    first_ev_for_type: dict[str, int] = {}
-    authority_ev: int | None = None
-    for m, ent in mention_rows:
-        first_ev_for_type.setdefault(ent.type, m.evidence_id)
-        if ent.type == "ORGANISATION" and authority_ev is None and _is_authority(ent.canonical_value):
-            authority_ev = m.evidence_id
+    def running() -> int:
+        return sum(c["contribution"] for c in ledger)
 
-    # F1: tactic presence (placeholder cues)
-    if "UPI_HANDLE" in first_ev_for_type:
-        add("F1 tactic presence (Financial Demand via UPI)",
-            f"evidence:{first_ev_for_type['UPI_HANDLE']}", 18,
-            "A UPI payment handle appears in the evidence.")
-    if authority_ev is not None:
-        add("F1 tactic presence (Authority Impersonation)",
-            f"evidence:{authority_ev}", 14,
-            "Names a law-enforcement, customs, telecom or regulatory body (claimed authority).")
-    if "URL" in first_ev_for_type:
-        add("F1 tactic presence (Unsolicited URL)",
-            f"evidence:{first_ev_for_type['URL']}", 12,
-            "A web link appears in the evidence (never fetched by VIGIL).")
+    # F1: tactic presence, once per distinct stage
+    for stage in ALL_STAGES:
+        if stage in best:
+            ev = best[stage]
+            add(f"F1 tactic presence: {stage}", f"utterance:{ev.utterance_id}", STAGE_WEIGHTS[stage],
+                f"The {stage.lower()} stage was detected ({ev.label}, rule confidence {ev.confidence:.2f}).")
+    f1_total = running()
+    if f1_total > F1_CAP:
+        add("F1 cap", "global", F1_CAP - f1_total,
+            f"Tactic-presence factors are capped at +{F1_CAP} in total.")
 
-    urgency_ev = _first_evidence_matching(evidence_items, URGENCY_RE)
-    if urgency_ev:
-        add("F1 tactic presence (Urgency)", f"evidence:{urgency_ev.id}", 8,
-            "Urgency or deadline wording is present.")
+    # F2: canonical progression
+    run_len, run_end = _longest_canonical_run(first_utterance)
+    if run_len >= 3:
+        add("F2 canonical order observed", f"utterance:{best[run_end].utterance_id}", F2_ORDER_BONUS,
+            f"{run_len} stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand).")
 
-    threat_ev = _first_evidence_matching(evidence_items, THREAT_RE)
-    if threat_ev:
-        add("F1 tactic presence (Threat & Intimidation)", f"evidence:{threat_ev.id}", 14,
-            "Wording about arrest, warrants, FIR or similar legal threats is present.")
-
-    # F3: OBSERVED_MATCH to an incident whose own risk band is >= ELEVATED (+6 each, cap +12).
+    # F3: OBSERVED_MATCH to an incident whose own risk band is >= ELEVATED (+6 each, cap +12)
     observed = (
         db.query(Association)
         .filter(
@@ -131,27 +111,45 @@ def calculate_baseline_risk(db: Session, incident_id: int) -> tuple[int, str, li
     qualifying: list[Association] = []
     for assoc in observed:
         other_id = assoc.incident_b_id if assoc.incident_a_id == incident_id else assoc.incident_a_id
-        other = (
-            db.query(Analysis).filter(Analysis.incident_id == other_id).order_by(Analysis.id.desc()).first()
-        )
+        other = db.query(Analysis).filter(Analysis.incident_id == other_id).order_by(Analysis.id.desc()).first()
         if other and BAND_ORDER.get(other.risk_band, 0) >= BAND_ORDER["ELEVATED"]:
             qualifying.append(assoc)
     if qualifying:
-        add("F3 OBSERVED_MATCH to a higher-risk incident",
-            f"assoc:{qualifying[0].id}", min(12, 6 * len(qualifying)),
-            f"Shares an identical normalised identifier with {len(qualifying)} incident(s) "
-            "scoring ELEVATED or above. This is an observation, not proof of one campaign.")
+        add("F3 OBSERVED_MATCH to a higher-risk incident", f"assoc:{qualifying[0].id}",
+            min(F3_CAP, F3_PER_LINK * len(qualifying)),
+            f"Shares an identical normalised identifier with {len(qualifying)} incident(s) scoring ELEVATED "
+            "or above. This is an observation, not proof of one campaign.")
 
-    # M1: benign-context cues, only when no payment handle is requested.
-    benign_ev = _first_evidence_matching(evidence_items, BENIGN_RE)
-    supporting_so_far = sum(c["contribution"] for c in contributions)
-    if benign_ev and "UPI_HANDLE" not in first_ev_for_type and supporting_so_far > 0:
-        add("M1 benign-context cues", f"evidence:{benign_ev.id}", -min(15, supporting_so_far),
-            "Directs the reader to an official channel and requests no payment handle.")
+    # Mitigating factors. Each is limited to what has been added so far, so the score never goes below 0.
+    if not injection_flagged and running() > 0:
+        has_demand = "DEMAND" in best or "CREDENTIAL" in best
+        if legitimate_seen and not has_demand:
+            add("M1 benign-context cues", f"utterance:{_first_legit_utterance(events)}",
+                -min(M1_BENIGN, running()),
+                "Directs the reader to an official channel or gives safety advice, and requests no payment or credentials.")
+        if running() > 0 and len(best) == 1 and next(iter(best.values())).confidence < WEAK_CONFIDENCE:
+            only = next(iter(best.values()))
+            add("M2 weak evidence", f"utterance:{only.utterance_id}", -min(M2_WEAK, running()),
+                "Only one stage was detected, and only by a low-confidence rule.")
+        if running() > 0 and _has_uncertain_entity(db, incident_id):
+            add("M3 uncertain extraction", "global", -min(M3_UNCERTAIN, running()),
+                "An extracted identifier has low extraction confidence.")
 
-    # Clamp to 0..100 while keeping the ledger exact: record the clamp as its own contribution.
-    raw = sum(c["contribution"] for c in contributions)
-    if raw > 100:
+    raw = running()
+    if raw > 100:  # unreachable with the current weights (maximum 92); kept so the ledger stays exact
         add("Cap at 100", "global", 100 - raw, "Score capped at the 100-point maximum.")
-    final_score = max(0, min(100, raw))
-    return final_score, risk_band_for(final_score), contributions
+    score = max(0, min(100, running()))
+    return score, risk_band_for(score), ledger
+
+
+def _first_legit_utterance(events: list[TacticEvent]) -> int:
+    return min(ev.utterance_id for ev in events if ev.label == "LEGITIMATE")
+
+
+def _has_uncertain_entity(db: Session, incident_id: int) -> bool:
+    return (
+        db.query(Mention)
+        .join(Evidence, Mention.evidence_id == Evidence.id)
+        .filter(Evidence.incident_id == incident_id, Mention.extraction_confidence < UNCERTAIN_ENTITY_CONFIDENCE)
+        .first()
+    ) is not None
