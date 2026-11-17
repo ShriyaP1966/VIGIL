@@ -11,6 +11,9 @@ import { basisLabel, basisTone, confidencePct, linkSummary, statusTone } from '.
 interface CampaignsProps {
   canReview: boolean;
   refreshKey: number;
+  /** Hypothesis chosen by the URL (/campaigns/<id>); null means "show the first one". */
+  selectedId: number | null;
+  onSelect: (id: number) => void;
   onInspectAssociation: (assocId: number) => void;
   onSelectIncident: (id: number) => void;
   onChanged: () => void;
@@ -21,10 +24,10 @@ const bandText = (band: string) =>
   band === 'ELEVATED' ? 'text-risk-elevated' : 'text-risk-low';
 
 export const Campaigns: React.FC<CampaignsProps> = ({
-  canReview, refreshKey, onInspectAssociation, onSelectIncident, onChanged,
+  canReview, refreshKey, selectedId, onSelect, onInspectAssociation, onSelectIncident, onChanged,
 }) => {
   const [list, setList] = useState<CampaignListItem[]>([]);
-  const [selected, setSelected] = useState<number | null>(null);
+  const selected = selectedId ?? list[0]?.id ?? null;
   const [detail, setDetail] = useState<CampaignDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,6 @@ export const Campaigns: React.FC<CampaignsProps> = ({
         const items = await apiClient.listCampaigns();
         if (cancelled) return;
         setList(items);
-        setSelected(prev => (prev != null && items.some(i => i.id === prev) ? prev : items[0]?.id ?? null));
       } catch (e: any) {
         if (!cancelled) setError(e?.message || 'Failed to load campaign hypotheses.');
       } finally {
@@ -49,8 +51,10 @@ export const Campaigns: React.FC<CampaignsProps> = ({
   }, [refreshKey]);
 
   useEffect(() => {
-    if (selected == null) { setDetail(null); return; }
+    setDetail(null);
+    if (selected == null) return;
     let cancelled = false;
+    setError(null);
     apiClient.getCampaign(selected)
       .then(d => { if (!cancelled) setDetail(d); })
       .catch((e: any) => { if (!cancelled) setError(e?.message || 'Failed to load this hypothesis.'); });
@@ -64,7 +68,7 @@ export const Campaigns: React.FC<CampaignsProps> = ({
   }, [selected, onChanged]);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">Campaign hypotheses</h1>
         <p className="text-sm text-text-secondary mt-1 max-w-3xl">
@@ -95,7 +99,7 @@ export const Campaigns: React.FC<CampaignsProps> = ({
               <li key={c.id}>
                 <button
                   type="button"
-                  onClick={() => setSelected(c.id)}
+                  onClick={() => onSelect(c.id)}
                   aria-pressed={selected === c.id}
                   className={`w-full text-left bg-bg-card border rounded-lg p-4 space-y-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
                     selected === c.id ? 'border-accent-primary' : 'border-border-subtle hover:border-accent-primary/50'

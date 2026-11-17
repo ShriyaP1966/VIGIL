@@ -11,16 +11,19 @@ import { ScenarioLab } from './pages/ScenarioLab';
 import { SimulatedLiveCall } from './pages/SimulatedLiveCall';
 import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
+import { NotFound } from './pages/NotFound';
 import { apiClient, ApiMode } from './services/api/client';
 import { ViewMode, AssociationInspectorData, NodeInspectorInfo, ReviewDecision } from './types';
+import { getRouter, useRoute } from './router';
+import { TITLES, pathFor, sectionOf } from './router/routes';
 
 export const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewMode>('overview');
-  const [selectedIncidentId, setSelectedIncidentId] = useState<number | null>(null);
+  const route = useRoute();
+  const router = getRouter();
+
   const [apiMode, setApiMode] = useState<ApiMode>('waking');
   const [association, setAssociation] = useState<AssociationInspectorData | null>(null);
   const [nodeInfo, setNodeInfo] = useState<NodeInspectorInfo | null>(null);
-  const [inspectorOpen, setInspectorOpen] = useState(false);
   const [inspectorError, setInspectorError] = useState<string | null>(null);
   // Bumped after a review so the graph and the campaign pages re-read the (changed) associations.
   const [refreshKey, setRefreshKey] = useState(0);
@@ -31,27 +34,51 @@ export const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const closeInspector = useCallback(() => setInspectorOpen(false), []);
+  // The page title follows the URL.
+  useEffect(() => {
+    document.title = `${TITLES[route.view]} · VIGIL`;
+  }, [route.view]);
 
-  const handleNavigate = (view: ViewMode, id?: number) => {
-    if (id !== undefined) {
-      setSelectedIncidentId(id);
+  // A node inspector belongs to the page it was opened on.
+  useEffect(() => { setNodeInfo(null); }, [route.path]);
+
+  // The evidence inspector is part of the URL (?assoc=<id>): load it whenever that parameter is present, so a
+  // refresh or a pasted link reopens it, in live and in static demo mode alike.
+  useEffect(() => {
+    if (route.assocId == null) {
+      setAssociation(null);
+      return;
     }
-    setCurrentView(view);
-    setInspectorOpen(false);
-  };
-
-  const handleInspectAssociation = async (assocId: number) => {
+    let cancelled = false;
     setInspectorError(null);
-    try {
-      const data = await apiClient.getAssociationInspector(assocId);
-      setAssociation(data);
-      setNodeInfo(null);
-      setInspectorOpen(true);
-    } catch (e: any) {
-      setInspectorError(e?.message || 'Failed to load the evidence inspector.');
-    }
+    apiClient.getAssociationInspector(route.assocId)
+      .then((data) => { if (!cancelled) { setAssociation(data); setNodeInfo(null); } })
+      .catch((e: any) => {
+        if (!cancelled) {
+          setAssociation(null);
+          setInspectorError(e?.message || 'Failed to load the evidence inspector.');
+        }
+      });
+    return () => { cancelled = true; };
+  }, [route.assocId]);
+
+  const handleNavigate = (view: ViewMode, id?: number) => router.navigate(pathFor(view, id));
+
+  const handleInspectAssociation = (assocId: number) => {
+    setInspectorError(null);
+    router.openAssociation(assocId);
   };
+
+  const handleInspectNode = (info: NodeInspectorInfo) => {
+    setInspectorError(null);
+    if (route.assocId != null) router.navigate(route.path, { replace: true });   // one inspector at a time
+    setNodeInfo(info);
+  };
+
+  const closeInspector = useCallback(() => {
+    if (route.assocId != null) router.closeAssociation();
+    else setNodeInfo(null);
+  }, [route.assocId, router]);
 
   const handleReviewAssociation = async (id: number, decision: ReviewDecision, note: string) => {
     const updated = await apiClient.reviewAssociation(id, decision, note);   // errors surface in the review controls
@@ -59,16 +86,12 @@ export const App: React.FC = () => {
     setRefreshKey(k => k + 1);
   };
 
-  const handleInspectNode = (info: NodeInspectorInfo) => {
-    setInspectorError(null);
-    setNodeInfo(info);
-    setAssociation(null);
-    setInspectorOpen(true);
-  };
+  const shownAssociation = route.assocId != null && association?.id === route.assocId ? association : null;
+  const inspectorOpen = shownAssociation != null || (route.assocId == null && nodeInfo != null);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-bg-main text-text-primary">
-      <Sidebar currentView={currentView} onNavigate={(view) => handleNavigate(view)} />
+      <Sidebar currentView={sectionOf(route)} />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <TopBar apiMode={apiMode} onNewInvestigation={() => handleNavigate('new_investigation')} />
@@ -81,27 +104,28 @@ export const App: React.FC = () => {
         )}
 
         <main className="flex-1 overflow-y-auto">
-          {currentView === 'overview' && (
+          {route.view === 'overview' && (
             <Overview onNavigate={(view, id) => handleNavigate(view, id)} />
           )}
 
-          {currentView === 'new_investigation' && (
+          {route.view === 'new_investigation' && (
             <NewInvestigation
               apiMode={apiMode}
               onSuccess={(id) => handleNavigate('investigation_detail', id)}
             />
           )}
 
-          {currentView === 'investigation_detail' && selectedIncidentId && (
+          {route.view === 'investigation_detail' && route.incidentId != null && (
             <InvestigationDetail
-              incidentId={selectedIncidentId}
+              key={route.incidentId}
+              incidentId={route.incidentId}
               onBack={() => handleNavigate('overview')}
               onOpenGraph={() => handleNavigate('graph')}
               onInspectAssociation={handleInspectAssociation}
             />
           )}
 
-          {currentView === 'graph' && (
+          {route.view === 'graph' && (
             <IntelligenceGraph
               refreshKey={refreshKey}
               onInspectAssociation={handleInspectAssociation}
@@ -110,25 +134,29 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'campaigns' && (
+          {route.view === 'campaigns' && (
             <Campaigns
               canReview={canReview}
               refreshKey={refreshKey}
+              selectedId={route.campaignId ?? null}
+              onSelect={(id) => handleNavigate('campaigns', id)}
               onInspectAssociation={handleInspectAssociation}
               onSelectIncident={(id) => handleNavigate('investigation_detail', id)}
               onChanged={() => setRefreshKey(k => k + 1)}
             />
           )}
-          {currentView === 'scenario_lab' && <ScenarioLab />}
-          {currentView === 'simulated_live_call' && <SimulatedLiveCall />}
-          {currentView === 'reports' && <Reports />}
-          {currentView === 'settings' && <Settings apiMode={apiMode} />}
+
+          {route.view === 'scenario_lab' && <ScenarioLab />}
+          {route.view === 'simulated_live_call' && <SimulatedLiveCall />}
+          {route.view === 'reports' && <Reports />}
+          {route.view === 'settings' && <Settings apiMode={apiMode} />}
+          {route.view === 'not_found' && <NotFound path={route.path} />}
         </main>
       </div>
 
       <InspectorShell
-        association={association}
-        node={nodeInfo}
+        association={shownAssociation}
+        node={route.assocId == null ? nodeInfo : null}
         isOpen={inspectorOpen}
         onClose={closeInspector}
         onOpenIncident={(id) => handleNavigate('investigation_detail', id)}

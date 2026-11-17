@@ -11,10 +11,14 @@ import {
   Settings as SettingsIcon
 } from 'lucide-react';
 import { ViewMode } from '../../types';
+import { Link } from '../../router';
+import { pathFor } from '../../router/routes';
 
 interface SidebarProps {
-  currentView: ViewMode;
-  onNavigate: (view: ViewMode) => void;
+  /** The section the current URL belongs to (null on the not-found page). */
+  currentView: ViewMode | null;
+  /** Called after a navigation link is followed (the mobile drawer closes itself with it). */
+  onNavigate?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => {
@@ -51,10 +55,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
           const Icon = item.icon;
           const isActive = currentView === item.id;
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => onNavigate(item.id as ViewMode)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+              to={pathFor(item.id as ViewMode)}
+              onNavigate={onNavigate}
+              aria-current={isActive ? 'page' : undefined}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
                 isActive 
                   ? 'bg-bg-elevated text-accent-primary border-l-2 border-accent-primary font-semibold' 
                   : 'text-text-secondary hover:text-text-primary hover:bg-bg-card'
@@ -67,7 +73,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate }) => 
                   {item.badge}
                 </span>
               )}
-            </button>
+            </Link>
           );
         })}
       </nav>
