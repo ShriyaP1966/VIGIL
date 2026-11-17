@@ -1,0 +1,22 @@
+{
+ "version": "ce@3.1.0",
+ "note": "Counter-evidence rules (blueprint 6.10). Severities and confidence impacts are a-priori priors set by the developer, not probabilities and not learned. Any HIGH finding makes an association DISPUTED_ASSOCIATION; adjusted_confidence = clip(base_confidence + sum of impacts, 0, 1). CE-6 and CE-8 are deferred (see 'status').",
+ "rules": [
+  {"id": "CE-1", "kind": "INCOMPATIBLE_CHRONOLOGY", "severity": "HIGH", "confidence_impact": -0.30, "status": "implemented",
+   "params": {"min_shared_stages": 3, "max_order_consistency": 0.6}},
+  {"id": "CE-2", "kind": "DIFFERENT_PAYMENT_DESTINATION", "severity": "MEDIUM", "confidence_impact": -0.10, "status": "implemented",
+   "params": {"anchor_types": ["PHONE", "DOMAIN"]}},
+  {"id": "CE-3", "kind": "BENIGN_CONTEXT_IDENTIFIER", "severity": "HIGH", "confidence_impact": -0.40, "status": "implemented",
+   "params": {}},
+  {"id": "CE-4", "kind": "WEAK_ENTITY_EXTRACTION", "severity": "MEDIUM", "confidence_impact": -0.15, "status": "implemented (minimal)",
+   "params": {"min_extraction_confidence": 0.7}},
+  {"id": "CE-5", "kind": "INCONSISTENT_IMPERSONATION", "severity": "MEDIUM", "confidence_impact": -0.10, "status": "implemented",
+   "params": {}},
+  {"id": "CE-6", "kind": "SINGLE_WEAK_SIGNAL", "severity": "MEDIUM", "confidence_impact": -0.15, "status": "deferred",
+   "params": {}},
+  {"id": "CE-7", "kind": "LANGUAGE_DIFFERENCE", "severity": "LOW", "confidence_impact": -0.02, "status": "implemented",
+   "params": {}},
+  {"id": "CE-8", "kind": "TEMPORAL_GAP", "severity": "LOW", "confidence_impact": -0.10, "status": "deferred",
+   "params": {"recurrence_window_days": 90}}
+ ]
+}

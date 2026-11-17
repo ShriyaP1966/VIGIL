@@ -96,6 +96,8 @@ def mask_identifier(val: str, entity_type: str) -> str:
     if not val:
         return val
     if entity_type == "PHONE":
+        if val == "1930":          # a public helpline short code is not personal data
+            return val
         clean = val.replace(" ", "")
         if clean.startswith("+91") and len(clean) >= 12:
             return f"+91 {clean[3:5]}•••••{clean[-2:]}"

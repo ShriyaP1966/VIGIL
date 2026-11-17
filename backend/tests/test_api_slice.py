@@ -1,4 +1,5 @@
 """End-to-end tests of the Phase 1 vertical slice through the real HTTP API."""
+import pytest
 
 SHARED_UPI = "verify-cbi@okhdfcbank"
 
@@ -67,8 +68,15 @@ def test_inspector_payload_shows_shared_identifier_and_excerpts(client):
     # I5: at least one evidence reference with an excerpt from each incident
     assert {ev["incident_id"] for ev in payload["evidence"]} == {a["id"], b["id"]}
     assert all(ev["excerpt"] for ev in payload["evidence"])
-    # Counter-evidence is stored separately (none expected in Phase 1)
-    assert payload["counter_evidence"] == []
+    # Counter-evidence is stored separately: these two calls claim different institutions (CBI vs Customs)
+    # and use different languages (Hinglish vs English), so CE-5 (MEDIUM) and CE-7 (LOW) fire.
+    ce = {c["rule_id"]: c for c in payload["counter_evidence"]}
+    assert set(ce) == {"CE-5", "CE-7"}
+    assert (ce["CE-5"]["severity"], ce["CE-5"]["confidence_impact"]) == ("MEDIUM", -0.10)
+    assert (ce["CE-7"]["severity"], ce["CE-7"]["confidence_impact"]) == ("LOW", -0.02)
+    assert all(c["observation"] and c["explanation"] for c in ce.values())
+    assert payload["status"] == "OBSERVED_MATCH"                       # no HIGH finding, so not disputed
+    assert payload["adjusted_confidence"] == pytest.approx(payload["base_confidence"] - 0.12)
 
 
 def test_risk_ledger_sums_exactly_to_score(client):

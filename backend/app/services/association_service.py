@@ -290,6 +290,16 @@ def _strip_playbook_scores(assoc: Association) -> None:
         assoc.match_type = "EXACT_IDENTIFIER"
 
 
+def _system_playbook(db: Session, assoc: Association) -> bool:
+    """A behaviour-only association the engine created and no analyst has touched (candidate, or disputed
+    by a counter-evidence rule). Only these may be refreshed or withdrawn by the engine."""
+    return (
+        assoc.match_type == "PLAYBOOK"
+        and assoc.status in ("CANDIDATE_ASSOCIATION", "DISPUTED_ASSOCIATION")
+        and db.query(Review).filter(Review.target_type == "association", Review.target_id == assoc.id).first() is None
+    )
+
+
 def update_playbook_candidates(db: Session, incident_id: int, t_candidate: float = DEFAULT_T_CANDIDATE) -> None:
     """Compare this incident's fingerprint with every other incident's latest fingerprint and keep the
     behaviour-based associations in step. A fingerprint can only ever produce CANDIDATE_ASSOCIATION (I2):
@@ -322,7 +332,7 @@ def update_playbook_candidates(db: Session, incident_id: int, t_candidate: float
                     explanation=_playbook_explanation(fa, fb, result, t_candidate),
                     algorithm_version=FINGERPRINT_VERSION,
                 ))
-            elif existing.status == "CANDIDATE_ASSOCIATION" and existing.match_type == "PLAYBOOK":
+            elif _system_playbook(db, existing):
                 existing.similarity = existing.base_confidence = existing.adjusted_confidence = result.playbook_sim
                 existing.component_scores_json = json.dumps(scores)
                 existing.supporting_evidence_json = json.dumps(_stage_evidence(db, a_id) + _stage_evidence(db, b_id))
@@ -334,7 +344,7 @@ def update_playbook_candidates(db: Session, incident_id: int, t_candidate: float
                 existing.similarity = result.playbook_sim
                 existing.match_type = "COMBINED"
         elif existing is not None:
-            if existing.status == "CANDIDATE_ASSOCIATION" and existing.match_type == "PLAYBOOK":
+            if _system_playbook(db, existing):
                 db.delete(existing)            # nothing supports it any more and no analyst touched it
             elif existing.status == "OBSERVED_MATCH" and existing.match_type == "COMBINED":
                 _strip_playbook_scores(existing)

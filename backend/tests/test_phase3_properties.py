@@ -18,7 +18,9 @@ from sqlalchemy.pool import StaticPool
 from ai_engine.fingerprint.similarity import DEFAULT_T_CANDIDATE, Fingerprint, compare
 from backend.app.core.database import Base
 from backend.app.models import models  # noqa: F401
-from backend.app.models.models import Analysis, Association, Campaign, CampaignMember, Entity, Evidence, Incident, Mention, Review
+from backend.app.models.models import (
+    Analysis, Association, Campaign, CampaignMember, CounterEvidence, Entity, Evidence, Incident, Mention, Review,
+)
 from backend.app.schemas.schemas import EvidenceCreate, IncidentCreate
 from backend.app.services.association_service import LINKABLE_TYPES
 from backend.app.services.incident_service import create_incident, run_incident_analysis
@@ -94,14 +96,21 @@ def test_i1_observed_matches_are_exactly_the_pairs_that_share_an_exact_identifie
     observed = {(a.incident_a_id, a.incident_b_id) for a in db.query(Association).filter(Association.status == "OBSERVED_MATCH")}
     sharing = {(a.incident_a_id, a.incident_b_id) for a in db.query(Association)
                if json.loads(a.shared_entity_ids_json)}
-    assert observed == oracle == sharing                 # nothing missed, nothing invented
+    assert sharing == oracle                             # every exact-identifier pair has an association, none invented
+    assert observed <= oracle                            # an observed match always rests on an exact identifier
+    # A pair that shares an identifier but is not (or no longer) an observed match was disputed by a HIGH
+    # counter-evidence finding (e.g. a shared public helpline), never silently dropped.
+    for a in db.query(Association):
+        if (a.incident_a_id, a.incident_b_id) in oracle - observed:
+            assert a.status == "DISPUTED_ASSOCIATION"
+            assert any(c.severity == "HIGH" for c in db.query(CounterEvidence).filter(CounterEvidence.association_id == a.id))
 
 
 def test_i2_behaviour_only_links_are_never_observed_or_analyst_set(world):
     db, _ = world
     for a in db.query(Association):
         if a.match_type == "PLAYBOOK":
-            assert a.status == "CANDIDATE_ASSOCIATION"
+            assert a.status in ("CANDIDATE_ASSOCIATION", "DISPUTED_ASSOCIATION")   # disputed only by a counter-evidence rule
             assert json.loads(a.shared_entity_ids_json) == []
         if a.status == "OBSERVED_MATCH":
             assert a.match_type in ("EXACT_IDENTIFIER", "COMBINED") and json.loads(a.shared_entity_ids_json)
@@ -122,13 +131,20 @@ def test_i5_every_association_has_evidence_and_an_explanation(world):
 # Decoys and legitimate incidents fail the gate
 # ---------------------------------------------------------------------------------------------
 
-def test_no_legitimate_incident_is_ever_linked(world):
+def test_no_legitimate_incident_is_ever_linked_by_behaviour_or_stays_connected(world):
     db, records = world
     legit_titles = {r["incident_id"] for r in records if r["scenario_type"] == "legitimate"}
     assert len(legit_titles) >= 15
     t = names(db)
-    for a in db.query(Association):
-        assert t[a.incident_a_id] not in legit_titles and t[a.incident_b_id] not in legit_titles
+    touching = [a for a in db.query(Association)
+                if t[a.incident_a_id] in legit_titles or t[a.incident_b_id] in legit_titles]
+    for a in touching:
+        # The only way a legitimate notice meets another incident is a shared public identifier (the national
+        # helpline 1930); counter-evidence rule CE-3 disputes it, so it never connects incidents.
+        assert a.match_type != "PLAYBOOK" and a.status == "DISPUTED_ASSOCIATION"
+        assert any(c.rule_id == "CE-3" for c in db.query(CounterEvidence).filter(CounterEvidence.association_id == a.id))
+    legit_ids = {i for i, title in t.items() if title in legit_titles}
+    assert not [m for m in db.query(CampaignMember) if m.incident_id in legit_ids]
 
 
 def test_same_tactics_in_reverse_chronology_fails_the_gate():
@@ -209,10 +225,11 @@ def test_engine_output_equals_the_specification_for_every_pair(world):
             expected_candidates += 1
             assert row is not None, f"missing association for pair {a_id}-{b_id}"
             assert row.similarity == pytest.approx(res.playbook_sim)
-            assert row.status in ("CANDIDATE_ASSOCIATION", "OBSERVED_MATCH")
+            assert row.status in ("CANDIDATE_ASSOCIATION", "OBSERVED_MATCH", "DISPUTED_ASSOCIATION")
         elif row is not None:
             # without a candidate-level similarity the only legitimate link is an exact identifier match
-            assert row.status == "OBSERVED_MATCH" and row.match_type == "EXACT_IDENTIFIER"
+            # (observed, or disputed by counter-evidence)
+            assert row.status in ("OBSERVED_MATCH", "DISPUTED_ASSOCIATION") and row.match_type == "EXACT_IDENTIFIER"
     assert expected_candidates == sum(1 for r in stored.values() if r.similarity is not None)
 
 

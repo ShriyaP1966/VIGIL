@@ -52,6 +52,13 @@ ORG_GAZETTEER = {
 
 ORG_CLASS_BY_CANONICAL = {canonical: inst for canonical, inst in ORG_GAZETTEER.values()}
 
+PUBLIC_HELPLINE = "1930"   # India's National Cyber Crime Helpline
+# "helpline ... 1930", "toll free 1930", "dial 1930", "call 1930": explicit forms only
+_HELPLINE_RES = [
+    re.compile(r"\b(?:helpline|help\s*line|toll[\s-]*free)\b[^.\n]{0,15}?\b(1930)(?!\d)", re.IGNORECASE),
+    re.compile(r"\b(?:dial|call)\s+(?:the\s+)?(1930)(?!\d)", re.IGNORECASE),
+]
+
 _URL_RE = re.compile(r"https?://[^\s<>\"'`]+", re.IGNORECASE)
 _URL_TRAILING_PUNCT = ".,;:!?)]}'\""
 _TRACKING_PARAMS = {"fbclid", "gclid", "msclkid", "igshid", "mc_cid", "mc_eid"}
@@ -103,6 +110,17 @@ def extract_entities(text: str) -> list[EntityMentionData]:
 
     entities: list[EntityMentionData] = []
     seen_canonical = set()
+
+    # 0. Public short-code helplines. Only the national cyber crime helpline 1930, and only when the text
+    #    says it is a helpline/number to call, so that a bare year such as "1930" is never extracted.
+    for helpline_re in _HELPLINE_RES:
+        for m in helpline_re.finditer(text):
+            if PUBLIC_HELPLINE not in seen_canonical:
+                seen_canonical.add(PUBLIC_HELPLINE)
+                entities.append(EntityMentionData(
+                    entity_type="PHONE", raw_value=m.group(1), canonical_value=PUBLIC_HELPLINE,
+                    norm_method="public_shortcode", span_start=m.start(1), span_end=m.end(1), confidence=0.9,
+                ))
 
     # 1. Extract Phone Numbers using phonenumbers
     try:

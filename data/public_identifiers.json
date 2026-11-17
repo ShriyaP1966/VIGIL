@@ -1,0 +1,22 @@
+{
+ "version": "public_identifiers@1.0",
+ "note": "Official public identifiers. A shared mention of one of these is NOT evidence that two incidents are related (counter-evidence rule CE-3): genuine bank alerts and scam calls alike cite them. The list is a small, non-exhaustive starter set; whoever maintains it must verify each entry against the official source before relying on it. Domains match exactly or as a parent of a subdomain.",
+ "identifiers": [
+  {"type": "PHONE", "canonical": "1930", "description": "National Cyber Crime Helpline"},
+  {"type": "DOMAIN", "canonical": "cybercrime.gov.in", "description": "National Cyber Crime Reporting Portal"},
+  {"type": "DOMAIN", "canonical": "i4c.mha.gov.in", "description": "Indian Cyber Crime Coordination Centre (I4C)"},
+  {"type": "DOMAIN", "canonical": "mha.gov.in", "description": "Ministry of Home Affairs"},
+  {"type": "DOMAIN", "canonical": "cert-in.org.in", "description": "CERT-In"},
+  {"type": "DOMAIN", "canonical": "sancharsaathi.gov.in", "description": "Sanchar Saathi (Department of Telecommunications)"},
+  {"type": "DOMAIN", "canonical": "trai.gov.in", "description": "Telecom Regulatory Authority of India"},
+  {"type": "DOMAIN", "canonical": "uidai.gov.in", "description": "UIDAI (Aadhaar)"},
+  {"type": "DOMAIN", "canonical": "incometax.gov.in", "description": "Income Tax Department e-filing portal"},
+  {"type": "DOMAIN", "canonical": "rbi.org.in", "description": "Reserve Bank of India"},
+  {"type": "DOMAIN", "canonical": "npci.org.in", "description": "National Payments Corporation of India"},
+  {"type": "DOMAIN", "canonical": "indiapost.gov.in", "description": "India Post"},
+  {"type": "DOMAIN", "canonical": "sbi.co.in", "description": "State Bank of India"},
+  {"type": "DOMAIN", "canonical": "hdfcbank.com", "description": "HDFC Bank"},
+  {"type": "DOMAIN", "canonical": "icicibank.com", "description": "ICICI Bank"},
+  {"type": "DOMAIN", "canonical": "pnbindia.in", "description": "Punjab National Bank"}
+ ]
+}

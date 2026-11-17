@@ -17,6 +17,7 @@ from ai_engine.extraction.normalisation import normalise_text, compute_sha256, d
 from ai_engine.extraction.entity_extractor import extract_entities
 from backend.app.core.config import settings
 from backend.app.services.campaign_service import rebuild_campaigns
+from backend.app.services.counter_evidence_service import evaluate_incident_associations
 from backend.app.services.association_service import find_or_create_observed_matches, update_playbook_candidates
 from backend.app.services.risk_service import RISK_VERSION, calculate_risk
 
@@ -232,6 +233,20 @@ def _extract_and_store_tactics(db: Session, incident_id: int) -> tuple[Extractio
     return result, fingerprint, flag_ids([f for flags in injection_flags for f in flags])
 
 
+def _refresh_risk(db: Session, analysis: Analysis, injection_flagged: bool) -> None:
+    """Recompute the risk score and ledger of an existing analysis (same row, same version)."""
+    score, band, contributions = calculate_risk(db, analysis.incident_id, injection_flagged=injection_flagged)
+    analysis.risk_score, analysis.risk_band = score, band
+    db.query(RiskContribution).filter(RiskContribution.analysis_id == analysis.id).delete()
+    for c in contributions:
+        db.add(RiskContribution(
+            analysis_id=analysis.id, factor=c["factor"], evidence_ref=c.get("evidence_ref"),
+            rule_version=c["rule_version"], contribution=c["contribution"], effect=c["effect"],
+            explanation=c["explanation"],
+        ))
+    db.commit()
+
+
 def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True) -> Analysis:
     """
     Run full end-to-end analysis on an incident:
@@ -286,10 +301,15 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
     #    observed or analyst-set association, I2)
     update_playbook_candidates(db, incident_id, settings.T_CANDIDATE)
 
+    # 6. Counter-evidence: why these links might NOT hold. A HIGH finding makes a link DISPUTED; if a link
+    #    flipped between observed and disputed, the risk ledger (F3) must not count it, so it is recomputed.
+    if evaluate_incident_associations(db, incident_id):
+        _refresh_risk(db, analysis, injection_flagged=bool(injection_ids))
+
     if _propagate:
         linked = db.query(Association).filter(
             (Association.incident_a_id == incident_id) | (Association.incident_b_id == incident_id),
-            Association.status == "OBSERVED_MATCH",
+            Association.status.in_(("OBSERVED_MATCH", "DISPUTED_ASSOCIATION")),
         ).all()
         counterparts = {
             a.incident_b_id if a.incident_a_id == incident_id else a.incident_a_id for a in linked
