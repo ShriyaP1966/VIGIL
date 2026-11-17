@@ -145,6 +145,59 @@ export interface GraphData {
   edges: GraphEdge[];
 }
 
+export type ReviewDecision = 'ACCEPT' | 'REJECT' | 'FLAG';
+
+export type CampaignStatus = 'HYPOTHESIS_UNREVIEWED' | 'ACCEPTED_BY_ANALYST' | 'REJECTED_BY_ANALYST' | 'FLAGGED';
+
+/** A campaign HYPOTHESIS. It is never called "confirmed", even after an analyst accepts it. */
+export interface CampaignListItem {
+  id: number;
+  hypothesis_title: string;
+  status: CampaignStatus;
+  status_label: string;
+  confidence: number;
+  member_count: number;
+  basis_counts: Record<string, number>;
+  weakest_link_association_id?: number | null;
+  incident_ids: number[];
+}
+
+export interface CampaignMemberView {
+  incident_id: number;
+  title: string;
+  source_channel: string;
+  language: string;
+  risk_score: number;
+  risk_band: RiskBand;
+  membership_basis: 'OBSERVED' | 'CANDIDATE' | 'ANALYST';
+  stage_sequence: string[];
+  institution_class: string;
+  payment_channel: string;
+}
+
+export interface CampaignLink {
+  id: number;
+  incident_a_id: number;
+  incident_b_id: number;
+  status: AssociationStatus;
+  match_type: string;
+  similarity?: number | null;
+  adjusted_confidence: number;
+  explanation: string;
+  is_weakest: boolean;
+}
+
+export interface CampaignDetail extends CampaignListItem {
+  members: CampaignMemberView[];
+  links: CampaignLink[];
+  excluded_links: CampaignLink[];
+  shared_indicators: Array<{ type: string; display_value: string; incident_ids: number[] }>;
+  counter_evidence: Array<Record<string, unknown>>;
+  review: { state: string; history: Array<{ id: number; decision: string; note?: string | null; previous_status: string; new_status: string; created_at: string }> };
+  disclaimer: string;
+  versions: Record<string, string>;
+}
+
 /** What the inspector shows when a graph node (not an association edge) is selected. */
 export type NodeInspectorInfo =
   | { kind: 'incident'; node: GraphNode }
@@ -174,6 +227,8 @@ export interface AssociationInspectorData {
     canonical_value?: string;
     display_value?: string;
     excerpt: string;
+    /** Playbook stage this excerpt shows (behavioural associations only). */
+    stage?: string;
   }>;
   counter_evidence: Array<{
     id: number;

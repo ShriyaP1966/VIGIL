@@ -12,7 +12,7 @@
         "language": "hi-Latn",
         "status": "open",
         "risk_score": 86,
-        "created_at": "2026-11-17T13:19:48.281053"
+        "created_at": "2026-11-17T13:38:25.939460"
       }
     },
     {
@@ -27,7 +27,7 @@
         "language": "en",
         "status": "open",
         "risk_score": 58,
-        "created_at": "2026-11-17T13:19:48.457049"
+        "created_at": "2026-11-17T13:38:26.074677"
       }
     },
     {
@@ -42,7 +42,22 @@
         "language": "en",
         "status": "open",
         "risk_score": 0,
-        "created_at": "2026-11-17T13:19:48.553432"
+        "created_at": "2026-11-17T13:38:26.144932"
+      }
+    },
+    {
+      "id": "incident_4",
+      "type": "incident",
+      "label": "INC-0004: CBI-style call with rota",
+      "risk_band": "CRITICAL",
+      "details": {
+        "incident_id": 4,
+        "title": "CBI-style call with rotated identifiers",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 80,
+        "created_at": "2026-11-17T13:38:26.171724"
       }
     },
     {
@@ -82,6 +97,19 @@
         "canonical_value": "Indian Customs",
         "display_value": "Indian Customs",
         "norm_method": "gazetteer_alias"
+      }
+    },
+    {
+      "id": "entity_4",
+      "type": "upi_handle",
+      "label": "cl•••@okicici",
+      "risk_band": null,
+      "details": {
+        "entity_id": 4,
+        "type": "UPI_HANDLE",
+        "canonical_value": "clearance47@okicici",
+        "display_value": "cl•••@okicici",
+        "norm_method": "lower_case"
       }
     }
   ],
@@ -142,6 +170,28 @@
       "explanation": null
     },
     {
+      "id": "struct_4_4",
+      "source": "incident_4",
+      "target": "entity_4",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.95,
+      "status": null,
+      "explanation": null
+    },
+    {
+      "id": "struct_4_2",
+      "source": "incident_4",
+      "target": "entity_2",
+      "type": "structural",
+      "label": "mentions",
+      "similarity": null,
+      "confidence": 0.92,
+      "status": null,
+      "explanation": null
+    },
+    {
       "id": "assoc_1",
       "source": "incident_1",
       "target": "incident_2",
@@ -151,6 +201,17 @@
       "confidence": 0.75,
       "status": "OBSERVED_MATCH",
       "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents."
+    },
+    {
+      "id": "assoc_2",
+      "source": "incident_1",
+      "target": "incident_4",
+      "type": "CANDIDATE_ASSOCIATION",
+      "label": "100%",
+      "similarity": 1.0,
+      "confidence": 1.0,
+      "status": "CANDIDATE_ASSOCIATION",
+      "explanation": "Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used."
     }
   ]
 }

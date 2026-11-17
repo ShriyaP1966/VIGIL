@@ -1,0 +1,119 @@
+{
+  "id": 1,
+  "hypothesis_title": "Campaign hypothesis: 3 related incidents (claimed institution: Central Agency)",
+  "status": "HYPOTHESIS_UNREVIEWED",
+  "status_label": "Hypothesis (unreviewed)",
+  "confidence": 0.875,
+  "member_count": 3,
+  "basis_counts": {
+    "OBSERVED": 2,
+    "CANDIDATE": 1
+  },
+  "weakest_link_association_id": 1,
+  "incident_ids": [
+    1,
+    2,
+    4
+  ],
+  "members": [
+    {
+      "incident_id": 1,
+      "title": "Digital Arrest Threat — CBI Officer Impersonation",
+      "source_channel": "call",
+      "language": "hi-Latn",
+      "risk_score": 86,
+      "risk_band": "CRITICAL",
+      "membership_basis": "OBSERVED",
+      "stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ],
+      "institution_class": "CENTRAL_AGENCY",
+      "payment_channel": "UPI"
+    },
+    {
+      "incident_id": 2,
+      "title": "Customs Contraband Parcel Demand",
+      "source_channel": "call",
+      "language": "en",
+      "risk_score": 58,
+      "risk_band": "ELEVATED",
+      "membership_basis": "OBSERVED",
+      "stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "URGENCY",
+        "DEMAND"
+      ],
+      "institution_class": "COURIER_CUSTOMS",
+      "payment_channel": "UPI"
+    },
+    {
+      "incident_id": 4,
+      "title": "CBI-style call with rotated identifiers",
+      "source_channel": "call",
+      "language": "en",
+      "risk_score": 80,
+      "risk_band": "CRITICAL",
+      "membership_basis": "CANDIDATE",
+      "stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ],
+      "institution_class": "CENTRAL_AGENCY",
+      "payment_channel": "UPI"
+    }
+  ],
+  "links": [
+    {
+      "id": 1,
+      "incident_a_id": 1,
+      "incident_b_id": 2,
+      "status": "OBSERVED_MATCH",
+      "match_type": "EXACT_IDENTIFIER",
+      "similarity": null,
+      "adjusted_confidence": 0.75,
+      "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents.",
+      "is_weakest": true
+    },
+    {
+      "id": 2,
+      "incident_a_id": 1,
+      "incident_b_id": 4,
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "similarity": 1.0,
+      "adjusted_confidence": 1.0,
+      "explanation": "Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used.",
+      "is_weakest": false
+    }
+  ],
+  "excluded_links": [],
+  "shared_indicators": [
+    {
+      "type": "UPI_HANDLE",
+      "display_value": "ve•••@okhdfcbank",
+      "incident_ids": [
+        1,
+        2
+      ]
+    }
+  ],
+  "counter_evidence": [],
+  "review": {
+    "state": "UNREVIEWED",
+    "history": []
+  },
+  "disclaimer": "A campaign hypothesis groups incidents that may be related, based on observed identifiers and similar behaviour. It is not a confirmed finding and does not attribute activity to any person or organisation. Analyst review is required before it is relied on.",
+  "versions": {
+    "algorithm": "campaign@3.1.0"
+  }
+}

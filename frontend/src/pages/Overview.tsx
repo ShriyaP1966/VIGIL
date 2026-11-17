@@ -89,7 +89,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             <Layers className="w-4 h-4 text-accent-secondary" />
           </div>
           <div className="text-2xl font-bold font-mono text-text-primary">{candidateAssocs}</div>
-          <div className="text-[11px] text-text-muted mt-1">Playbook engine arrives in a later phase</div>
+          <div className="text-[11px] text-text-muted mt-1">Similar script, no shared identifier</div>
         </div>
 
         <div className="bg-bg-card border border-border-subtle rounded-lg p-5">

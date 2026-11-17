@@ -54,7 +54,7 @@
     "extractor": "regex_gazetteer@3.1.0"
   },
   "review": {
-    "state": "OBSERVED_MATCH",
+    "state": "UNREVIEWED",
     "history": []
   }
 }

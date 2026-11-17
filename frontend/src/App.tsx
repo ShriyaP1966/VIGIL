@@ -12,7 +12,7 @@ import { SimulatedLiveCall } from './pages/SimulatedLiveCall';
 import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
 import { apiClient, ApiMode } from './services/api/client';
-import { ViewMode, AssociationInspectorData, NodeInspectorInfo } from './types';
+import { ViewMode, AssociationInspectorData, NodeInspectorInfo, ReviewDecision } from './types';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
@@ -22,6 +22,9 @@ export const App: React.FC = () => {
   const [nodeInfo, setNodeInfo] = useState<NodeInspectorInfo | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const [inspectorError, setInspectorError] = useState<string | null>(null);
+  // Bumped after a review so the graph and the campaign pages re-read the (changed) associations.
+  const [refreshKey, setRefreshKey] = useState(0);
+  const canReview = apiMode === 'live';
 
   useEffect(() => {
     const unsubscribe = apiClient.subscribeMode((mode) => setApiMode(mode));
@@ -48,6 +51,12 @@ export const App: React.FC = () => {
     } catch (e: any) {
       setInspectorError(e?.message || 'Failed to load the evidence inspector.');
     }
+  };
+
+  const handleReviewAssociation = async (id: number, decision: ReviewDecision, note: string) => {
+    const updated = await apiClient.reviewAssociation(id, decision, note);   // errors surface in the review controls
+    setAssociation(updated);
+    setRefreshKey(k => k + 1);
   };
 
   const handleInspectNode = (info: NodeInspectorInfo) => {
@@ -94,13 +103,22 @@ export const App: React.FC = () => {
 
           {currentView === 'graph' && (
             <IntelligenceGraph
+              refreshKey={refreshKey}
               onInspectAssociation={handleInspectAssociation}
               onInspectNode={handleInspectNode}
               onSelectIncident={(id) => handleNavigate('investigation_detail', id)}
             />
           )}
 
-          {currentView === 'campaigns' && <Campaigns />}
+          {currentView === 'campaigns' && (
+            <Campaigns
+              canReview={canReview}
+              refreshKey={refreshKey}
+              onInspectAssociation={handleInspectAssociation}
+              onSelectIncident={(id) => handleNavigate('investigation_detail', id)}
+              onChanged={() => setRefreshKey(k => k + 1)}
+            />
+          )}
           {currentView === 'scenario_lab' && <ScenarioLab />}
           {currentView === 'simulated_live_call' && <SimulatedLiveCall />}
           {currentView === 'reports' && <Reports />}
@@ -114,6 +132,8 @@ export const App: React.FC = () => {
         isOpen={inspectorOpen}
         onClose={closeInspector}
         onOpenIncident={(id) => handleNavigate('investigation_detail', id)}
+        canReview={canReview}
+        onReviewAssociation={handleReviewAssociation}
       />
     </div>
   );

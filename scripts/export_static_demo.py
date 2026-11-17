@@ -71,14 +71,20 @@ def export() -> None:
         for assoc_id in assoc_ids:
             _write(f"association_{assoc_id}.json", client.get(f"/api/v1/associations/{assoc_id}").json())
 
+        campaigns = client.get("/api/v1/campaigns").json()
+        _write("campaigns.json", campaigns)
+        for campaign in campaigns:
+            _write(f"campaign_{campaign['id']}.json", client.get(f"/api/v1/campaigns/{campaign['id']}").json())
+
         _write("meta.json", {
             "synthetic": True,
             "generated_by": "scripts/export_static_demo.py",
             "note": "Precomputed from the real pipeline on synthetic seed data. Not real incidents.",
             "incidents": len(incidents),
             "associations": len(assoc_ids),
+            "campaign_hypotheses": len(campaigns),
         })
-        print(f"Done: {len(incidents)} incidents, {len(assoc_ids)} association(s).")
+        print(f"Done: {len(incidents)} incidents, {len(assoc_ids)} association(s), {len(campaigns)} campaign hypothesis(es).")
     finally:
         app.dependency_overrides.clear()
 

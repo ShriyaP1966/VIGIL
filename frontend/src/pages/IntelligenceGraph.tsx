@@ -20,12 +20,15 @@ const nodeTypes = { vigil: VigilNode };
 const STATUS_FILTERS = ['ALL', 'OBSERVED_MATCH', 'CANDIDATE_ASSOCIATION', 'DISPUTED_ASSOCIATION'] as const;
 
 interface IntelligenceGraphProps {
+  /** Changes after an analyst review so the graph re-reads the associations. */
+  refreshKey: number;
   onInspectAssociation: (assocId: number) => void;
   onInspectNode: (info: NodeInspectorInfo) => void;
   onSelectIncident: (id: number) => void;
 }
 
 export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
+  refreshKey,
   onInspectAssociation,
   onInspectNode,
   onSelectIncident,
@@ -49,7 +52,7 @@ export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { void load(); }, [load, refreshKey]);
 
   const { nodes, edges } = useMemo(
     () => (graphData ? buildFlowElements(graphData, { status: statusFilter, showStructural }) : { nodes: [], edges: [] }),
@@ -132,11 +135,15 @@ export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
         </span>
         <span className="flex items-center gap-2">
           <span className="w-5 border-t-2 border-dashed" style={{ borderColor: EDGE_COLORS.CANDIDATE_ASSOCIATION }} aria-hidden="true" />
-          Dashed amber = candidate (playbook), available in a later phase
+          <span><strong className="text-text-primary">Dashed amber = candidate.</strong> Similar script, no shared identifier; the label is the similarity.</span>
         </span>
         <span className="flex items-center gap-2">
           <span className="w-5 border-t-2 border-dashed" style={{ borderColor: EDGE_COLORS.DISPUTED_ASSOCIATION }} aria-hidden="true" />
-          Dashed red = disputed by counter-evidence, available in a later phase
+          Dashed red = disputed (flagged by an analyst)
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="w-5 h-1 rounded" style={{ background: EDGE_COLORS.ANALYST_VERIFIED_ASSOCIATION }} aria-hidden="true" />
+          Thick teal = accepted by an analyst
         </span>
       </div>
 

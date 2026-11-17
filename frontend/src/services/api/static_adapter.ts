@@ -1,4 +1,7 @@
-import { GraphData, IncidentDetail, IncidentListItem, AssociationInspectorData } from '../../types';
+import {
+  GraphData, IncidentDetail, IncidentListItem, AssociationInspectorData,
+  CampaignDetail, CampaignListItem, ReviewDecision,
+} from '../../types';
 import { DEMO_DATA_BASE } from './config';
 import { LiveBackendRequiredError } from './errors';
 
@@ -34,6 +37,22 @@ export const staticAdapter = {
 
   getAssociationInspector(assocId: number): Promise<AssociationInspectorData> {
     return loadDemo(`association_${assocId}.json`);
+  },
+
+  listCampaigns(): Promise<CampaignListItem[]> {
+    return loadDemo('campaigns.json');
+  },
+
+  getCampaign(id: number): Promise<CampaignDetail> {
+    return loadDemo(`campaign_${id}.json`);
+  },
+
+  async reviewAssociation(_id: number, _decision: ReviewDecision, _note?: string): Promise<AssociationInspectorData> {
+    throw new LiveBackendRequiredError('Saving an analyst review');
+  },
+
+  async reviewCampaign(_id: number, _decision: ReviewDecision, _note?: string): Promise<CampaignDetail> {
+    throw new LiveBackendRequiredError('Saving an analyst review');
   },
 
   async clearAllData(): Promise<void> {

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X, AlertTriangle, ExternalLink, HelpCircle, Info } from 'lucide-react';
-import { AssociationInspectorData, NodeInspectorInfo } from '../../types';
+import { AssociationInspectorData, NodeInspectorInfo, ReviewDecision } from '../../types';
+import { ReviewControls } from '../review/ReviewControls';
 
 interface InspectorShellProps {
   association: AssociationInspectorData | null;
@@ -8,7 +9,21 @@ interface InspectorShellProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenIncident: (id: number) => void;
+  /** False in the hosted static demo: reviews need the live backend. */
+  canReview: boolean;
+  onReviewAssociation: (id: number, decision: ReviewDecision, note: string) => Promise<void>;
 }
+
+const COMPONENT_LABELS: Record<string, string> = {
+  seq_sim: 'Sequence similarity',
+  lcs_sim: 'Shared run (strict)',
+  containment_adj: 'Containment (damped)',
+  order_ok: 'Order consistency',
+  inst_match: 'Institution match',
+  pay_match: 'Payment match',
+  playbook_sim: 'Playbook similarity',
+  exact_identifier_match: 'Exact identifier match',
+};
 
 const SectionTitle: React.FC<{ icon?: React.ReactNode; children: React.ReactNode }> = ({ icon, children }) => (
   <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
@@ -17,8 +32,21 @@ const SectionTitle: React.FC<{ icon?: React.ReactNode; children: React.ReactNode
   </h4>
 );
 
-const AssociationPanel: React.FC<{ data: AssociationInspectorData }> = ({ data }) => (
+const AssociationPanel: React.FC<{
+  data: AssociationInspectorData;
+  canReview: boolean;
+  onReview: (decision: ReviewDecision, note: string) => Promise<void>;
+}> = ({ data, canReview, onReview }) => (
   <>
+    {data.match_type === 'PLAYBOOK' && data.status === 'CANDIDATE_ASSOCIATION' && (
+      <div className="flex gap-2 text-[11px] leading-snug text-text-secondary bg-risk-elevated/10 border border-risk-elevated/30 rounded-md p-2.5">
+        <Info className="w-4 h-4 shrink-0 text-risk-elevated" aria-hidden="true" />
+        <span>
+          Candidate: the two incidents follow a similar script, but <strong>no identifier is shared</strong>.
+          This is a lead to investigate, not a confirmed link. Language and channel were not used.
+        </span>
+      </div>
+    )}
     {data.status === 'OBSERVED_MATCH' && (
       <div className="flex gap-2 text-[11px] leading-snug text-text-secondary bg-accent-primary/10 border border-accent-primary/30 rounded-md p-2.5">
         <Info className="w-4 h-4 shrink-0 text-accent-primary" aria-hidden="true" />
@@ -68,6 +96,25 @@ const AssociationPanel: React.FC<{ data: AssociationInspectorData }> = ({ data }
       <p className="text-[10px] text-text-muted mt-1.5">Confidence is a prior for this link, not a probability of fraud.</p>
     </div>
 
+    {Object.keys(data.component_scores).some(k => k in COMPONENT_LABELS) && (
+      <div>
+        <SectionTitle>How the similarity is built</SectionTitle>
+        <dl className="grid grid-cols-2 gap-2 text-xs">
+          {Object.entries(data.component_scores)
+            .filter(([k]) => k in COMPONENT_LABELS)
+            .map(([k, v]) => (
+              <div key={k} className="bg-bg-main p-2 rounded border border-border-subtle">
+                <dt className="text-[10px] text-text-muted">{COMPONENT_LABELS[k]}</dt>
+                <dd className="font-mono text-text-primary font-semibold">{(Number(v) * 100).toFixed(0)}%</dd>
+              </div>
+            ))}
+        </dl>
+        <p className="text-[10px] text-text-muted mt-1.5">
+          Weights are a-priori design choices, not learned. Dwell-time similarity is not used.
+        </p>
+      </div>
+    )}
+
     {data.shared_entities.length > 0 && (
       <div>
         <SectionTitle>Shared identifier</SectionTitle>
@@ -96,7 +143,7 @@ const AssociationPanel: React.FC<{ data: AssociationInspectorData }> = ({ data }
           <div key={idx} className="bg-bg-main p-2.5 rounded border border-border-subtle text-xs space-y-1">
             <div className="flex justify-between text-[10px] text-text-muted font-mono">
               <span>Incident #{ev.incident_id}</span>
-              <span>Evidence #{ev.evidence_id}</span>
+              <span>{ev.stage ? `${ev.stage} · ` : ''}Evidence #{ev.evidence_id}</span>
             </div>
             {/* Evidence is untrusted text: rendered as plain text, never as HTML. */}
             <p className="text-text-secondary italic bg-bg-card p-2 rounded border border-border-subtle/50 break-words">
@@ -114,6 +161,7 @@ const AssociationPanel: React.FC<{ data: AssociationInspectorData }> = ({ data }
       {data.counter_evidence.length === 0 ? (
         <div className="text-xs text-text-muted bg-bg-main/50 p-3 rounded border border-border-subtle">
           None recorded. The counter-evidence engine arrives in a later phase, so this does not mean the link is uncontested.
+          Contradictions an analyst flags are recorded in the review history below.
         </div>
       ) : (
         <div className="space-y-2">
@@ -133,14 +181,17 @@ const AssociationPanel: React.FC<{ data: AssociationInspectorData }> = ({ data }
     </div>
 
     <div className="pt-2 border-t border-border-subtle flex flex-wrap justify-between gap-x-4 text-[10px] font-mono text-text-muted">
-      <span>Algorithm: {data.versions?.algorithm}</span>
+      <span>Method: {data.match_type.replace(/_/g, ' ').toLowerCase()} · Algorithm: {data.versions?.algorithm}</span>
       <span>Extractor: {data.versions?.extractor}</span>
     </div>
 
-    <div className="text-[11px] text-text-muted bg-bg-elevated/40 border border-border-subtle rounded p-2.5">
-      <strong className="text-text-secondary">Review state: {data.review.state.replace(/_/g, ' ').toLowerCase()}.</strong>{' '}
-      Analyst Accept / Reject / Flag controls arrive in a later phase; no review has been recorded.
-    </div>
+    <ReviewControls
+      subject="link"
+      state={data.review.state}
+      history={data.review.history}
+      canReview={canReview}
+      onReview={onReview}
+    />
   </>
 );
 
@@ -210,7 +261,9 @@ const NodePanel: React.FC<{ info: NodeInspectorInfo; onOpenIncident: (id: number
   );
 };
 
-export const InspectorShell: React.FC<InspectorShellProps> = ({ association, node, isOpen, onClose, onOpenIncident }) => {
+export const InspectorShell: React.FC<InspectorShellProps> = ({
+  association, node, isOpen, onClose, onOpenIncident, canReview, onReviewAssociation,
+}) => {
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -250,7 +303,13 @@ export const InspectorShell: React.FC<InspectorShellProps> = ({ association, nod
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-5 text-sm">
-        {association ? <AssociationPanel data={association} /> : node ? <NodePanel info={node} onOpenIncident={onOpenIncident} /> : null}
+        {association ? (
+          <AssociationPanel
+            data={association}
+            canReview={canReview}
+            onReview={(decision, note) => onReviewAssociation(association.id, decision, note)}
+          />
+        ) : node ? <NodePanel info={node} onOpenIncident={onOpenIncident} /> : null}
       </div>
     </aside>
   );

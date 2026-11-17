@@ -1,0 +1,198 @@
+{
+  "id": 2,
+  "status": "CANDIDATE_ASSOCIATION",
+  "match_type": "PLAYBOOK",
+  "incidents": [
+    {
+      "id": 1,
+      "title": "Digital Arrest Threat — CBI Officer Impersonation"
+    },
+    {
+      "id": 4,
+      "title": "CBI-style call with rotated identifiers"
+    }
+  ],
+  "similarity": 1.0,
+  "base_confidence": 1.0,
+  "adjusted_confidence": 1.0,
+  "component_scores": {
+    "seq_sim": 1.0,
+    "lcs_sim": 1.0,
+    "containment_adj": 1.0,
+    "order_ok": 1.0,
+    "inst_match": 1.0,
+    "pay_match": 1.0,
+    "playbook_sim": 1.0,
+    "lcs": 6.0,
+    "t_candidate": 0.75
+  },
+  "shared_entities": [],
+  "evidence": [
+    {
+      "evidence_id": 1,
+      "incident_id": 1,
+      "stage": "AUTHORITY",
+      "label": "AUTHORITY_IMPERSONATION",
+      "utterance_id": 1,
+      "span": [
+        0,
+        16
+      ],
+      "excerpt": "Main CBI officer",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 1,
+      "incident_id": 1,
+      "stage": "ALLEGATION",
+      "label": "FALSE_ALLEGATION",
+      "utterance_id": 1,
+      "span": [
+        46,
+        83
+      ],
+      "excerpt": "Aapke Aadhaar card par illegal parcel",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 1,
+      "incident_id": 1,
+      "stage": "THREAT",
+      "label": "THREAT_INTIMIDATION",
+      "utterance_id": 3,
+      "span": [
+        16,
+        30
+      ],
+      "excerpt": "arrest warrant",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 1,
+      "incident_id": 1,
+      "stage": "ISOLATION",
+      "label": "ISOLATION",
+      "utterance_id": 3,
+      "span": [
+        138,
+        149
+      ],
+      "excerpt": "Kisi ko mat",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 1,
+      "incident_id": 1,
+      "stage": "URGENCY",
+      "label": "URGENCY",
+      "utterance_id": 3,
+      "span": [
+        9,
+        15
+      ],
+      "excerpt": "turant",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 1,
+      "incident_id": 1,
+      "stage": "DEMAND",
+      "label": "FINANCIAL_DEMAND",
+      "utterance_id": 3,
+      "span": [
+        61,
+        116
+      ],
+      "excerpt": "verification deposit 50000 rupees verify-cbi@okhdfcbank",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 4,
+      "incident_id": 4,
+      "stage": "AUTHORITY",
+      "label": "AUTHORITY_IMPERSONATION",
+      "utterance_id": 8,
+      "span": [
+        0,
+        39
+      ],
+      "excerpt": "This is Officer Anil Verma from the CBI",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 4,
+      "incident_id": 4,
+      "stage": "ALLEGATION",
+      "label": "FALSE_ALLEGATION",
+      "utterance_id": 8,
+      "span": [
+        61,
+        101
+      ],
+      "excerpt": "SIM card is linked to a money laundering",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 4,
+      "incident_id": 4,
+      "stage": "THREAT",
+      "label": "THREAT_INTIMIDATION",
+      "utterance_id": 10,
+      "span": [
+        0,
+        20
+      ],
+      "excerpt": "You will be arrested",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 4,
+      "incident_id": 4,
+      "stage": "ISOLATION",
+      "label": "ISOLATION",
+      "utterance_id": 10,
+      "span": [
+        40,
+        58
+      ],
+      "excerpt": "Do not tell anyone",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 4,
+      "incident_id": 4,
+      "stage": "URGENCY",
+      "label": "URGENCY",
+      "utterance_id": 10,
+      "span": [
+        21,
+        38
+      ],
+      "excerpt": "within 30 minutes",
+      "extractor": "rules@1.0"
+    },
+    {
+      "evidence_id": 4,
+      "incident_id": 4,
+      "stage": "DEMAND",
+      "label": "FINANCIAL_DEMAND",
+      "utterance_id": 11,
+      "span": [
+        0,
+        52
+      ],
+      "excerpt": "Transfer a refundable deposit to clearance47@okicici",
+      "extractor": "rules@1.0"
+    }
+  ],
+  "counter_evidence": [],
+  "explanation": "Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used.",
+  "versions": {
+    "algorithm": "fingerprint@3.1.0",
+    "extractor": "rules@1.0"
+  },
+  "review": {
+    "state": "UNREVIEWED",
+    "history": []
+  }
+}

@@ -5,7 +5,7 @@
   "language": "hi-Latn",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T13:19:48.281053",
+  "created_at": "2026-11-17T13:38:25.939460",
   "evidence_items": [
     {
       "id": 1,
@@ -14,7 +14,7 @@
       "normalised_text": "Caller: Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain.\nVictim: Lekin maine kuch galat nahi kiya.\nCaller: Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
       "sha256": "303033593f8d50aff58fdf0dafb52f14ca7b2628345d4d26e324fbbcf0b43233",
       "provenance": "seed:scenario_01",
-      "timestamp": "2026-11-17T13:19:48.293921",
+      "timestamp": "2026-11-17T13:38:25.948331",
       "entities": [
         {
           "id": 1,

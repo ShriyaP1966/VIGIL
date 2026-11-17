@@ -45,6 +45,17 @@ SEED_INCIDENTS = [
             provenance="seed:scenario_03",
         )],
     ),
+    IncidentCreate(
+        title="CBI-style call with rotated identifiers",
+        source_channel="call",
+        language="en",
+        scenario_id="scenario_04_rotated_identifiers",
+        evidence=[EvidenceCreate(
+            type="transcript",
+            text="Caller: This is Officer Anil Verma from the CBI cyber division. Your SIM card is linked to a money laundering case.\nVictim: I did not do anything.\nCaller: You will be arrested within 30 minutes. Do not tell anyone and stay on the video call.\nCaller: Transfer a refundable deposit to clearance47@okicici.",
+            provenance="seed:scenario_04",
+        )],
+    ),
 ]
 
 

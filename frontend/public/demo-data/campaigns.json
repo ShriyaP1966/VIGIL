@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "hypothesis_title": "Campaign hypothesis: 3 related incidents (claimed institution: Central Agency)",
+    "status": "HYPOTHESIS_UNREVIEWED",
+    "status_label": "Hypothesis (unreviewed)",
+    "confidence": 0.875,
+    "member_count": 3,
+    "basis_counts": {
+      "OBSERVED": 2,
+      "CANDIDATE": 1
+    },
+    "weakest_link_association_id": 1,
+    "incident_ids": [
+      1,
+      2,
+      4
+    ]
+  }
+]

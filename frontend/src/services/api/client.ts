@@ -1,7 +1,10 @@
 import { httpAdapter } from './http_adapter';
 import { staticAdapter } from './static_adapter';
 import { API_BASE_URL } from './config';
-import { GraphData, IncidentDetail, IncidentListItem, AssociationInspectorData } from '../../types';
+import {
+  GraphData, IncidentDetail, IncidentListItem, AssociationInspectorData,
+  CampaignDetail, CampaignListItem, ReviewDecision,
+} from '../../types';
 
 /**
  * live    = backend answered the health probe; the HttpApi adapter is used
@@ -111,6 +114,26 @@ class ApiClient {
   public async getAssociationInspector(assocId: number): Promise<AssociationInspectorData> {
     await this.ready;
     return this.adapter.getAssociationInspector(assocId);
+  }
+
+  public async listCampaigns(): Promise<CampaignListItem[]> {
+    await this.ready;
+    return this.adapter.listCampaigns();
+  }
+
+  public async getCampaign(id: number): Promise<CampaignDetail> {
+    await this.ready;
+    return this.adapter.getCampaign(id);
+  }
+
+  public async reviewAssociation(id: number, decision: ReviewDecision, note?: string): Promise<AssociationInspectorData> {
+    await this.ready;
+    return this.adapter.reviewAssociation(id, decision, note);
+  }
+
+  public async reviewCampaign(id: number, decision: ReviewDecision, note?: string): Promise<CampaignDetail> {
+    await this.ready;
+    return this.adapter.reviewCampaign(id, decision, note);
   }
 
   public async clearAllData(): Promise<void> {
