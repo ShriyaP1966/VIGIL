@@ -12,12 +12,18 @@ Source of truth: `PROJECT_BLUEPRINT.md`, `ARCHITECTURE.md`, `TASK_TRACKER.md`. I
 - Single branch: `main`. No other branches locally or on the remote.
 - Never commit secrets, `.env`, `*.db`/`*.sqlite*`, `.venv/`, `node_modules/`, `dist/`, trained models or media. Only `.env.example` (empty values) is allowed.
 - Run `python scripts/preflight.py` before every commit and before every push. Fix failures; do not bypass.
+- Product wording: the playbook fingerprint recognises a *script family / playbook*, never a specific group, person or organisation.
 - Commit specific paths (`git add <paths>`), check `git status` and `git diff --cached --stat` first.
 
 ## Git rules (user-mandated)
 1. Every commit is authored as `ShriyaP1966 <shriyapatil1966@gmail.com>`. Before any commit, check `git config user.name` and `git config user.email`. If they differ, set them for this repo only (`git config --local`, never `--global`) and tell the user.
 2. No `Co-Authored-By` lines, "Generated with Claude Code" lines, or any other Claude/AI attribution in commit messages or PR descriptions. Plain commit messages only.
-3. Never run `git push`. Commit locally when a chunk of work is done, then tell the user it is ready; they push from their own terminal.
+3. May push to origin main only after preflight and all tests pass. Never force-push, never push any other branch, never rewrite history.
+   - Before each push run `python scripts/preflight.py` and the full test suites; if anything fails, do not push.
+   - Pushes go out under the user's own identity (`ShriyaP1966 <shriyapatil1966@gmail.com>`), using the credentials already configured on this machine. Never change the author, never use any other credentials, never add `Co-Authored-By` or any Claude attribution.
+   - If git asks for a sign-in or the push is rejected, stop and tell the user exactly what it said. No workarounds, never `--force`.
+   - Push after each phase is finished and verified (and after any explicit request), then show that `git ls-remote --heads origin` lists only `main` and that `git log origin/main` matches local.
+   - Commit locally after each numbered work item.
 4. Never amend, rebase or rewrite existing commits. Never force-push.
 
 ## Autonomy
