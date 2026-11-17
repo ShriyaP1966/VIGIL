@@ -1,0 +1,60 @@
+{
+  "id": 1,
+  "status": "OBSERVED_MATCH",
+  "match_type": "EXACT_IDENTIFIER",
+  "incidents": [
+    {
+      "id": 1,
+      "title": "Digital Arrest Threat \u2014 CBI Officer Impersonation"
+    },
+    {
+      "id": 2,
+      "title": "Customs Contraband Parcel Demand"
+    }
+  ],
+  "similarity": null,
+  "base_confidence": 0.75,
+  "adjusted_confidence": 0.75,
+  "component_scores": {
+    "exact_identifier_match": 1.0
+  },
+  "shared_entities": [
+    {
+      "entity_id": 100,
+      "type": "UPI_HANDLE",
+      "canonical_value": "verify-cbi@okhdfcbank",
+      "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
+      "norm_method": "lower_case"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": 10,
+      "incident_id": 1,
+      "entity_id": 100,
+      "entity_type": "UPI_HANDLE",
+      "canonical_value": "verify-cbi@okhdfcbank",
+      "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
+      "excerpt": "Main CBI officer Rajesh Sharma bol raha hoon. Pay verification fee to verify-cbi@okhdfcbank immediately..."
+    },
+    {
+      "evidence_id": 20,
+      "incident_id": 2,
+      "entity_id": 100,
+      "entity_type": "UPI_HANDLE",
+      "canonical_value": "verify-cbi@okhdfcbank",
+      "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
+      "excerpt": "This is Mumbai Customs Department. You are directed to transfer clearance charges immediately to verify-cbi@okhdfcbank within 30 minutes."
+    }
+  ],
+  "counter_evidence": [],
+  "explanation": "Exact normalized UPI_HANDLE 've\u2022\u2022\u2022@okhdfcbank' observed in evidence of both incidents.",
+  "versions": {
+    "algorithm": "vigil@3.1.0",
+    "extractor": "regex_gazetteer@3.1.0"
+  },
+  "review": {
+    "state": "OBSERVED_MATCH",
+    "history": []
+  }
+}

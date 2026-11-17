@@ -1,0 +1,103 @@
+{
+  "nodes": [
+    {
+      "id": "incident_1",
+      "type": "incident",
+      "label": "INC-0001: Digital Arrest Call",
+      "risk_band": "HIGH",
+      "details": {
+        "incident_id": 1,
+        "title": "Digital Arrest Threat \u2014 CBI Officer Impersonation",
+        "channel": "call",
+        "language": "hi-Latn",
+        "status": "open",
+        "risk_score": 78
+      }
+    },
+    {
+      "id": "incident_2",
+      "type": "incident",
+      "label": "INC-0002: Customs Parcel Demand",
+      "risk_band": "HIGH",
+      "details": {
+        "incident_id": 2,
+        "title": "Customs Contraband Parcel Demand",
+        "channel": "call",
+        "language": "en",
+        "status": "open",
+        "risk_score": 72
+      }
+    },
+    {
+      "id": "incident_3",
+      "type": "incident",
+      "label": "INC-0003: Official Branch Alert",
+      "risk_band": "LOW",
+      "details": {
+        "incident_id": 3,
+        "title": "HDFC Official Branch Alert",
+        "channel": "sms",
+        "language": "en",
+        "status": "reviewed",
+        "risk_score": 10
+      }
+    },
+    {
+      "id": "entity_100",
+      "type": "upi_handle",
+      "label": "ve\u2022\u2022\u2022@okhdfcbank",
+      "details": {
+        "entity_id": 100,
+        "type": "UPI_HANDLE",
+        "canonical_value": "verify-cbi@okhdfcbank",
+        "display_value": "ve\u2022\u2022\u2022@okhdfcbank",
+        "norm_method": "lower_case"
+      }
+    },
+    {
+      "id": "entity_101",
+      "type": "organisation",
+      "label": "Central Bureau of Investigation",
+      "details": {
+        "entity_id": 101,
+        "type": "ORGANISATION",
+        "canonical_value": "Central Bureau of Investigation",
+        "display_value": "Central Bureau of Investigation",
+        "norm_method": "gazetteer_alias"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "struct_1_100",
+      "source": "incident_1",
+      "target": "entity_100",
+      "type": "structural",
+      "label": "mentions"
+    },
+    {
+      "id": "struct_2_100",
+      "source": "incident_2",
+      "target": "entity_100",
+      "type": "structural",
+      "label": "mentions"
+    },
+    {
+      "id": "struct_1_101",
+      "source": "incident_1",
+      "target": "entity_101",
+      "type": "structural",
+      "label": "mentions"
+    },
+    {
+      "id": "assoc_1",
+      "source": "incident_1",
+      "target": "incident_2",
+      "type": "OBSERVED_MATCH",
+      "label": "observed match",
+      "confidence": 0.75,
+      "status": "OBSERVED_MATCH",
+      "explanation": "Exact normalized UPI_HANDLE 've\u2022\u2022\u2022@okhdfcbank' observed in evidence of both incidents."
+    }
+  ]
+}
