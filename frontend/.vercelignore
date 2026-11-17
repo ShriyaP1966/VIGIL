@@ -1,0 +1,13 @@
+# Files the Vercel CLI must never upload (it builds from source on Vercel's side)
+node_modules
+dist
+.vercel
+.env
+.env.*
+*.pem
+*.key
+*.db
+*.sqlite*
+*.log
+.vscode
+.idea

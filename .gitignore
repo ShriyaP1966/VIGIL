@@ -18,6 +18,9 @@ build/
 htmlcov/
 coverage/
 
+# Vercel CLI project link (ids only, but machine-local: never commit)
+.vercel/
+
 # Environment variables & secrets (CRITICAL: never commit .env)
 .env
 .env.local
