@@ -12,7 +12,7 @@
 |---|---|---|---|---|
 | **Phase 0** | Foundation & Guardrails | 17 Nov 2026 | ✅ Done (browser walk-through of placeholder pages not recorded) | Deployment scaffold (`deployment/`) |
 | **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | 🟡 Code complete, 2 items open: public deployment (needs Vercel/Render sign-in), in-browser walk-through. Antigravity quota log waived by owner (build moved to Claude Code) | **First Slice Deployed** (Vercel + Render): *not yet* |
-| **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ⚪ Pending | - |
+| **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ✅ Done as scoped by the owner (Gemini, scikit-learn tier and delimiter sandboxing cut); UI not yet viewed in a browser | - |
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ⚪ Pending | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ⚪ Pending | - |
 | **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ⚪ Pending | Static demo data generator export |
@@ -90,24 +90,24 @@
 
 #### Tasks
 - [x] **Secret redaction at ingestion (§5.5), done first as agreed on 17 Nov** (owner-approved scope: OTP, PIN, CVV, passwords, card and Aadhaar numbers; phones, UPI handles and bank account numbers kept). `ai_engine/privacy/redaction.py`, schema-boundary validators plus a fail-closed service backup, `redactions` table, UI note, leak tests for DB, API responses, logs and error paths. Best effort; limits are documented in the README.
-- [ ] Define `Extractor` Protocol and Pydantic data schemas in `ai_engine/extraction/interface.py`.
-- [ ] Implement `RuleMLExtractor`: Appendix A lexicon matching + scikit-learn TF-IDF (word + char n-grams) and Logistic Regression.
-- [ ] Seed lexicon authored in `data/lexicon.json` with English and Hinglish phrases.
-- [ ] Implement `GeminiExtractor` (optional Tier 3): schema-constrained JSON extraction, strict timeout, automatic fallback to `RuleMLExtractor`.
-- [ ] Implement Prompt-Injection Guard: delimiter sandboxing, instruction detection regex, `injection_flags` generation.
-- [ ] Enforce risk safety floor: injection flags prevent generation of mitigating factors.
-- [ ] Implement `scripts/generate_dataset.py` v1: slot-based templates, identifier rotation parameter, Faker names, validation checks.
-- [ ] Implement `scripts/train_classifier.py`: trains baseline model from `data/` in seconds (no binary models committed).
-- [ ] Persist `tactic_events` with confidence scores and text character spans.
-- [ ] Frontend: tactic timeline and highlighted text spans in Investigation Detail; manipulation attempt warning badge.
+- [x] `Extractor` Protocol and Pydantic schemas in `ai_engine/extraction/interface.py` (extended with per-label spans).
+- [x] Rule-based extractor `RuleExtractor` (`ai_engine/extraction/rule_extractor.py`): Appendix A lexicon rules, offline, deterministic. **The scikit-learn tier was cut by the owner**, so there is no `RuleMLExtractor` ML component.
+- [x] Lexicon in `data/lexicon.json` (English, Hinglish, a few Devanagari Hindi and Marathi patterns), generated from `scripts/build_lexicon.py`.
+- [~] ~~`GeminiExtractor`~~ **Cut by the owner** (deadline). `fallback_used` stays `false`; the offline path is the only path.
+- [x] Prompt-injection guard: instruction-detection regex layer, `injection_flags`. **Delimiter sandboxing cut by the owner** (it only matters with an LLM in the loop).
+- [x] Risk safety floor: a flagged incident gets no mitigating factor; flagged spans are masked before tactic extraction.
+- [x] `scripts/generate_dataset.py` v1: slot templates, rotation parameter, validator. *(Built-in name lists; Faker was not installed or needed.)*
+- [~] ~~`scripts/train_classifier.py`~~ **Cut by the owner** along with the scikit-learn classifier.
+- [x] `tactic_events` persisted with confidence and span; replaced on re-analysis. Stage-based risk (F1/F2/F3/M1-M3) with an exact-sum ledger, `risk@3.1.1`.
+- [x] Frontend: tactic timeline, highlighted transcript spans, manipulation-attempt badge. *(Built, type-checked and logic-tested; not yet viewed in a browser.)*
 
 #### Done Means Checkpoint
-- [ ] `python scripts/generate_dataset.py --seed 1` outputs valid JSONL < 1 MB.
-- [ ] Classifier trains in < 10 seconds; `evaluate_model.py --suite tactics` reports macro-F1 on template-held-out splits.
-- [ ] Pipeline runs 100% offline with no API key configured.
-- [ ] When configured with an invalid Gemini key or forced network timeout, system falls back gracefully to `RuleMLExtractor` with `fallback_used: true`.
-- [ ] 10 adversarial injection test transcripts trigger the manipulation badge with zero reduction in computed risk.
-- [ ] Investigation Detail highlights exact text spans for extracted tactics.
+- [x] `python scripts/generate_dataset.py --seed 1` outputs valid JSONL < 1 MB. *(178,584 bytes; 112 incidents; byte-identical on regeneration.)*
+- [x] `evaluate_model.py --suite tactics` reports per-label P/R/F1 and macro-F1 on template-held-out splits. *(Classifier training is moot: that tier was cut. Test split, run once on the frozen lexicon: macro-F1 0.964. Dev 0.991, train 0.973. Synthetic same-author data, so optimistic. See DEVELOPMENT_LOG.md Session 4 for the weak spots.)*
+- [x] Pipeline runs 100% offline with no API key configured.
+- [x] ~~Invalid Gemini key or timeout falls back to the rule extractor.~~ **Not applicable: Gemini was cut.**
+- [x] 10 adversarial injection test transcripts trigger the manipulation badge with zero reduction in computed risk. *(10/10 flagged, labels and risk unchanged; the attacks are the developer's own, so this is optimistic; limitations are documented.)*
+- [x] Investigation Detail highlights exact text spans for extracted tactics. *(Implemented and unit-tested; not yet viewed in a browser.)*
 
 ---
 

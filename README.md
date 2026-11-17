@@ -21,18 +21,21 @@
 
 ## Project status
 
-This README describes the full v3.1 design. **Only the Phase 1 vertical slice is implemented so far**; everything else below is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
+This README describes the full v3.1 design. **Phases 1 and 2 are implemented so far**; everything in the right-hand column is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
 
-| Implemented (Phase 1) | Planned (not built yet) |
+| Implemented (Phases 1-2) | Planned (not built yet) |
 |---|---|
-| Paste evidence, SHA-256 provenance, NFKC normalisation | Tactic classification, injection guard (Phase 2) |
-| Phone / UPI / email / URL / domain / organisation extraction, masked display | Playbook fingerprint, candidate associations, campaign hypotheses (Phase 3) |
-| Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | |
-| `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | Counter-evidence engine, full inspector, analyst review (Phase 4) |
-| Placeholder risk indicator with an exact contribution ledger | Evaluation and the rotation experiment (Phase 5) |
-| Graph (React Flow), evidence inspector, static precomputed demo mode | Simulated live call, reports, scenario lab UI (Phase 6) |
+| Paste evidence, SHA-256 provenance, NFKC normalisation | Playbook fingerprint similarity, candidate associations, campaign hypotheses (Phase 3) |
+| Phone / UPI / email / URL / domain / organisation extraction, masked display | Full temporal engine (dwell, recurrence window) (Phase 3) |
+| Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | Counter-evidence engine, full inspector, analyst review (Phase 4) |
+| `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | Rotation experiment and the remaining evaluation suites (Phase 5) |
+| Rule-based tactic extraction (English, Hinglish, a few Hindi/Marathi patterns) with exact spans | Simulated live call, reports, scenario lab UI (Phase 6) |
+| Stage-based risk indicator with an exact contribution ledger | Gemini extractor and ML classifier: **cut**, not planned for the deadline |
+| Prompt-injection guard (regex), manipulation badge, no mitigation for flagged text | |
+| Tactic timeline and highlighted transcript; graph (React Flow), evidence inspector, static demo mode | |
+| Synthetic dataset generator v1 and the `tactics` / `injection` evaluation suites | |
 
-No evaluation results exist yet, and none are claimed.
+**Evaluation so far (Phase 2 only).** On the held-out *test templates* of the synthetic dataset the rule extractor scores macro-F1 0.964 (authority-claim recall 0.80 and allegation precision 0.77 are the weak spots). The 10 injection attacks are all flagged. All of this is synthetic data written by the same author as the rules, so the numbers are optimistic and do not predict real-world performance. Reproduce with `python scripts/evaluate_model.py --suite tactics --split test`; results and caveats are in [docs/experiments/](docs/experiments/). The headline identifier-rotation experiment has **not** been run yet, and no result for it is claimed.
 
 ---
 
@@ -216,6 +219,8 @@ Developed in partnership with **Google Antigravity**:
 ## 14. Known Limitations
 
 - Secret redaction is rule-based and best effort. It does **not** catch spelled-out digits ("four eight two…"), secrets with no cue word nearby ("the number from the sms is 482913"), or non-Luhn card numbers with no "card" cue. Amount-like values right after a currency marker are treated as amounts. A 4-6 digit value after "PIN" is redacted even if it was a postal code ("PIN code" itself is left alone). Plain text sent by the browser reaches the server before it is redacted, so use HTTPS and synthetic data.
+- Tactic detection is lexicon rules only: it recognises the phrasings in `data/lexicon.json` and misses others (on unseen templates authority-claim recall was 0.80). Some labels are ambiguous (e.g. "tonight" counts as urgency, "under digital arrest" as threat). Institution class and payment channel are simple priority rules with modest accuracy (0.66-0.75 and 0.66-0.97 across splits). Victim turns are not scored, but a victim's words inside an unlabelled paste are.
+- The injection guard is a regex layer. It does not catch leetspeak, spaced-out letters or polite paraphrase without trigger words, and benign-sounding text appended without trigger wording can lower the score of a scam that has no payment or credential request (by at most 15 points).
 - High dependence on transcription quality when operating on noisy audio.
 - Heuristic weights in risk and playbook similarity are design priors, not trained Bayesian posterior probabilities.
 - Hindi and Hinglish nuance requires continuous lexicon expansion for regional slang variations.
