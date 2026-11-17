@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: Optional[str] = None
     GEMINI_MODEL: Optional[str] = "gemini-1.5-flash"
     FRONTEND_ORIGIN: str = "*"
+    # Seed the synthetic demo incidents on startup when the DB is empty (for ephemeral-disk hosts).
+    SEED_ON_START: bool = False
 
     model_config = SettingsConfigDict(
         env_file=".env",

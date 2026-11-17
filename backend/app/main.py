@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import settings
-from backend.app.core.database import engine, Base, get_db
+from contextlib import asynccontextmanager
+from backend.app.core.database import engine, Base, get_db, SessionLocal
+from backend.app.services.seed_service import seed_session
 from backend.app.core.middleware import RequestIDMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -20,10 +22,20 @@ from backend.app.models.models import (
 # Create tables
 Base.metadata.create_all(bind=engine)
 
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    if settings.SEED_ON_START:
+        with SessionLocal() as db:
+            if db.query(Incident).count() == 0:
+                seed_session(db)
+    yield
+
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Cross-Channel Scam Intelligence Network — VIGIL API"
+    description="Cross-Channel Scam Intelligence Network — VIGIL API",
+    lifespan=lifespan,
 )
 
 # Exception handlers

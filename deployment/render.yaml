@@ -1,14 +1,19 @@
+# Render free web service for the OPTIONAL live backend (blueprint §14).
+# The public site never depends on this service: when it is asleep the frontend uses precomputed data.
+# The service runs from the REPOSITORY ROOT because the code imports `backend.*` and `ai_engine.*`.
 services:
   - type: web
     name: vigil-backend
-    env: python
+    runtime: python
     region: oregon
     plan: free
     branch: main
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: APP_MODE
         value: offline
       - key: DATABASE_URL
@@ -17,3 +22,9 @@ services:
         value: "0.75"
       - key: LOG_LEVEL
         value: INFO
+      # The disk is ephemeral: seed the synthetic demo incidents on every cold start.
+      - key: SEED_ON_START
+        value: "true"
+      # Set to the exact Vercel/Netlify site origin (no trailing slash) in the Render dashboard.
+      - key: FRONTEND_ORIGIN
+        sync: false

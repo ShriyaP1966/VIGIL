@@ -27,7 +27,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from backend.app.core.database import Base, get_db  # noqa: E402
 from backend.app.main import app  # noqa: E402
 from backend.app.models import models  # noqa: E402,F401  (register tables)
-from scripts.seed_demo import seed_session  # noqa: E402
+from backend.app.services.seed_service import seed_session  # noqa: E402
 
 OUTPUT_DIR = root_dir / "frontend" / "public" / "demo-data"
 
