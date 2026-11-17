@@ -27,13 +27,14 @@ Regenerate the demo data after any pipeline change: `python scripts/export_stati
 ## Step 1 — Frontend (Vercel, free Hobby plan)  *(requires your sign-in)*
 
 1. Sign in at https://vercel.com and choose **Add New → Project**; import `ShriyaP1966/VIGIL`.
-2. Project settings (these are authoritative; `deployment/vercel.json` mirrors them and can be used with
-   `vercel --local-config deployment/vercel.json`):
+2. Project settings. The authoritative file is **`frontend/vercel.json`** (Vite build, `npm ci`, output `dist`, and
+   the single-page-app rewrite so that `/campaigns`, `/incidents/<id>` and other deep links survive a refresh;
+   `/api/`, `/demo-data/` and `/assets/` are never rewritten). It is only read when the Root Directory is `frontend`:
    - Framework preset: **Vite**
-   - Root Directory: repository root (`./`)
-   - Install Command: `cd frontend && npm ci`
-   - Build Command: `cd frontend && npm run build`
-   - Output Directory: `frontend/dist`
+   - Root Directory: **`frontend`** (set in the Vercel dashboard)
+   - Install / Build / Output: taken from `frontend/vercel.json` (`npm ci`, `npm run build`, `dist`)
+   - Git integration stays on: a push to `main` redeploys the site. The CLI is not needed.
+   - `deployment/vercel.json` is the older repository-root variant (no rewrite). Do not use it with the `frontend` root.
 3. Environment variable (add only after the backend exists): `VITE_API_BASE_URL` = the Render URL, no trailing slash.
 4. Deploy and record the URL in the table at the bottom of this file.
 
@@ -62,9 +63,10 @@ Use `deployment/render.yaml` as a Blueprint (**New → Blueprint**), or create a
 
 ## Deployed URLs
 
-Not deployed yet. Deployment needs a Vercel and a Render sign-in, which only the repository owner can do.
+The frontend is deployed on Vercel (static-first: it serves precomputed synthetic data while no backend is
+reachable). The backend on Render has not been set up; it needs a Render sign-in from the repository owner.
 
 | Component | URL | Verified (date, device) |
 |---|---|---|
-| Frontend | _pending_ | _pending_ |
+| Frontend | https://vigil-demo-eta.vercel.app | Public access confirmed over HTTPS on 2026-11-17. The deep-link and phone-layout fixes were verified on a local build in headless Edge; not yet verified on a real phone. |
 | Backend (optional) | _pending_ | _pending_ |

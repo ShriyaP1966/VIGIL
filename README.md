@@ -15,7 +15,7 @@
 
 ## 1. Executive Summary
 
-- **Live Deployed Application:** *pending: not deployed yet.* The design is static-first: the public site always works from precomputed synthetic data and upgrades to the live backend when that is awake (see [deployment/DEPLOY.md](deployment/DEPLOY.md)).
+- **Live Deployed Application:** https://vigil-demo-eta.vercel.app (hosted demo on precomputed synthetic data; every page has its own URL). The design is static-first: the public site always works from precomputed synthetic data and upgrades to the live backend when that is awake (see [deployment/DEPLOY.md](deployment/DEPLOY.md)).
 - **Demo Video:** *pending.*
 - **Core idea:** Playbook Fingerprinting across rotating phone numbers, UPI IDs, and phishing domains, backed by an explicit 5-state association graph and counter-evidence reasoning.
 
