@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Settings as SettingsIcon, Trash2, AlertTriangle, CheckCircle, Shield } from 'lucide-react';
-import { apiClient } from '../services/api/client';
+import { apiClient, ApiMode } from '../services/api/client';
 
-export const Settings: React.FC = () => {
+export const Settings: React.FC<{ apiMode: ApiMode }> = ({ apiMode }) => {
+  const live = apiMode === 'live';
   const [clearing, setClearing] = useState(false);
   const [cleared, setCleared] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,13 +41,23 @@ export const Settings: React.FC = () => {
         </h3>
         <div className="space-y-3 text-xs text-text-secondary">
           <p>
-            • <strong>Offline Mode (Default):</strong> Pure deterministic extraction using local regex, gazetteers, and scikit-learn models. No external API calls are made.
+            • <strong>Current mode:</strong>{' '}
+            {apiMode === 'live'
+              ? 'Live analysis backend (offline engine: regex and gazetteer rules, no external API calls).'
+              : apiMode === 'waking'
+                ? 'Waiting for the live backend; precomputed synthetic data is shown meanwhile.'
+                : 'Hosted demo: precomputed synthetic data. Nothing you do here is stored or analysed.'}
           </p>
           <p>
-            • <strong>Zero PII Retention:</strong> Phone numbers, UPI handles, and emails are hashed for cross-incident matching and masked in UI displays. Passwords and OTP tokens are never stored.
+            • <strong>Offline by default:</strong> the engine needs no API keys and makes no external calls.
           </p>
           <p>
-            • <strong>Local Data Control:</strong> All SQLite database records exist exclusively on this device.
+            • <strong>Identifier handling:</strong> identifiers are stored in normalised form so exact matches can be found,
+            and masked in this interface. Passwords and OTPs are not collected. Use synthetic data only.
+          </p>
+          <p>
+            • <strong>Local data control:</strong> in live mode, records are kept in the backend's SQLite database
+            and can be erased below.
           </p>
         </div>
       </div>
@@ -76,12 +87,17 @@ export const Settings: React.FC = () => {
 
         <button
           onClick={handleClearData}
-          disabled={clearing}
-          className="flex items-center gap-2 bg-risk-critical/20 hover:bg-risk-critical/30 text-risk-critical border border-risk-critical/40 px-4 py-2 rounded-md text-xs font-semibold transition-colors disabled:opacity-50"
+          disabled={clearing || !live}
+          className="flex items-center gap-2 bg-risk-critical/20 hover:bg-risk-critical/30 text-risk-critical border border-risk-critical/40 px-4 py-2 rounded-md text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Trash2 className="w-4 h-4" />
-          <span>{clearing ? 'Clearing Data...' : 'Clear All Local Data'}</span>
+          <Trash2 className="w-4 h-4" aria-hidden="true" />
+          <span>{clearing ? 'Clearing…' : 'Clear all local data'}</span>
         </button>
+        {!live && (
+          <p className="text-[11px] text-text-muted">
+            Available only when connected to the live backend. The hosted demo stores no data.
+          </p>
+        )}
       </div>
     </div>
   );

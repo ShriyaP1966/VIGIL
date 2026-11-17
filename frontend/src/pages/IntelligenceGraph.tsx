@@ -1,255 +1,248 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  Network, 
-  Filter, 
-  Layers, 
-  AlertTriangle, 
-  CheckCircle, 
-  Table, 
-  Eye, 
-  Info,
-  Maximize2
-} from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactFlow, Background, Controls, type Edge, type Node } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { Network, Table, AlertCircle, RefreshCw } from 'lucide-react';
 import { apiClient } from '../services/api/client';
-import { GraphData, GraphNode, GraphEdge, AssociationInspectorData } from '../types';
+import { GraphData, NodeInspectorInfo } from '../types';
+import { VigilNode } from '../components/graph/VigilNode';
+import {
+  buildFlowElements,
+  associationIdOf,
+  edgeLabel,
+  incidentsMentioning,
+  isAssociationEdge,
+  EDGE_COLORS,
+  type VigilNodeData,
+} from '../components/graph/graph_layout';
+
+const nodeTypes = { vigil: VigilNode };
+
+const STATUS_FILTERS = ['ALL', 'OBSERVED_MATCH', 'CANDIDATE_ASSOCIATION', 'DISPUTED_ASSOCIATION'] as const;
 
 interface IntelligenceGraphProps {
   onInspectAssociation: (assocId: number) => void;
+  onInspectNode: (info: NodeInspectorInfo) => void;
   onSelectIncident: (id: number) => void;
 }
 
-export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({ 
-  onInspectAssociation, 
-  onSelectIncident 
+export const IntelligenceGraph: React.FC<IntelligenceGraphProps> = ({
+  onInspectAssociation,
+  onInspectNode,
+  onSelectIncident,
 }) => {
   const [graphData, setGraphData] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [tableView, setTableView] = useState(false);
-  const [filterType, setFilterType] = useState<string>('ALL');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [showStructural, setShowStructural] = useState(true);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const data = await apiClient.getGraph();
-        setGraphData(data);
-      } catch (e) {
-        console.error('Failed to load graph data', e);
-      } finally {
-        setLoading(false);
-      }
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setGraphData(await apiClient.getGraph());
+    } catch (e: any) {
+      setError(e?.message || 'Failed to load the graph.');
+    } finally {
+      setLoading(false);
     }
-    load();
   }, []);
 
-  const nodes = graphData?.nodes || [];
-  const edges = graphData?.edges || [];
+  useEffect(() => { void load(); }, [load]);
 
-  const filteredEdges = edges.filter(e => {
-    if (filterType === 'ALL') return true;
-    return e.type === filterType;
-  });
+  const { nodes, edges } = useMemo(
+    () => (graphData ? buildFlowElements(graphData, { status: statusFilter, showStructural }) : { nodes: [], edges: [] }),
+    [graphData, statusFilter, showStructural]
+  );
+
+  const associationEdges = useMemo(
+    () => (graphData?.edges ?? []).filter(isAssociationEdge)
+      .filter(e => statusFilter === 'ALL' || (e.status ?? e.type) === statusFilter),
+    [graphData, statusFilter]
+  );
+
+  const handleEdgeClick = (_: React.MouseEvent, edge: Edge) => {
+    const id = (edge.data as { associationId?: number } | undefined)?.associationId;
+    if (id != null) onInspectAssociation(id);
+  };
+
+  const handleNodeClick = (_: React.MouseEvent, node: Node) => {
+    if (!graphData) return;
+    const data = node.data as VigilNodeData;
+    if (data.kind === 'incident') onInspectNode({ kind: 'incident', node: data.graphNode });
+    else onInspectNode({ kind: 'entity', node: data.graphNode, mentionedBy: incidentsMentioning(graphData, node.id) });
+  };
+
+  const hasIncidents = (graphData?.nodes ?? []).some(n => n.type === 'incident');
 
   return (
-    <div className="flex flex-col h-full bg-bg-main relative">
-      {/* Graph Toolbar */}
-      <div className="h-14 bg-bg-sidebar border-b border-border-subtle flex items-center justify-between px-6 z-10">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
-            <Network className="w-4 h-4 text-accent-primary" />
-            <span>Cross-Channel Intelligence Graph</span>
-          </div>
-
-          <div className="h-4 w-px bg-border-subtle" />
-
-          {/* Filter Chips */}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-text-muted">Edges:</span>
-            {['ALL', 'OBSERVED_MATCH', 'CANDIDATE_ASSOCIATION', 'DISPUTED_ASSOCIATION'].map(t => (
+    <div className="flex flex-col h-full min-h-[560px] bg-bg-main">
+      {/* Toolbar */}
+      <div className="bg-bg-sidebar border-b border-border-subtle flex flex-wrap items-center justify-between gap-3 px-6 py-3">
+        <div className="flex flex-wrap items-center gap-4">
+          <h1 className="flex items-center gap-2 text-sm font-semibold text-text-primary">
+            <Network className="w-4 h-4 text-accent-primary" aria-hidden="true" />
+            Cross-Channel Intelligence Graph
+          </h1>
+          <div className="flex flex-wrap items-center gap-2 text-xs" role="group" aria-label="Filter association edges by status">
+            <span className="text-text-muted">Links:</span>
+            {STATUS_FILTERS.map(t => (
               <button
                 key={t}
-                onClick={() => setFilterType(t)}
-                className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors ${
-                  filterType === t 
-                    ? 'bg-accent-primary text-bg-main font-bold' 
+                type="button"
+                aria-pressed={statusFilter === t}
+                onClick={() => setStatusFilter(t)}
+                className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
+                  statusFilter === t
+                    ? 'bg-accent-primary text-bg-main font-bold'
                     : 'bg-bg-card hover:bg-bg-elevated text-text-secondary border border-border-subtle'
                 }`}
               >
-                {t === 'ALL' ? 'All Links' : t.replace('_', ' ')}
+                {t === 'ALL' ? 'All links' : t.replace(/_/g, ' ').toLowerCase()}
               </button>
             ))}
           </div>
+          <label className="flex items-center gap-1.5 text-xs text-text-secondary cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showStructural}
+              onChange={e => setShowStructural(e.target.checked)}
+              className="accent-sky-400"
+            />
+            Show identifier links
+          </label>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setTableView(!tableView)}
-            className="flex items-center gap-1.5 bg-bg-card hover:bg-bg-elevated text-text-secondary px-3 py-1.5 rounded text-xs border border-border-subtle transition-colors"
-          >
-            <Table className="w-3.5 h-3.5" />
-            <span>{tableView ? 'Canvas View' : 'Table View'}</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setTableView(v => !v)}
+          className="flex items-center gap-1.5 bg-bg-card hover:bg-bg-elevated text-text-secondary px-3 py-1.5 rounded text-xs border border-border-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
+        >
+          <Table className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>{tableView ? 'Canvas view' : 'Table view'}</span>
+        </button>
       </div>
 
-      {/* Mandatory Legend Banner */}
-      <div className="bg-bg-elevated/40 border-b border-border-subtle px-6 py-2 flex items-center justify-between text-xs text-text-muted">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 bg-accent-primary"></span>
-            <span className="text-text-primary font-medium">Solid Blue:</span>
-            <span>Identical normalized identifier observed. <em>(Not proof of same criminals).</em></span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 border-t border-dashed border-risk-elevated"></span>
-            <span className="text-text-primary font-medium">Dashed Amber:</span>
-            <span>Candidate Playbook similarity ≥ 75%.</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 border-t border-dashed border-risk-critical"></span>
-            <span className="text-text-primary font-medium">Dashed Red:</span>
-            <span>Disputed link with high counter-evidence.</span>
-          </div>
-        </div>
+      {/* Legend (wording required by blueprint §12.5) */}
+      <div className="bg-bg-elevated/40 border-b border-border-subtle px-6 py-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-text-muted">
+        <span className="flex items-center gap-2">
+          <span className="w-5 h-0.5" style={{ background: EDGE_COLORS.OBSERVED_MATCH }} aria-hidden="true" />
+          <span><strong className="text-text-primary">Solid blue = identifier observed in both incidents.</strong> It is not proof of one campaign.</span>
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="w-5 border-t-2 border-dashed" style={{ borderColor: EDGE_COLORS.CANDIDATE_ASSOCIATION }} aria-hidden="true" />
+          Dashed amber = candidate (playbook), available in a later phase
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="w-5 border-t-2 border-dashed" style={{ borderColor: EDGE_COLORS.DISPUTED_ASSOCIATION }} aria-hidden="true" />
+          Dashed red = disputed by counter-evidence, available in a later phase
+        </span>
       </div>
 
-      {/* Main Canvas / Table Area */}
-      <div className="flex-1 relative overflow-auto p-6">
+      {/* Body */}
+      <div className="flex-1 relative min-h-[420px]">
         {loading ? (
-          <div className="h-full flex items-center justify-center text-sm font-mono text-text-muted animate-pulse">
-            Loading graph topology...
+          <div className="h-full flex items-center justify-center text-sm font-mono text-text-muted animate-pulse" role="status">
+            Loading graph…
+          </div>
+        ) : error ? (
+          <div className="h-full flex flex-col items-center justify-center gap-3 p-8 text-center" role="alert">
+            <AlertCircle className="w-6 h-6 text-risk-critical" aria-hidden="true" />
+            <p className="text-sm text-text-secondary max-w-md">{error}</p>
+            <button
+              type="button"
+              onClick={() => void load()}
+              className="flex items-center gap-1.5 text-xs bg-bg-card border border-border-subtle px-3 py-1.5 rounded text-text-primary hover:bg-bg-elevated"
+            >
+              <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Retry
+            </button>
+          </div>
+        ) : !hasIncidents ? (
+          <div className="h-full flex items-center justify-center p-8 text-sm text-text-muted text-center">
+            No incidents yet. Create an investigation to see identifiers and observed matches here.
           </div>
         ) : tableView ? (
-          /* Accessible Table Alternative */
-          <div className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden max-w-6xl mx-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-bg-elevated text-text-muted uppercase font-mono text-[10px] border-b border-border-subtle">
-                <tr>
-                  <th className="p-3">Link ID</th>
-                  <th className="p-3">Association Status</th>
-                  <th className="p-3">Source Node</th>
-                  <th className="p-3">Target Node</th>
-                  <th className="p-3">Confidence / Score</th>
-                  <th className="p-3">Explanation</th>
-                  <th className="p-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle">
-                {filteredEdges.map(edge => (
-                  <tr key={edge.id} className="hover:bg-bg-elevated/30">
-                    <td className="p-3 font-mono text-text-muted">{edge.id}</td>
-                    <td className="p-3">
-                      <span className={`px-2 py-0.5 rounded font-mono text-[10px] ${
-                        edge.type === 'OBSERVED_MATCH' ? 'bg-accent-primary/20 text-accent-primary border border-accent-primary/40' :
-                        edge.type === 'CANDIDATE_ASSOCIATION' ? 'bg-risk-elevated/20 text-risk-elevated' :
-                        edge.type === 'DISPUTED_ASSOCIATION' ? 'bg-risk-critical/20 text-risk-critical' : 'bg-bg-elevated text-text-muted'
-                      }`}>
-                        {edge.type}
-                      </span>
-                    </td>
-                    <td className="p-3 font-mono text-text-primary">{edge.source}</td>
-                    <td className="p-3 font-mono text-text-primary">{edge.target}</td>
-                    <td className="p-3 font-mono text-text-secondary">
-                      {edge.confidence ? `${Math.round(edge.confidence * 100)}%` : '—'}
-                    </td>
-                    <td className="p-3 text-text-secondary max-w-xs truncate">{edge.explanation || edge.label}</td>
-                    <td className="p-3 text-right">
-                      {edge.id.startsWith('assoc_') && (
-                        <button
-                          onClick={() => onInspectAssociation(parseInt(edge.id.replace('assoc_', '')))}
-                          className="text-accent-primary hover:underline font-medium"
-                        >
-                          Inspect
-                        </button>
-                      )}
-                    </td>
+          <div className="p-6 overflow-auto h-full">
+            <div className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden max-w-6xl mx-auto">
+              <table className="w-full text-left text-xs">
+                <caption className="sr-only">Association links between incidents</caption>
+                <thead className="bg-bg-elevated text-text-muted uppercase font-mono text-[10px] border-b border-border-subtle">
+                  <tr>
+                    <th scope="col" className="p-3">Status</th>
+                    <th scope="col" className="p-3">Incidents</th>
+                    <th scope="col" className="p-3">Label</th>
+                    <th scope="col" className="p-3">Confidence</th>
+                    <th scope="col" className="p-3">Why this link exists</th>
+                    <th scope="col" className="p-3 text-right">Inspect</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          /* Interactive Node Network Cards */
-          <div className="max-w-6xl mx-auto space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {nodes.filter(n => n.type === 'incident').map(incNode => {
-                const incId = incNode.details.incident_id;
-                const connectedEdges = edges.filter(e => e.source === incNode.id || e.target === incNode.id);
-                return (
-                  <div
-                    key={incNode.id}
-                    className="bg-bg-card border border-border-subtle rounded-lg p-5 shadow-sm hover:border-accent-primary/50 transition-all flex flex-col justify-between"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-xs text-text-muted">INC-{incId.toString().padStart(4, '0')}</span>
-                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded uppercase ${
-                          incNode.risk_band === 'CRITICAL' ? 'bg-risk-critical/20 text-risk-critical' :
-                          incNode.risk_band === 'HIGH' ? 'bg-risk-high/20 text-risk-high' :
-                          incNode.risk_band === 'ELEVATED' ? 'bg-risk-elevated/20 text-risk-elevated' : 'bg-risk-low/20 text-risk-low'
-                        }`}>
-                          Risk {incNode.details.risk_score || 0}
-                        </span>
-                      </div>
-                      <h3 className="font-bold text-sm text-text-primary">{incNode.details.title}</h3>
-                      <div className="text-xs text-text-muted space-y-1">
-                        <div>Channel: <span className="text-text-secondary font-mono">{incNode.details.channel}</span></div>
-                        <div>Language: <span className="text-text-secondary font-mono">{incNode.details.language}</span></div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-border-subtle mt-4 flex items-center justify-between">
-                      <span className="text-[11px] text-text-muted">
-                        {connectedEdges.length} connection(s)
-                      </span>
-                      <button
-                        onClick={() => onSelectIncident(incId)}
-                        className="text-xs text-accent-primary hover:underline font-semibold"
-                      >
-                        Open Details →
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Render Association Edges Summary */}
-            <div className="bg-bg-card border border-border-subtle rounded-lg p-5 space-y-3">
-              <h3 className="text-sm font-semibold text-text-primary">Active Cross-Incident Associations</h3>
-              <div className="space-y-2">
-                {filteredEdges.filter(e => e.id.startsWith('assoc_')).map(e => {
-                  const assocId = parseInt(e.id.replace('assoc_', ''));
-                  return (
-                    <div
-                      key={e.id}
-                      onClick={() => onInspectAssociation(assocId)}
-                      className="p-3 bg-bg-main border border-border-subtle rounded-md flex items-center justify-between hover:border-accent-primary cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-xs font-bold text-accent-primary">
-                          {e.source.replace('incident_', 'INC-')} ↔ {e.target.replace('incident_', 'INC-')}
-                        </span>
-                        <span className="text-xs bg-bg-elevated px-2 py-0.5 rounded text-text-secondary border border-border-subtle font-mono">
-                          {e.type}
-                        </span>
-                        <span className="text-xs text-text-muted truncate max-w-md">
-                          {e.explanation}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-mono font-bold text-text-primary">
-                          {e.confidence ? `${Math.round(e.confidence * 100)}%` : ''}
-                        </span>
-                        <span className="text-xs text-accent-primary font-medium hover:underline">
-                          Open Inspector →
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+                </thead>
+                <tbody className="divide-y divide-border-subtle">
+                  {associationEdges.length === 0 && (
+                    <tr><td colSpan={6} className="p-4 text-center text-text-muted">No association links match this filter.</td></tr>
+                  )}
+                  {associationEdges.map(edge => {
+                    const id = associationIdOf(edge);
+                    return (
+                      <tr key={edge.id} className="hover:bg-bg-elevated/30">
+                        <td className="p-3 font-mono text-accent-primary">{(edge.status ?? edge.type).replace(/_/g, ' ')}</td>
+                        <td className="p-3 font-mono text-text-primary">
+                          {edge.source.replace('incident_', 'INC-')} ↔ {edge.target.replace('incident_', 'INC-')}
+                        </td>
+                        <td className="p-3 text-text-secondary">{edgeLabel(edge)}</td>
+                        <td className="p-3 font-mono text-text-secondary">
+                          {edge.confidence != null ? `${Math.round(edge.confidence * 100)}%` : '—'}
+                        </td>
+                        <td className="p-3 text-text-secondary">{edge.explanation}</td>
+                        <td className="p-3 text-right">
+                          {id != null && (
+                            <button
+                              type="button"
+                              onClick={() => onInspectAssociation(id)}
+                              className="text-accent-primary hover:underline font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded"
+                            >
+                              Inspect
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <div className="px-3 py-2 border-t border-border-subtle text-[11px] text-text-muted">
+                Incidents without an association link are shown on the canvas view and on the Overview page.
               </div>
             </div>
           </div>
+        ) : (
+          <>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onEdgeClick={handleEdgeClick}
+              onNodeClick={handleNodeClick}
+              onNodeDoubleClick={(_, node) => {
+                const data = node.data as VigilNodeData;
+                if (data.kind === 'incident') onSelectIncident(data.graphNode.details.incident_id);
+              }}
+              fitView
+              fitViewOptions={{ padding: 0.25 }}
+              minZoom={0.3}
+              maxZoom={1.6}
+              nodesConnectable={false}
+              colorMode="dark"
+              proOptions={{ hideAttribution: true }}
+              aria-label="Intelligence graph. Click a node or link to inspect it; use Table view for a keyboard-friendly list."
+            >
+              <Background gap={24} color="#1E293B" />
+              <Controls showInteractive={false} />
+            </ReactFlow>
+            <p className="absolute bottom-3 right-4 text-[11px] text-text-muted bg-bg-main/80 px-2 py-1 rounded pointer-events-none">
+              Click a link or node to inspect · double-click an incident to open it
+            </p>
+          </>
         )}
       </div>
     </div>

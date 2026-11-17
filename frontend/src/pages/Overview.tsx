@@ -11,6 +11,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   const [incidents, setIncidents] = useState<IncidentListItem[]>([]);
   const [graphData, setGraphData] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -21,8 +22,8 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         ]);
         setIncidents(incList);
         setGraphData(g);
-      } catch (e) {
-        console.error('Failed to load overview data', e);
+      } catch (e: any) {
+        setError(e?.message || 'Failed to load overview data.');
       } finally {
         setLoading(false);
       }
@@ -42,7 +43,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">Intelligence Overview</h1>
           <p className="text-sm text-text-secondary mt-1">
-            Real-time cross-channel scam incident monitoring and campaign attribution.
+            Cross-channel scam evidence, observed identifier matches and risk indicators.
           </p>
         </div>
         <button
@@ -58,7 +59,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       <div className="bg-bg-elevated/40 border border-border-subtle rounded-lg p-4 flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-accent-primary shrink-0 mt-0.5" />
         <div className="text-xs text-text-secondary leading-relaxed">
-          <strong className="text-text-primary font-semibold">Synthetic Benchmark Data:</strong> All evidence in this environment is 100% synthetic and uncalibrated. Solid blue lines denote exact observed identifier equality, <span className="text-accent-primary underline">not confirmed criminal syndicates</span>.
+          <strong className="text-text-primary font-semibold">Synthetic data:</strong> all evidence here is synthetic and the risk indicator is an uncalibrated heuristic. A solid blue line means the same identifier was observed in two incidents. <span className="text-text-primary">It is not proof of one campaign.</span>
         </div>
       </div>
 
@@ -88,7 +89,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             <Layers className="w-4 h-4 text-accent-secondary" />
           </div>
           <div className="text-2xl font-bold font-mono text-text-primary">{candidateAssocs}</div>
-          <div className="text-[11px] text-text-muted mt-1">Playbook similarity ≥ 75%</div>
+          <div className="text-[11px] text-text-muted mt-1">Playbook engine arrives in a later phase</div>
         </div>
 
         <div className="bg-bg-card border border-border-subtle rounded-lg p-5">
@@ -114,9 +115,11 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-sm text-text-muted font-mono animate-pulse">
+          <div role="status" className="p-8 text-center text-sm text-text-muted font-mono animate-pulse">
             Loading investigation records...
           </div>
+        ) : error ? (
+          <div role="alert" className="p-8 text-center text-sm text-risk-critical">{error}</div>
         ) : incidents.length === 0 ? (
           <div className="p-8 text-center text-sm text-text-muted">
             No incidents ingested yet. Click "New Investigation" to paste evidence.
@@ -126,8 +129,11 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             {incidents.map((inc) => (
               <div
                 key={inc.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => onNavigate('investigation_detail', inc.id)}
-                className="px-6 py-4 flex items-center justify-between hover:bg-bg-elevated/40 cursor-pointer transition-colors"
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('investigation_detail', inc.id); } }}
+                className="px-6 py-4 flex items-center justify-between hover:bg-bg-elevated/40 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">

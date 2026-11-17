@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Send, FileText, Phone, MessageSquare, Globe, Sparkles, AlertCircle } from 'lucide-react';
-import { apiClient } from '../services/api/client';
+import { apiClient, ApiMode } from '../services/api/client';
 
 interface NewInvestigationProps {
+  apiMode: ApiMode;
   onSuccess: (id: number) => void;
 }
 
-export const NewInvestigation: React.FC<NewInvestigationProps> = ({ onSuccess }) => {
+const MAX_EVIDENCE_CHARS = 20_000; // keep in sync with backend MAX_EVIDENCE_CHARS
+
+export const NewInvestigation: React.FC<NewInvestigationProps> = ({ apiMode, onSuccess }) => {
+  const live = apiMode === 'live';
   const [title, setTitle] = useState('');
   const [sourceChannel, setSourceChannel] = useState('call');
   const [language, setLanguage] = useState('hi-Latn');
@@ -81,9 +85,26 @@ export const NewInvestigation: React.FC<NewInvestigationProps> = ({ onSuccess })
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">New Investigation</h1>
         <p className="text-sm text-text-secondary mt-1">
-          Ingest raw call transcripts, messages, or payment requests for entity resolution and playbook attribution.
+          Paste a synthetic call transcript, message or payment request. VIGIL extracts identifiers and checks
+          whether the same identifier appears in other incidents.
         </p>
       </div>
+
+      <div className="bg-bg-elevated/40 border border-border-subtle rounded-lg p-3 text-xs text-text-secondary flex gap-2">
+        <AlertCircle className="w-4 h-4 shrink-0 text-accent-primary mt-0.5" aria-hidden="true" />
+        <span>Synthetic data only: do not enter real personal information, real phone numbers or real account details.</span>
+      </div>
+
+      {!live && (
+        <div role="status" className="bg-risk-elevated/10 border border-risk-elevated/30 rounded-lg p-3 text-xs text-risk-elevated flex gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+          <span>
+            {apiMode === 'waking'
+              ? 'The live analysis server is not reachable yet (a free host may be waking up). You can load a sample, but analysis starts when the server is live.'
+              : 'This hosted demo shows precomputed synthetic data. Analysing new text needs the live backend, so submitting is disabled.'}
+          </span>
+        </div>
+      )}
 
       {/* Quick Sample Presets */}
       <div className="bg-bg-card border border-border-subtle rounded-lg p-4 space-y-2">
@@ -188,23 +209,24 @@ export const NewInvestigation: React.FC<NewInvestigationProps> = ({ onSuccess })
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste transcript turns, message body, or transaction narrative here..."
+            maxLength={MAX_EVIDENCE_CHARS}
             className="w-full bg-bg-main border border-border-subtle rounded-md p-3.5 text-sm text-text-primary font-mono focus:outline-none focus:border-accent-primary leading-relaxed"
             required
           />
           <div className="flex justify-between items-center text-[11px] text-text-muted mt-1.5">
-            <span>Text will be NFKC-normalised, SHA-256 hashed, and audited for indicators.</span>
-            <span>{text.length} characters</span>
+            <span>The original is SHA-256 hashed and kept unchanged; a normalised copy is used for matching.</span>
+            <span>{text.length} / {MAX_EVIDENCE_CHARS} characters</span>
           </div>
         </div>
 
         <div className="pt-2 flex justify-end">
           <button
             type="submit"
-            disabled={submitting}
-            className="flex items-center gap-2 bg-accent-primary hover:bg-sky-400 text-bg-main font-semibold px-6 py-2.5 rounded-md text-sm transition-colors shadow-sm disabled:opacity-50"
+            disabled={submitting || !live}
+            className="flex items-center gap-2 bg-accent-primary hover:bg-sky-400 text-bg-main font-semibold px-6 py-2.5 rounded-md text-sm transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Send className="w-4 h-4" />
-            <span>{submitting ? 'Running Pipeline...' : 'Run Investigation Pipeline'}</span>
+            <Send className="w-4 h-4" aria-hidden="true" />
+            <span>{submitting ? 'Analysing…' : 'Analyse evidence'}</span>
           </button>
         </div>
       </form>

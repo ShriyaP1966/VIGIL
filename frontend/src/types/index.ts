@@ -111,6 +111,11 @@ export interface GraphData {
   edges: GraphEdge[];
 }
 
+/** What the inspector shows when a graph node (not an association edge) is selected. */
+export type NodeInspectorInfo =
+  | { kind: 'incident'; node: GraphNode }
+  | { kind: 'entity'; node: GraphNode; mentionedBy: GraphNode[] };
+
 export interface AssociationInspectorData {
   id: number;
   status: AssociationStatus;
