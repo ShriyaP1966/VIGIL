@@ -16,6 +16,7 @@ from ai_engine.privacy.redaction import REDACTOR_VERSION, RedactionEvent, redact
 from ai_engine.extraction.normalisation import normalise_text, compute_sha256, detect_language, mask_identifier
 from ai_engine.extraction.entity_extractor import extract_entities
 from backend.app.core.config import settings
+from backend.app.services.campaign_service import rebuild_campaigns
 from backend.app.services.association_service import find_or_create_observed_matches, update_playbook_candidates
 from backend.app.services.risk_service import RISK_VERSION, calculate_risk
 
@@ -295,5 +296,6 @@ def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True
         }
         for other_id in sorted(counterparts):
             run_incident_analysis(db, other_id, _propagate=False)
+        rebuild_campaigns(db)       # hypotheses follow the associations (once per top-level analysis)
 
     return analysis

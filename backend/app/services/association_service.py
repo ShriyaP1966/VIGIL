@@ -10,6 +10,7 @@ from ai_engine.fingerprint.similarity import (
 from backend.app.models.models import (
     Analysis, Association, Entity, Evidence, Mention, Review, TacticEvent, Utterance,
 )
+from backend.app.services.campaign_service import rebuild_campaigns
 
 
 LINKABLE_TYPES = {"PHONE", "UPI_HANDLE", "DOMAIN", "EMAIL", "URL"}
@@ -359,4 +360,5 @@ def apply_association_review(db: Session, assoc_id: int, decision: str, note: st
     assoc.status = new_status
     db.commit()
     db.refresh(assoc)
+    rebuild_campaigns(db)            # accepting, rejecting or flagging a link changes which incidents connect
     return assoc

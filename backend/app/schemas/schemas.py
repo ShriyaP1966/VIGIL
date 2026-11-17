@@ -216,6 +216,60 @@ class ReviewRequest(BaseModel):
         return self
 
 
+class CampaignListItem(BaseModel):
+    id: int
+    hypothesis_title: str
+    status: str
+    status_label: str                      # always says "hypothesis" (invariant I4)
+    confidence: float
+    member_count: int
+    basis_counts: Dict[str, int]
+    weakest_link_association_id: Optional[int] = None
+    incident_ids: List[int]
+
+
+class CampaignMemberView(BaseModel):
+    incident_id: int
+    title: str
+    source_channel: str
+    language: str
+    risk_score: int
+    risk_band: str
+    membership_basis: str                  # OBSERVED | CANDIDATE | ANALYST
+    stage_sequence: List[str]
+    institution_class: str
+    payment_channel: str
+
+
+class CampaignLink(BaseModel):
+    id: int
+    incident_a_id: int
+    incident_b_id: int
+    status: str
+    match_type: str
+    similarity: Optional[float] = None
+    adjusted_confidence: float
+    explanation: str
+    is_weakest: bool = False
+
+
+class SharedIndicator(BaseModel):
+    type: str
+    display_value: str
+    incident_ids: List[int]
+
+
+class CampaignDetail(CampaignListItem):
+    members: List[CampaignMemberView]
+    links: List[CampaignLink]
+    excluded_links: List[CampaignLink]     # disputed or rejected links between members: shown, never connecting
+    shared_indicators: List[SharedIndicator]
+    counter_evidence: List[Dict[str, Any]] = []
+    review: Dict[str, Any]
+    disclaimer: str
+    versions: Dict[str, str]
+
+
 class AssociationInspectorResponse(BaseModel):
     id: int
     status: str
