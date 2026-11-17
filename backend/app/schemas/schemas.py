@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Literal, Optional, Dict, Any
 from datetime import datetime
 from pydantic import BaseModel, Field
 
@@ -10,21 +10,29 @@ class HealthResponse(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
+MAX_EVIDENCE_CHARS = 20_000
+MAX_SPEAKER_TURNS = 200
+
+EvidenceType = Literal["transcript", "message", "url", "payment_request"]
+SourceChannel = Literal["call", "sms", "email", "web"]
+LanguageCode = Literal["en", "hi", "hi-Latn", "mr", "mixed"]
+
+
 class EvidenceCreate(BaseModel):
-    type: str = "transcript"  # transcript, message, url, payment_request
-    text: str
+    type: EvidenceType = "transcript"
+    text: str = Field(min_length=1, max_length=MAX_EVIDENCE_CHARS)
     timestamp: Optional[datetime] = None
-    provenance: Optional[str] = "user_paste"
-    speaker_turns: Optional[List[Dict[str, Any]]] = None
+    provenance: Optional[str] = Field(default="user_paste", max_length=255)
+    speaker_turns: Optional[List[Dict[str, Any]]] = Field(default=None, max_length=MAX_SPEAKER_TURNS)
 
 
 class IncidentCreate(BaseModel):
-    title: str
-    source_channel: str = "call"  # call, sms, email, web
-    language: str = "en"
-    notes: Optional[str] = None
-    scenario_id: Optional[str] = None
-    evidence: Optional[List[EvidenceCreate]] = None
+    title: str = Field(min_length=1, max_length=255)
+    source_channel: SourceChannel = "call"
+    language: LanguageCode = "en"
+    notes: Optional[str] = Field(default=None, max_length=2000)
+    scenario_id: Optional[str] = Field(default=None, max_length=100)
+    evidence: Optional[List[EvidenceCreate]] = Field(default=None, max_length=20)
 
 
 class EntityMentionSchema(BaseModel):

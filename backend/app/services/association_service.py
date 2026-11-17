@@ -5,6 +5,20 @@ from backend.app.models.models import (
 )
 
 
+LINKABLE_TYPES = {"PHONE", "UPI_HANDLE", "DOMAIN", "EMAIL", "URL"}
+
+
+def is_exact_identifier_match(a: Entity | None, b: Entity | None) -> bool:
+    """Invariant I1 predicate: same identifier type and exactly equal canonical value."""
+    return (
+        a is not None
+        and b is not None
+        and a.type in LINKABLE_TYPES
+        and a.type == b.type
+        and a.canonical_value == b.canonical_value
+    )
+
+
 def find_or_create_observed_matches(db: Session, incident_id: int) -> list[Association]:
     """
     Generate OBSERVED_MATCH associations based strictly on EXACT normalised identifier equality.
@@ -24,8 +38,6 @@ def find_or_create_observed_matches(db: Session, incident_id: int) -> list[Assoc
     if not current_mentions:
         return []
 
-    # Filter to linkable identifier types
-    LINKABLE_TYPES = {"PHONE", "UPI_HANDLE", "DOMAIN", "EMAIL", "URL"}
     created_associations = []
 
     for mention in current_mentions:
@@ -90,8 +102,10 @@ def find_or_create_observed_matches(db: Session, incident_id: int) -> list[Assoc
                 }
             ]
 
-            # Invariant I1 verification: identical canonical check
-            if entity.canonical_value != entity.canonical_value:
+            # Invariant I1: an OBSERVED_MATCH requires exactly equal normalised identifiers.
+            # Compare the two mentions' entities explicitly instead of trusting the join.
+            other_entity = db.query(Entity).filter(Entity.id == other_mention.entity_id).first()
+            if not is_exact_identifier_match(entity, other_entity):
                 continue
 
             # Prior confidences per blueprint §6.10:

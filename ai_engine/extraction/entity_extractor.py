@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlencode, urlparse
 import phonenumbers
 from ai_engine.extraction.interface import EntityMentionData
 
@@ -50,6 +50,38 @@ ORG_GAZETTEER = {
     "pnb": ("Punjab National Bank", "BANK"),
 }
 
+ORG_CLASS_BY_CANONICAL = {canonical: inst for canonical, inst in ORG_GAZETTEER.values()}
+
+_URL_RE = re.compile(r"https?://[^\s<>\"'`]+", re.IGNORECASE)
+_URL_TRAILING_PUNCT = ".,;:!?)]}'\""
+_TRACKING_PARAMS = {"fbclid", "gclid", "msclkid", "igshid", "mc_cid", "mc_eid"}
+
+
+def canonical_host(host: str) -> str:
+    """Lower-case, strip 'www.' and a trailing dot, and convert IDN hosts to punycode."""
+    host = host.strip().lower().rstrip(".")
+    if host.startswith("www."):
+        host = host[4:]
+    if not host:
+        return ""
+    try:
+        host = host.encode("idna").decode("ascii")
+    except UnicodeError:
+        pass
+    return host
+
+
+def canonical_url(scheme: str, host: str, path: str, query: str) -> str:
+    """Canonical URL: scheme://host/path[?query] with tracking parameters removed."""
+    path = path.rstrip("/")
+    kept = sorted(
+        (k, v) for k, v in parse_qsl(query, keep_blank_values=True)
+        if not k.lower().startswith("utm_") and k.lower() not in _TRACKING_PARAMS
+    )
+    qs = f"?{urlencode(kept)}" if kept else ""
+    return f"{scheme.lower()}://{host}{path}{qs}"
+
+
 # Standard email TLDs to differentiate email from UPI
 COMMON_EMAIL_TLDS = {
     "com", "org", "net", "edu", "gov", "mil", "in", "co.in", "io", "ai",
@@ -94,18 +126,21 @@ def extract_entities(text: str) -> list[EntityMentionData]:
     except Exception:
         pass
 
-    # 2. Extract URLs and Domains
-    url_regex = re.compile(r"https?://(?:www\.)?([a-zA-Z0-9\-\._~:/?#\[\]@!$&'()*+,;=]+)", re.IGNORECASE)
-    for match in url_regex.finditer(text):
+    # 2. Extract URLs and Domains (parse only; URLs are NEVER fetched)
+    for match in _URL_RE.finditer(text):
         raw_url = match.group(0)
-        start, end = match.span()
+        start = match.start()
+        # Sentence punctuation is not part of the URL.
+        while raw_url and raw_url[-1] in _URL_TRAILING_PUNCT:
+            raw_url = raw_url[:-1]
+        end = start + len(raw_url)
         try:
             parsed = urlparse(raw_url)
-            host = parsed.netloc.lower()
-            if ":" in host:
-                host = host.split(":")[0]
-            clean_url = f"{parsed.scheme}://{host}{parsed.path}"
-            
+            host = canonical_host(parsed.hostname or "")
+            if not host:
+                continue
+            clean_url = canonical_url(parsed.scheme, host, parsed.path, parsed.query)
+
             if clean_url not in seen_canonical:
                 seen_canonical.add(clean_url)
                 entities.append(EntityMentionData(
@@ -175,11 +210,18 @@ def extract_entities(text: str) -> list[EntityMentionData]:
                     confidence=0.95
                 ))
 
-    # 4. Extract Claimed Organisations from Gazetteer
+    # 4. Extract Claimed Organisations from Gazetteer.
+    # Short aliases (ED, DOT, CBI, SBI...) must appear in upper case in the text so that
+    # ordinary words such as "ed" or "dot" do not create organisation mentions.
     lower_text = text.lower()
     for alias, (canonical_name, inst_class) in ORG_GAZETTEER.items():
-        pattern = r"\b" + re.escape(alias) + r"\b"
-        for match in re.finditer(pattern, lower_text):
+        if len(alias) <= 4:
+            pattern = r"\b" + re.escape(alias.upper()) + r"\b"
+            haystack = text
+        else:
+            pattern = r"\b" + re.escape(alias) + r"\b"
+            haystack = lower_text
+        for match in re.finditer(pattern, haystack):
             start, end = match.span()
             if canonical_name not in seen_canonical:
                 seen_canonical.add(canonical_name)

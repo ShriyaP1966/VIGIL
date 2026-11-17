@@ -4,7 +4,12 @@ from backend.app.models.models import Incident, Entity, Mention, Evidence, Assoc
 from backend.app.schemas.schemas import GraphResponse, GraphNode, GraphEdge
 
 
-def build_investigation_graph(db: Session, min_confidence: float = 0.0, include_rejected: bool = False) -> GraphResponse:
+def build_investigation_graph(
+    db: Session,
+    min_confidence: float = 0.0,
+    include_rejected: bool = False,
+    status: str | None = None,
+) -> GraphResponse:
     """
     Construct cross-channel bipartite graph of incidents, extracted entities,
     structural links, and cross-incident associations (§4, §12.5).
@@ -42,6 +47,7 @@ def build_investigation_graph(db: Session, min_confidence: float = 0.0, include_
     # 2. Add Entity Nodes and Structural Edges (Incident -> Entity)
     mentions = db.query(Mention).all()
     added_entities = set()
+    added_structural = set()
 
     for m in mentions:
         entity = db.query(Entity).filter(Entity.id == m.entity_id).first()
@@ -67,8 +73,11 @@ def build_investigation_graph(db: Session, min_confidence: float = 0.0, include_
             nodes.append(node)
             g.add_node(ent_node_id, **node.details)
 
-        # Structural edge from Incident to Entity
-        edge_id = f"struct_{evidence.incident_id}_{entity.id}_{m.id}"
+        # Structural edge from Incident to Entity (one per incident/entity pair)
+        edge_id = f"struct_{evidence.incident_id}_{entity.id}"
+        if edge_id in added_structural:
+            continue
+        added_structural.add(edge_id)
         edge = GraphEdge(
             id=edge_id,
             source=f"incident_{evidence.incident_id}",
@@ -86,6 +95,8 @@ def build_investigation_graph(db: Session, min_confidence: float = 0.0, include_
         if assoc.status == "REJECTED_ASSOCIATION" and not include_rejected:
             continue
         if assoc.adjusted_confidence < min_confidence:
+            continue
+        if status and assoc.status != status:
             continue
 
         edge_id = f"assoc_{assoc.id}"

@@ -5,9 +5,17 @@ from sqlalchemy.orm import Session
 from backend.app.core.config import settings
 from backend.app.core.database import engine, Base, get_db
 from backend.app.core.middleware import RequestIDMiddleware
-from backend.app.core.errors import VigilException, vigil_exception_handler, generic_exception_handler
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from backend.app.core.errors import (
+    VigilException, vigil_exception_handler, generic_exception_handler,
+    http_exception_handler, validation_exception_handler,
+)
 from backend.app.api.v1 import health, incidents, graph, associations
-from backend.app.models.models import Incident, Evidence, Entity, Mention, Association, Analysis, RiskContribution, CounterEvidence, Review, Campaign, CampaignMember
+from backend.app.models.models import (
+    Incident, Evidence, Utterance, Entity, Mention, Relationship, TacticEvent, Association,
+    Analysis, RiskContribution, CounterEvidence, Review, Campaign, CampaignMember,
+)
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -20,6 +28,8 @@ app = FastAPI(
 
 # Exception handlers
 app.add_exception_handler(VigilException, vigil_exception_handler)
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
 # Middleware
@@ -27,7 +37,7 @@ app.add_middleware(RequestIDMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"] if settings.FRONTEND_ORIGIN == "*" else [settings.FRONTEND_ORIGIN],
-    allow_credentials=True,
+    allow_credentials=False,  # no cookies/auth in the MVP; "*" origins are invalid with credentials
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["X-Request-ID"]
@@ -59,8 +69,11 @@ def clear_all_data(confirm: bool = Query(False), db: Session = Depends(get_db)):
     db.query(Association).delete()
     db.query(CampaignMember).delete()
     db.query(Campaign).delete()
+    db.query(TacticEvent).delete()
+    db.query(Relationship).delete()
     db.query(Mention).delete()
     db.query(Entity).delete()
+    db.query(Utterance).delete()
     db.query(Evidence).delete()
     db.query(Incident).delete()
     db.commit()

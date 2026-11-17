@@ -1,7 +1,7 @@
 import json
 from sqlalchemy.orm import Session
 from backend.app.models.models import (
-    Incident, Evidence, Utterance, Entity, Mention, Analysis, RiskContribution
+    Incident, Evidence, Utterance, Entity, Mention, Analysis, RiskContribution, Association
 )
 from backend.app.schemas.schemas import IncidentCreate, EvidenceCreate
 from ai_engine.extraction.normalisation import normalise_text, compute_sha256, detect_language, mask_identifier
@@ -73,8 +73,9 @@ def add_evidence_to_incident(db: Session, incident_id: int, data: EvidenceCreate
         db.add(utt)
         db.commit()
 
-    # Extract entities and save mentions
-    raw_entities = extract_entities(data.text)
+    # Extract entities from the NORMALISED text (NFKC, zero-width stripped) so that invisible
+    # characters cannot split an identifier. Mention spans refer to `normalised_text`.
+    raw_entities = extract_entities(norm_text)
     for ent_data in raw_entities:
         # Check if entity already exists by canonical_value and type
         entity = (
@@ -112,12 +113,14 @@ def add_evidence_to_incident(db: Session, incident_id: int, data: EvidenceCreate
     return evidence
 
 
-def run_incident_analysis(db: Session, incident_id: int) -> Analysis:
+def run_incident_analysis(db: Session, incident_id: int, _propagate: bool = True) -> Analysis:
     """
     Run full end-to-end analysis on an incident:
-    1. Extract entities & form OBSERVED_MATCH associations
+    1. Form OBSERVED_MATCH associations from exactly shared normalised identifiers
     2. Calculate risk heuristic & contribution breakdown
     3. Persist Analysis and RiskContribution records
+    4. Re-analyse incidents on the other end of an observed match once, so that both ledgers
+       reflect the link (F3). Each run is stored as a new Analysis row; the latest one is shown.
     """
     # 1. Generate observed matches
     find_or_create_observed_matches(db, incident_id)
@@ -155,4 +158,16 @@ def run_incident_analysis(db: Session, incident_id: int) -> Analysis:
         db.add(rc)
 
     db.commit()
+
+    if _propagate:
+        linked = db.query(Association).filter(
+            (Association.incident_a_id == incident_id) | (Association.incident_b_id == incident_id),
+            Association.status == "OBSERVED_MATCH",
+        ).all()
+        counterparts = {
+            a.incident_b_id if a.incident_a_id == incident_id else a.incident_a_id for a in linked
+        }
+        for other_id in sorted(counterparts):
+            run_incident_analysis(db, other_id, _propagate=False)
+
     return analysis
