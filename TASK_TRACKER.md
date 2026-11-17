@@ -13,7 +13,7 @@
 | **Phase 0** | Foundation & Guardrails | 17 Nov 2026 | ✅ Done (browser walk-through of placeholder pages not recorded) | Deployment scaffold (`deployment/`) |
 | **Phase 1** | Vertical Slice 1 (Ingest → Match → Graph) | 18 Nov 2026 | 🟡 Code complete, 2 items open: public deployment (needs Vercel/Render sign-in), in-browser walk-through. Antigravity quota log waived by owner (build moved to Claude Code) | **First Slice Deployed** (Vercel + Render): *not yet* |
 | **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ✅ Done as scoped by the owner (Gemini, scikit-learn tier and delimiter sandboxing cut); UI not yet viewed in a browser | - |
-| **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ⚪ Pending | - |
+| **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ✅ Done as scoped by the owner (dwell, fuzzy candidates, CE-8, side-by-side UI and graph hull cut); UI not yet viewed in a browser. **Finding:** the fingerprint recognises a script family, not a campaign instance (see DEVELOPMENT_LOG Session 5) | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ⚪ Pending | - |
 | **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ⚪ Pending | Static demo data generator export |
 | **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ⚪ Pending | **Final Production Deployment** (Dual-mode) |
@@ -115,22 +115,23 @@
 **Objective:** Playbook fingerprinting and campaign hypotheses with safety invariants I1–I5 strictly enforced.
 
 #### Tasks
-- [ ] Implement Association Service managing all five states (`OBSERVED_MATCH`, `CANDIDATE_ASSOCIATION`, `ANALYST_VERIFIED_ASSOCIATION`, `DISPUTED_ASSOCIATION`, `REJECTED_ASSOCIATION`).
-- [ ] Implement `reviews` audit table and review endpoints (`POST /associations/{id}/review`, `POST /campaigns/{id}/review`).
-- [ ] Implement Temporal Engine: chronologically ordered event streams, stage sequence derivation, dwell profile calculation, partial sequence handling, recurrence windows.
-- [ ] Implement Playbook Fingerprint similarity: LCS strict similarity, containment adjustment, relative order consistency, composite scoring.
-- [ ] Implement Playbook Association Gate ($\ge 3$ distinct stages, $\text{LCS} \ge 3$, $\text{similarity} \ge T_{\text{candidate}}$).
-- [ ] Implement Campaign Hypothesis Builder: connected components over observed matches, candidate edge extensions, hypothesis confidence calculation, weakest-link identification.
-- [ ] Frontend: visual edge styles per association state, graph legend clarifying observed match semantics, Campaigns view listing hypotheses.
+- [x] Association service managing all five states; invariants I1, I2, I3, I5 enforced by ORM listeners. `CANDIDATE_ASSOCIATION` is created, updated or withdrawn by the engine; `ANALYST_VERIFIED_ASSOCIATION` / `REJECTED_ASSOCIATION` only through a review; `DISPUTED_ASSOCIATION` through an analyst FLAG (the rule-based path comes with the counter-evidence engine in Phase 4).
+- [x] `reviews` audit table in use; `POST /associations/{id}/review` and `POST /campaigns/{id}/review` (notes are redacted before storage).
+- [~] Temporal Engine, **reduced by the owner's cut line**: stage sequence derivation and partial-sequence handling are done (Phase 2 fingerprint + containment). **Dwell profile and recurrence window are cut/deferred** (CE-8 moves to Phase 4).
+- [x] Playbook fingerprint similarity (LCS, containment with damping, relative order, composite) per §6.7; dwell similarity omitted and the weights renormalised, as the blueprint allows.
+- [x] Association gate: both incidents need >= 3 distinct stages and LCS >= 3, then similarity >= `T_candidate` (0.75, from settings; not tuned).
+- [x] Campaign hypothesis builder: components over observed/verified links extended by candidate links, member basis, mean link confidence, weakest link, excluded (disputed/rejected) links. *Deviation:* a group connected only by candidate links is also a hypothesis (behaviour-only).
+- [x] Frontend: candidate edges labelled with similarity, legend, inspector with review controls, Campaigns list and detail. *(Built, type-checked and unit-tested; not yet viewed in a browser. The side-by-side playbook comparison and the graph hull are cut.)*
+- [~] Fuzzy-identifier candidates: **cut** (not needed for the headline experiment).
 
 #### Done Means Checkpoint
-- [ ] Property unit tests enforce Invariant I1 (exact match only) and Invariant I2 (fingerprints cannot create observed or verified states).
-- [ ] Scenario with rotated identifiers produces a dashed amber `CANDIDATE_ASSOCIATION` edge with component scores.
-- [ ] Decoy scenarios (different tactics) fail the association gate and remain unlinked.
-- [ ] Cut-off partial sequences match correctly via containment adjustment.
-- [ ] Submitting an `ACCEPT` review transitions state to `ANALYST_VERIFIED_ASSOCIATION` and writes an audit record (Invariant I3).
-- [ ] All campaign views and API outputs strictly use the term "hypothesis" (Invariant I4).
-- [ ] All unit and integration tests pass.
+- [x] Property tests enforce I1 (observed matches equal an independent oracle of shared exact identifiers) and I2 (fingerprints cannot create observed or verified states), at rotation 0, 0.5 and 1.0, on train and dev data only.
+- [x] A rotated-identifier scenario produces a `CANDIDATE_ASSOCIATION` edge with component scores (graph edge is dashed amber in the UI layout; not yet seen in a browser).
+- [x] Decoys fail the gate: legitimate incidents are never linked, the same tactics in reverse order and look-alike benign notices stay unlinked. *(Only hand-built decoys so far; the full decoy set is Phase 5.)*
+- [x] Cut-off partial sequences match through containment (LCS equals the fragment, containment 1.0).
+- [x] `ACCEPT` sets `ANALYST_VERIFIED_ASSOCIATION` and writes a `reviews` row; the data layer refuses the status without one (I3).
+- [x] All campaign views and API outputs use the term "hypothesis"; tests scan API output and source files for forbidden wording (I4).
+- [x] All unit and integration tests pass. *(354 backend, 34 frontend.)*
 
 ---
 

@@ -21,13 +21,16 @@
 
 ## Project status
 
-This README describes the full v3.1 design. **Phases 1 and 2 are implemented so far**; everything in the right-hand column is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
+This README describes the full v3.1 design. **Phases 1-3 are implemented so far**; everything in the right-hand column is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
 
-| Implemented (Phases 1-2) | Planned (not built yet) |
+| Implemented (Phases 1-3) | Planned (not built yet) |
 |---|---|
-| Paste evidence, SHA-256 provenance, NFKC normalisation | Playbook fingerprint similarity, candidate associations, campaign hypotheses (Phase 3) |
-| Phone / UPI / email / URL / domain / organisation extraction, masked display | Full temporal engine (dwell, recurrence window) (Phase 3) |
-| Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | Counter-evidence engine, full inspector, analyst review (Phase 4) |
+| Paste evidence, SHA-256 provenance, NFKC normalisation | Dwell similarity and the recurrence window (cut for now) |
+| Phone / UPI / email / URL / domain / organisation extraction, masked display | Counter-evidence rules, full inspector (Phase 4) |
+| Playbook fingerprint similarity with a gate; behaviour-only `CANDIDATE_ASSOCIATION` links | |
+| Five association states with invariants enforced in the data layer; analyst Accept / Reject / Flag with an audit trail | |
+| Campaign hypotheses (always labelled hypothesis) with member basis, weakest link and review | |
+| Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | |
 | `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | Rotation experiment and the remaining evaluation suites (Phase 5) |
 | Rule-based tactic extraction (English, Hinglish, a few Hindi/Marathi patterns) with exact spans | Simulated live call, reports, scenario lab UI (Phase 6) |
 | Stage-based risk indicator with an exact contribution ledger | Gemini extractor and ML classifier: **cut**, not planned for the deadline |
@@ -35,7 +38,7 @@ This README describes the full v3.1 design. **Phases 1 and 2 are implemented so 
 | Tactic timeline and highlighted transcript; graph (React Flow), evidence inspector, static demo mode | |
 | Synthetic dataset generator v1 and the `tactics` / `injection` evaluation suites | |
 
-**Evaluation so far (Phase 2 only).** On the held-out *test templates* of the synthetic dataset the rule extractor scores macro-F1 0.964 (authority-claim recall 0.80 and allegation precision 0.77 are the weak spots). The 10 injection attacks are all flagged. All of this is synthetic data written by the same author as the rules, so the numbers are optimistic and do not predict real-world performance. Reproduce with `python scripts/evaluate_model.py --suite tactics --split test`; results and caveats are in [docs/experiments/](docs/experiments/). The headline identifier-rotation experiment has **not** been run yet, and no result for it is claimed.
+**Evaluation so far (Phase 2 only).** On the held-out *test templates* of the synthetic dataset the rule extractor scores macro-F1 0.964 (authority-claim recall 0.80 and allegation precision 0.77 are the weak spots). The 10 injection attacks are all flagged. All of this is synthetic data written by the same author as the rules, so the numbers are optimistic and do not predict real-world performance. Reproduce with `python scripts/evaluate_model.py --suite tactics --split test`; results and caveats are in [docs/experiments/](docs/experiments/). The headline identifier-rotation experiment has **not** been run yet, and no result for it is claimed. A preliminary diagnostic on the synthetic train/dev data suggests the behavioural fingerprint recognises a *script family*, not an individual campaign: it finds most true pairs but also links different campaign instances that run the same script (precision about 0.2 against the "same campaign instance" ground truth, with no cross-script false links). See `DEVELOPMENT_LOG.md` (Session 5); the proper evaluation is planned.
 
 ---
 
@@ -56,7 +59,7 @@ VIGIL extracts an ordered tactic sequence (`AUTHORITY → ALLEGATION → THREAT 
 
 | Association State | Meaning | Creation Source | Graph Styling |
 |---|---|---|---|
-| `OBSERVED_MATCH` | Identical normalised identifier observed in evidence. *(Proves shared identifier, NOT confirmed criminal syndicate).* | Exact normalized equality only | Solid thin sky-blue line (`observed match`) |
+| `OBSERVED_MATCH` | Identical normalised identifier observed in evidence. *(Proves a shared identifier, NOT a common origin).* | Exact normalized equality only | Solid thin sky-blue line (`observed match`) |
 | `CANDIDATE_ASSOCIATION` | Statistically similar playbook fingerprint or fuzzy identifier requiring analyst review. | System heuristic / algorithm | Dashed amber line (`similarity %`) |
 | `ANALYST_VERIFIED_ASSOCIATION` | Confirmed by a human fraud analyst. | Human analyst review action | Solid thick teal line with checkmark |
 | `DISPUTED_ASSOCIATION` | Contradicted by high-severity counter-evidence. | Counter-evidence engine or analyst | Dashed red line with warning marker |
@@ -220,6 +223,7 @@ Developed in partnership with **Google Antigravity**:
 
 - Secret redaction is rule-based and best effort. It does **not** catch spelled-out digits ("four eight two…"), secrets with no cue word nearby ("the number from the sms is 482913"), or non-Luhn card numbers with no "card" cue. Amount-like values right after a currency marker are treated as amounts. A 4-6 digit value after "PIN" is redacted even if it was a postal code ("PIN code" itself is left alone). Plain text sent by the browser reaches the server before it is redacted, so use HTTPS and synthetic data.
 - Tactic detection is lexicon rules only: it recognises the phrasings in `data/lexicon.json` and misses others (on unseen templates authority-claim recall was 0.80). Some labels are ambiguous (e.g. "tonight" counts as urgency, "under digital arrest" as threat). Institution class and payment channel are simple priority rules with modest accuracy (0.66-0.75 and 0.66-0.97 across splits). Victim turns are not scored, but a victim's words inside an unlabelled paste are.
+- The playbook fingerprint compares the order of detected stages plus the claimed institution and payment channel. It cannot tell apart two groups that run the same script, it ignores dwell time, and its weights and the 0.75 candidate threshold are a-priori choices, not learned. A candidate link is a lead for an analyst, never a conclusion; campaigns are hypotheses even after an analyst accepts them.
 - The injection guard is a regex layer. It does not catch leetspeak, spaced-out letters or polite paraphrase without trigger words, and benign-sounding text appended without trigger wording can lower the score of a scam that has no payment or credential request (by at most 15 points).
 - High dependence on transcription quality when operating on noisy audio.
 - Heuristic weights in risk and playbook similarity are design priors, not trained Bayesian posterior probabilities.

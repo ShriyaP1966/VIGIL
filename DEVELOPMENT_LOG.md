@@ -129,4 +129,41 @@ First dev run, before any rule fix: macro-F1 0.956 (FALSE_ALLEGATION precision 0
 - Rule iteration used dev and train only; the test split was run once after the lexicon was frozen.
 
 ### Verification
-`pytest -q`: 275 passed. `ruff check`: clean. `npm test`: 28 passed. `tsc` and `vite build`: succeeded. Two mutation checks: removing the injection flag from the risk call fails the mitigation-lock test; earlier the redactor mutation check still stands. Static demo re-exported from the real pipeline. **Not verified:** the UI has not been viewed in a browser. (Antigravity quota log: waived by owner: build moved to Claude Code.)
+`pytest -q`: 275 passed. `ruff check`: clean. `npm test`: 28 passed. `tsc` and `vite build`: succeeded. Two mutation checks: removing the injection flag from the risk call fails the mitigation-lock test; earlier the redactor mutation check still stands. Static demo re-exported from the real pipeline. **Not verified:** the UI has not been viewed in a browser.
+
+---
+
+## Session 5: 17 Nov 2026 — Phase 3: fingerprint, associations, campaign hypotheses
+
+### Prompt used
+Owner approved Phase 3 in this order: (1) playbook fingerprint similarity per §6.7 with the gate, (2) association service with all five states, I2 enforced, reviews table and review endpoints (I3), (3) campaign hypothesis builder with /campaigns (I4), (4) UI: candidate edges with similarity %, Campaigns list and detail, (5) tests: I1/I2 property tests, decoys, containment, determinism. **Cut/deferred:** dwell similarity, fuzzy-identifier candidates, CE-8, the side-by-side UI, the graph hull. `T_candidate` stays 0.75 and is not tuned on test. Same rules (honest results, local commits per item, no push, preflight and tests before each commit).
+
+### Commits (local, not pushed)
+`4ba02e0` 3.1 fingerprint similarity · `ec928a2` 3.2 association service and review · `c9f2583` 3.3 campaign hypotheses · `c172135` 3.4 UI · `acee4e9` 3.5 property tests · plus the commit containing this entry.
+
+### What was built
+- **Fingerprint (`fingerprint@3.1.0`):** LCS, containment (damped by min(1, len/4)), relative-order consistency, institution and payment match; dwell omitted and the weights renormalised (0.65/0.15/0.10 over 0.90). Language and channel are never inputs. Gate: both incidents >= 3 distinct stages and LCS >= 3. Symmetric and deterministic.
+- **Association service:** the engine compares each analysed incident with all others and creates, updates or withdraws behaviour-only `CANDIDATE_ASSOCIATION` rows with component scores, one excerpt per stage per incident, and a plain-language explanation. An exact identifier arriving later upgrades a candidate to `OBSERVED_MATCH` (match type COMBINED); an observed pair whose behaviour also matches keeps its single row and gains the playbook scores. Reviews: ACCEPT -> ANALYST_VERIFIED, REJECT -> REJECTED, FLAG -> DISPUTED, with the review row written first.
+- **Invariants in the data layer:** ORM listeners raise on a behaviour-only OBSERVED_MATCH (I1/I2), on creating or flipping to an analyst status without a recorded review (I3) and on an association without evidence or explanation (I5).
+- **Campaign hypotheses (`campaign@3.1.0`):** components over observed and verified links extended by candidate links; member basis OBSERVED / CANDIDATE / ANALYST; confidence is the mean link confidence, weakest link always shown; disputed and rejected links are excluded but listed. Rebuilds are deterministic and idempotent; analyst-reviewed hypotheses keep their id and status.
+- **UI:** candidate edges labelled with similarity, inspector with component breakdown, stage excerpts and live review controls (disabled with an explanation in the static demo), Campaigns list and detail pages. A fourth seeded incident (same script, rotated identifiers) makes the demo show a candidate link: observed link, candidate link at similarity 1.00, one hypothesis of 3 incidents at mean link confidence 0.875 (incident 4 is behaviour-only).
+
+### Decisions and deviations
+- **Deviation from the blueprint:** a group connected only by candidate links is also a campaign hypothesis (behaviour-only). Blueprint §6.8 seeds hypotheses on observed matches only, so a campaign whose identifiers were all rotated could never appear.
+- No F4 risk factor (candidate association +5): it belongs to the Phase 4 risk engine, and adding it now would need cascading re-analysis.
+- A candidate with no remaining support is deleted if no analyst touched it; reviewed hypotheses are kept as history when their links disappear. A hypothesis accepted earlier keeps its status when new incidents join it (membership change since the review is not flagged yet).
+- `T_candidate` comes from `settings.T_CANDIDATE` (0.75) and was not tuned.
+
+### Finding to act on: the fingerprint recognises a script family, not a campaign instance
+Diagnostic (scratch computation, **train and dev splits only, test split untouched, no tuning**), counting a pair as true when both incidents share `campaign_instance_id`:
+
+| rotation | split | true pairs | candidates | precision | recall |
+|---|---|---|---|---|---|
+| 0.0 | train / dev | 24 / 24 | 121 / 105 | 0.18 / 0.17 | 0.92 / 0.75 |
+| 0.5 | train / dev | 24 / 24 | 90 / 132 | 0.21 / 0.18 | 0.79 / 1.00 |
+| 1.0 | train / dev | 24 / 24 | 90 / 124 | 0.18 / 0.18 | 0.67 / 0.92 |
+
+Every false positive is a pair from the SAME template but a DIFFERENT campaign instance (e.g. T1-T1, T4-T4, T5-T5); there were **no cross-template false positives**. In this generator, different instances of one template follow an identical script, so no behavioural method could separate them. Misses are mostly gate failures on cut-off calls with fewer than 3 stages or low-similarity fragments. Consequence for Phase 5: against the blueprint's ground truth (true pair = same `campaign_instance_id`), arm D will show many false associations, so the rotation experiment will probably show it helping recall and hurting precision. This is a property of the data design, not something to tune away. **Decision for the owner before Phase 5:** (a) keep the ground truth and report it honestly, (b) also report a script-family ground truth, and/or (c) give each instance a pre-declared, documented behavioural habit (e.g. its own stage order or optional stage) before any evaluation is run. Whatever is chosen must be fixed before the experiment, not after seeing results.
+
+### Verification
+`pytest -q`: 354 passed (1 min 43 s, because the property tests run the real pipeline). `ruff check`: clean. `npm test`: 34 passed. `tsc` and `vite build`: succeeded. Mutation check: weakening the gate (1 stage, LCS 1) fails five tests in three files; reverted. Static demo re-exported from the real pipeline (now includes campaigns). **Not verified:** the UI has not been viewed in a browser. Property and decoy tests use hand-built decoys and the train/dev splits only; the full decoy set and the real association evaluation are Phase 5. (Antigravity quota log: waived by owner: build moved to Claude Code.)
