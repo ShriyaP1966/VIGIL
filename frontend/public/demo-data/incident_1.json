@@ -5,16 +5,16 @@
   "language": "hi-Latn",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T12:39:08.057320",
+  "created_at": "2026-11-17T13:17:57.356669",
   "evidence_items": [
     {
       "id": 1,
       "type": "transcript",
-      "original_text": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain. Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
-      "normalised_text": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain. Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
-      "sha256": "8e56cbcb0778026ee376e28ce1faf6fcb933b2cf6f3dba67a9ff5bc52ed312ae",
+      "original_text": "Caller: Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain.\nVictim: Lekin maine kuch galat nahi kiya.\nCaller: Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
+      "normalised_text": "Caller: Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain.\nVictim: Lekin maine kuch galat nahi kiya.\nCaller: Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
+      "sha256": "303033593f8d50aff58fdf0dafb52f14ca7b2628345d4d26e324fbbcf0b43233",
       "provenance": "seed:scenario_01",
-      "timestamp": "2026-11-17T12:39:08.069468",
+      "timestamp": "2026-11-17T13:17:57.370383",
       "entities": [
         {
           "id": 1,
@@ -22,8 +22,8 @@
           "canonical_value": "verify-cbi@okhdfcbank",
           "display_value": "ve•••@okhdfcbank",
           "norm_method": "lower_case",
-          "span_start": 269,
-          "span_end": 290,
+          "span_start": 327,
+          "span_end": 348,
           "confidence": 0.95
         },
         {
@@ -32,8 +32,8 @@
           "canonical_value": "Central Bureau of Investigation",
           "display_value": "Central Bureau of Investigation",
           "norm_method": "gazetteer_alias",
-          "span_start": 5,
-          "span_end": 8,
+          "span_start": 13,
+          "span_end": 16,
           "confidence": 0.92
         },
         {
@@ -42,9 +42,97 @@
           "canonical_value": "Indian Customs",
           "display_value": "Indian Customs",
           "norm_method": "gazetteer_alias",
-          "span_start": 91,
-          "span_end": 98,
+          "span_start": 99,
+          "span_end": 106,
           "confidence": 0.92
+        }
+      ],
+      "utterances": [
+        {
+          "id": 1,
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain.",
+          "t_start_sec": null,
+          "language": "hi-Latn",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 16,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 83,
+              "confidence": 0.85
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 138,
+              "end": 154,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "id": 2,
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Lekin maine kuch galat nahi kiya.",
+          "t_start_sec": null,
+          "language": "hi-Latn",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "id": 3,
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
+          "t_start_sec": null,
+          "language": "hi-Latn",
+          "tactics": [
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 16,
+              "end": 30,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 138,
+              "end": 149,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 173,
+              "end": 189,
+              "confidence": 0.9
+            },
+            {
+              "label": "URGENCY",
+              "start": 9,
+              "end": 15,
+              "confidence": 0.9
+            },
+            {
+              "label": "FINANCIAL_DEMAND",
+              "start": 61,
+              "end": 116,
+              "confidence": 0.9
+            },
+            {
+              "label": "FINANCIAL_DEMAND",
+              "start": 121,
+              "end": 136,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
         }
       ]
     }
@@ -52,53 +140,97 @@
   "analysis": {
     "id": 3,
     "incident_id": 1,
-    "extractor": "RuleMLExtractor",
-    "extractor_version": "3.1.0",
+    "extractor": "rules",
+    "extractor_version": "rules@1.0",
     "fallback_used": false,
-    "risk_score": 60,
-    "risk_band": "HIGH",
-    "risk_version": "risk@3.1.0",
+    "risk_score": 86,
+    "risk_band": "CRITICAL",
+    "risk_version": "risk@3.1.1",
     "injection_flags": [],
     "fingerprint": {
-      "stage_sequence": []
+      "stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ],
+      "credential_requested": false,
+      "institution_class": "CENTRAL_AGENCY",
+      "payment_channel": "UPI",
+      "language": "mixed",
+      "channel": "call"
     },
     "contributions": [
       {
-        "factor": "F1 tactic presence (Financial Demand via UPI)",
-        "evidence_ref": "evidence:1",
-        "rule_version": "risk@3.1.0",
-        "contribution": 18,
+        "factor": "F1 tactic presence: AUTHORITY",
+        "evidence_ref": "utterance:1",
+        "rule_version": "risk@3.1.1",
+        "contribution": 6,
         "effect": "SUPPORTING",
-        "explanation": "A UPI payment handle appears in the evidence."
+        "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
       },
       {
-        "factor": "F1 tactic presence (Authority Impersonation)",
-        "evidence_ref": "evidence:1",
-        "rule_version": "risk@3.1.0",
+        "factor": "F1 tactic presence: ALLEGATION",
+        "evidence_ref": "utterance:1",
+        "rule_version": "risk@3.1.1",
+        "contribution": 10,
+        "effect": "SUPPORTING",
+        "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+      },
+      {
+        "factor": "F1 tactic presence: THREAT",
+        "evidence_ref": "utterance:3",
+        "rule_version": "risk@3.1.1",
         "contribution": 14,
         "effect": "SUPPORTING",
-        "explanation": "Names a law-enforcement, customs, telecom or regulatory body (claimed authority)."
+        "explanation": "The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
       },
       {
-        "factor": "F1 tactic presence (Urgency)",
-        "evidence_ref": "evidence:1",
-        "rule_version": "risk@3.1.0",
+        "factor": "F1 tactic presence: ISOLATION",
+        "evidence_ref": "utterance:3",
+        "rule_version": "risk@3.1.1",
+        "contribution": 16,
+        "effect": "SUPPORTING",
+        "explanation": "The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 tactic presence: URGENCY",
+        "evidence_ref": "utterance:3",
+        "rule_version": "risk@3.1.1",
         "contribution": 8,
         "effect": "SUPPORTING",
-        "explanation": "Urgency or deadline wording is present."
+        "explanation": "The urgency stage was detected (URGENCY, rule confidence 0.90)."
       },
       {
-        "factor": "F1 tactic presence (Threat & Intimidation)",
-        "evidence_ref": "evidence:1",
-        "rule_version": "risk@3.1.0",
-        "contribution": 14,
+        "factor": "F1 tactic presence: DEMAND",
+        "evidence_ref": "utterance:3",
+        "rule_version": "risk@3.1.1",
+        "contribution": 18,
         "effect": "SUPPORTING",
-        "explanation": "Wording about arrest, warrants, FIR or similar legal threats is present."
+        "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+      },
+      {
+        "factor": "F1 cap",
+        "evidence_ref": "global",
+        "rule_version": "risk@3.1.1",
+        "contribution": -2,
+        "effect": "MITIGATING",
+        "explanation": "Tactic-presence factors are capped at +70 in total."
+      },
+      {
+        "factor": "F2 canonical order observed",
+        "evidence_ref": "utterance:3",
+        "rule_version": "risk@3.1.1",
+        "contribution": 10,
+        "effect": "SUPPORTING",
+        "explanation": "6 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
       },
       {
         "factor": "F3 OBSERVED_MATCH to a higher-risk incident",
         "evidence_ref": "assoc:1",
-        "rule_version": "risk@3.1.0",
+        "rule_version": "risk@3.1.1",
         "contribution": 6,
         "effect": "SUPPORTING",
         "explanation": "Shares an identical normalised identifier with 1 incident(s) scoring ELEVATED or above. This is an observation, not proof of one campaign."

@@ -35,7 +35,7 @@
       "entity_type": "UPI_HANDLE",
       "canonical_value": "verify-cbi@okhdfcbank",
       "display_value": "ve•••@okhdfcbank",
-      "excerpt": "This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been registered. Yo..."
+      "excerpt": "Caller: This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been regist..."
     },
     {
       "evidence_id": 1,
@@ -44,7 +44,7 @@
       "entity_type": "UPI_HANDLE",
       "canonical_value": "verify-cbi@okhdfcbank",
       "display_value": "ve•••@okhdfcbank",
-      "excerpt": "Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money launde..."
+      "excerpt": "Caller: Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur mone..."
     }
   ],
   "counter_evidence": [],

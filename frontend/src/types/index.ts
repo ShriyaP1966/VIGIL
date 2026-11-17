@@ -29,6 +29,32 @@ export interface EntityMention {
   confidence: number;
 }
 
+/** A tactic that fired on part of an utterance (span relative to the utterance text). */
+export interface TacticSpan {
+  label: string;
+  start: number;
+  end: number;
+  confidence: number;
+}
+
+/** Text flagged as a prompt-injection / manipulation attempt (span relative to the utterance text). */
+export interface InjectionSpan {
+  rule_id: string;
+  start: number;
+  end: number;
+}
+
+export interface UtteranceView {
+  id: number;
+  idx: number;
+  speaker: string;
+  text: string;
+  t_start_sec?: number | null;
+  language?: string | null;
+  tactics: TacticSpan[];
+  injection_spans: InjectionSpan[];
+}
+
 export interface EvidenceItem {
   id: number;
   type: string;
@@ -38,6 +64,7 @@ export interface EvidenceItem {
   provenance: string;
   timestamp: string;
   entities: EntityMention[];
+  utterances?: UtteranceView[];
 }
 
 export interface RiskContribution {

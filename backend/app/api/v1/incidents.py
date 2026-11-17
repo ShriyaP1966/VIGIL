@@ -1,13 +1,19 @@
 import json
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query
+from collections import defaultdict
+
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from ai_engine.guard.injection import detect_injection
 from backend.app.core.database import get_db
-from backend.app.models.models import Incident, Evidence, Mention, Entity, Analysis, RiskContribution, Redaction
+from backend.app.models.models import (
+    Incident, Evidence, Mention, Entity, Analysis, RiskContribution, Redaction, TacticEvent, Utterance
+)
 from backend.app.schemas.schemas import (
     IncidentCreate, IncidentDetailResponse, IncidentListItem, EvidenceCreate, EvidenceSchema,
-    EntityMentionSchema, AnalysisSchema, RiskContributionSchema, RedactionSummary
+    EntityMentionSchema, AnalysisSchema, RiskContributionSchema, RedactionSummary,
+    TacticSpan, InjectionSpan, UtteranceSchema
 )
 from backend.app.services.incident_service import create_incident, add_evidence_to_incident, run_incident_analysis
 
@@ -96,6 +102,25 @@ def api_get_incident(incident_id: int, db: Session = Depends(get_db)):
     return get_incident_detail_helper(db, incident_id)
 
 
+def _utterance_views(db: Session, incident_id: int, evidence_id: int) -> list[UtteranceSchema]:
+    """Utterances of one evidence item with the tactic spans that fired and any flagged injection spans.
+    Spans are relative to each utterance's own text. Injection spans are recomputed (deterministic)."""
+    events = defaultdict(list)
+    for te in db.query(TacticEvent).filter(TacticEvent.incident_id == incident_id).order_by(TacticEvent.id):
+        start, end = (int(x) for x in te.evidence_span.split(":"))
+        events[te.utterance_id].append(TacticSpan(label=te.label, start=start, end=end, confidence=te.confidence))
+    rows = db.query(Utterance).filter(Utterance.evidence_id == evidence_id).order_by(Utterance.idx).all()
+    return [
+        UtteranceSchema(
+            id=u.id, idx=u.idx, speaker=u.speaker, text=u.text, t_start_sec=u.t_start_sec, language=u.language,
+            tactics=events.get(u.id, []),
+            injection_spans=[InjectionSpan(rule_id=f.rule_id, start=f.span_start, end=f.span_end)
+                             for f in detect_injection(u.text)],
+        )
+        for u in rows
+    ]
+
+
 def get_incident_detail_helper(db: Session, incident_id: int) -> IncidentDetailResponse:
     inc = db.query(Incident).filter(Incident.id == incident_id).first()
     if not inc:
@@ -127,7 +152,8 @@ def get_incident_detail_helper(db: Session, incident_id: int) -> IncidentDetailR
             sha256=ev.sha256,
             provenance=ev.provenance,
             timestamp=ev.timestamp,
-            entities=ent_schemas
+            entities=ent_schemas,
+            utterances=_utterance_views(db, incident_id, ev.id),
         ))
 
     analysis = db.query(Analysis).filter(Analysis.incident_id == incident_id).order_by(Analysis.id.desc()).first()

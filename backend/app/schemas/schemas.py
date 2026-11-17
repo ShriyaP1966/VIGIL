@@ -110,6 +110,30 @@ class AnalysisSchema(BaseModel):
     contributions: List[RiskContributionSchema]
 
 
+class TacticSpan(BaseModel):
+    label: str
+    start: int   # span in the utterance text
+    end: int
+    confidence: float
+
+
+class InjectionSpan(BaseModel):
+    rule_id: str
+    start: int
+    end: int
+
+
+class UtteranceSchema(BaseModel):
+    id: int
+    idx: int
+    speaker: str
+    text: str
+    t_start_sec: Optional[float] = None
+    language: Optional[str] = None
+    tactics: List[TacticSpan] = []
+    injection_spans: List[InjectionSpan] = []
+
+
 class EvidenceSchema(BaseModel):
     id: int
     type: str
@@ -119,6 +143,7 @@ class EvidenceSchema(BaseModel):
     provenance: str
     timestamp: datetime
     entities: List[EntityMentionSchema] = []
+    utterances: List[UtteranceSchema] = []
 
 
 class RedactionSummary(BaseModel):

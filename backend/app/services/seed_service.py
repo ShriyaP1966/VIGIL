@@ -19,7 +19,7 @@ SEED_INCIDENTS = [
         scenario_id="scenario_01_digital_arrest",
         evidence=[EvidenceCreate(
             type="transcript",
-            text="Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain. Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
+            text="Caller: Main CBI officer Rajesh Sharma bol raha hoon. Aapke Aadhaar card par illegal parcel Mumbai customs ne pakda hai. Is parcel mein drugs aur money laundering ke documents hain.\nVictim: Lekin maine kuch galat nahi kiya.\nCaller: Agar aap turant arrest warrant se bachna chahte hain to apni verification deposit 50000 rupees verify-cbi@okhdfcbank par transfer kijiye. Kisi ko mat batana, aap video call surveillance par hain.",
             provenance="seed:scenario_01",
         )],
     ),
@@ -30,7 +30,7 @@ SEED_INCIDENTS = [
         scenario_id="scenario_02_customs_parcel",
         evidence=[EvidenceCreate(
             type="transcript",
-            text="This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been registered. You are directed to transfer clearance charges immediately to verify-cbi@okhdfcbank within 30 minutes.",
+            text="Caller: This is Mumbai Customs Department. A package registered in your name contains counterfeit currency and passport copies. An FIR has been registered.\nVictim: What? I did not send any package.\nCaller: You are directed to transfer clearance charges immediately to verify-cbi@okhdfcbank within 30 minutes.",
             provenance="seed:scenario_02",
         )],
     ),

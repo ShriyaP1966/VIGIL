@@ -5,9 +5,9 @@
     "source_channel": "call",
     "language": "hi-Latn",
     "status": "open",
-    "risk_score": 60,
-    "risk_band": "HIGH",
-    "created_at": "2026-11-17T12:39:08.057320"
+    "risk_score": 86,
+    "risk_band": "CRITICAL",
+    "created_at": "2026-11-17T13:17:57.356669"
   },
   {
     "id": 2,
@@ -15,9 +15,9 @@
     "source_channel": "call",
     "language": "en",
     "status": "open",
-    "risk_score": 60,
-    "risk_band": "HIGH",
-    "created_at": "2026-11-17T12:39:08.153942"
+    "risk_score": 58,
+    "risk_band": "ELEVATED",
+    "created_at": "2026-11-17T13:17:57.540752"
   },
   {
     "id": 3,
@@ -27,6 +27,6 @@
     "status": "open",
     "risk_score": 0,
     "risk_band": "LOW",
-    "created_at": "2026-11-17T12:39:08.217886"
+    "created_at": "2026-11-17T13:17:57.642879"
   }
 ]

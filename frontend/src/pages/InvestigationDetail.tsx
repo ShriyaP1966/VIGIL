@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Network, CheckCircle, Info, Lock, AlertCircle, Link2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Network, Info, Lock, AlertCircle, Link2, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { apiClient } from '../services/api/client';
 import { GraphEdge, IncidentDetail } from '../types';
+import { TacticTimeline } from '../components/tactics/TacticTimeline';
+import { TacticTranscript } from '../components/tactics/TacticTranscript';
 import { associationIdOf, isAssociationEdge } from '../components/graph/graph_layout';
 
 interface InvestigationDetailProps {
@@ -10,8 +12,6 @@ interface InvestigationDetailProps {
   onOpenGraph: () => void;
   onInspectAssociation: (assocId: number) => void;
 }
-
-const STAGES = ['AUTHORITY', 'ALLEGATION', 'THREAT', 'ISOLATION', 'URGENCY', 'DEMAND'];
 
 const bandText = (band: string) =>
   band === 'CRITICAL' ? 'text-risk-critical' :
@@ -79,6 +79,7 @@ export const InvestigationDetail: React.FC<InvestigationDetailProps> = ({
   const observedStages: string[] = Array.isArray(analysis?.fingerprint?.stage_sequence)
     ? analysis!.fingerprint.stage_sequence
     : [];
+  const injectionFlags: string[] = analysis?.injection_flags ?? [];
   const contributionSum = contributions.reduce((s, c) => s + c.contribution, 0);
   const redactions = incident.redactions ?? [];
   const redactedTotal = redactions.reduce((s, r) => s + r.count, 0);
@@ -148,34 +149,21 @@ export const InvestigationDetail: React.FC<InvestigationDetailProps> = ({
         </div>
       )}
 
-      {/* Tactic timeline placeholder (Phase 2). Never shows stages that were not detected. */}
-      <div className="bg-bg-card border border-border-subtle rounded-lg p-4 space-y-2">
-        <div className="text-xs font-semibold text-text-muted uppercase tracking-wider">Tactic timeline</div>
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          {STAGES.map((stage, idx) => {
-            const seen = observedStages.includes(stage);
-            return (
-              <div
-                key={stage}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-mono text-xs ${
-                  seen
-                    ? 'bg-accent-primary/10 border-accent-primary/40 text-accent-primary font-semibold'
-                    : 'bg-bg-main border-border-subtle text-text-muted opacity-50'
-                }`}
-              >
-                <span>{idx + 1}.</span>
-                <span>{stage}</span>
-                {seen && <CheckCircle className="w-3.5 h-3.5" aria-label="observed" />}
-              </div>
-            );
-          })}
+      {injectionFlags.length > 0 && (
+        <div role="alert" className="bg-risk-critical/10 border border-risk-critical/40 rounded-lg p-3 text-xs flex gap-2">
+          <ShieldAlert className="w-4 h-4 shrink-0 text-risk-critical mt-0.5" aria-hidden="true" />
+          <span className="text-text-secondary">
+            <strong className="text-risk-critical">Manipulation attempt detected.</strong>{' '}
+            This text contains instruction-like wording aimed at the analyser ({injectionFlags.join(', ').replace(/_/g, ' ')}).
+            The flagged wording is outlined below, was ignored when detecting tactics, and cannot lower the risk indicator.
+          </span>
         </div>
-        {observedStages.length === 0 && (
-          <p className="text-[11px] text-text-muted">
-            Tactic classification is not implemented yet (planned for Phase 2), so no stages are marked.
-          </p>
-        )}
-      </div>
+      )}
+
+      <TacticTimeline
+        stageSequence={observedStages}
+        credentialRequested={Boolean(analysis?.fingerprint?.credential_requested)}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-6">
@@ -188,9 +176,13 @@ export const InvestigationDetail: React.FC<InvestigationDetailProps> = ({
                 <span className="text-[10px] font-mono text-text-muted uppercase">{ev.provenance}</span>
               </div>
               {/* Evidence is untrusted: rendered as text, never as HTML. */}
-              <div className="bg-bg-main border border-border-subtle rounded-md p-4 text-sm font-mono text-text-secondary whitespace-pre-wrap break-words leading-relaxed">
-                {ev.original_text}
-              </div>
+              {ev.utterances && ev.utterances.length > 0 ? (
+                <TacticTranscript utterances={ev.utterances} />
+              ) : (
+                <div className="bg-bg-main border border-border-subtle rounded-md p-4 text-sm font-mono text-text-secondary whitespace-pre-wrap break-words leading-relaxed">
+                  {ev.original_text}
+                </div>
+              )}
               <div className="text-[10px] font-mono text-text-muted break-all">SHA-256 of original: {ev.sha256}</div>
 
               <div className="pt-2">

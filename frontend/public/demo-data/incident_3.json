@@ -5,7 +5,7 @@
   "language": "en",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T12:39:08.217886",
+  "created_at": "2026-11-17T13:17:57.642879",
   "evidence_items": [
     {
       "id": 3,
@@ -14,22 +14,64 @@
       "normalised_text": "Dear Customer, your monthly bank statement has been dispatched to your registered email address. For inquiries, visit your nearest bank branch with original photo ID or call official national helpline 1930. Never share passwords or PINs.",
       "sha256": "5065767a25d7d4e99ff2169faaf747cf3b7372885ca58d3d0cac834fc79f4b6f",
       "provenance": "seed:scenario_03",
-      "timestamp": "2026-11-17T12:39:08.220806",
-      "entities": []
+      "timestamp": "2026-11-17T13:17:57.645111",
+      "entities": [],
+      "utterances": [
+        {
+          "id": 7,
+          "idx": 0,
+          "speaker": "speaker",
+          "text": "Dear Customer, your monthly bank statement has been dispatched to your registered email address. For inquiries, visit your nearest bank branch with original photo ID or call official national helpline 1930. Never share passwords or PINs.",
+          "t_start_sec": null,
+          "language": "en",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 43,
+              "end": 62,
+              "confidence": 0.9
+            },
+            {
+              "label": "LEGITIMATE",
+              "start": 112,
+              "end": 142,
+              "confidence": 0.9
+            },
+            {
+              "label": "LEGITIMATE",
+              "start": 183,
+              "end": 200,
+              "confidence": 0.9
+            },
+            {
+              "label": "LEGITIMATE",
+              "start": 207,
+              "end": 236,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ]
     }
   ],
   "analysis": {
     "id": 4,
     "incident_id": 3,
-    "extractor": "RuleMLExtractor",
-    "extractor_version": "3.1.0",
+    "extractor": "rules",
+    "extractor_version": "rules@1.0",
     "fallback_used": false,
     "risk_score": 0,
     "risk_band": "LOW",
-    "risk_version": "risk@3.1.0",
+    "risk_version": "risk@3.1.1",
     "injection_flags": [],
     "fingerprint": {
-      "stage_sequence": []
+      "stage_sequence": [],
+      "credential_requested": false,
+      "institution_class": "BANK",
+      "payment_channel": "NONE",
+      "language": "en",
+      "channel": "sms"
     },
     "contributions": []
   },
