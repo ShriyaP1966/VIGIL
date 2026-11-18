@@ -1,0 +1,176 @@
+section,record,field,value
+report,0,report_version,report@1.0
+report,0,synthetic,true
+incident,0,id,1
+incident,0,title,Digital Arrest Threat — CBI Officer Impersonation
+incident,0,source_channel,call
+incident,0,language,hi-Latn
+incident,0,status,open
+incident,0,created_at,2026-11-18T14:29:39.137712
+observed_facts.evidence,0,id,1
+observed_facts.evidence,0,type,transcript
+observed_facts.evidence,0,sha256,303033593f8d50aff58fdf0dafb52f14ca7b2628345d4d26e324fbbcf0b43233
+observed_facts.evidence,0,provenance,seed:scenario_01
+observed_facts.evidence,0,characters,427
+observed_facts.identifiers,0,type,ORGANISATION
+observed_facts.identifiers,0,display_value,Central Bureau of Investigation
+observed_facts.identifiers,0,mentions,1
+observed_facts.identifiers,1,type,ORGANISATION
+observed_facts.identifiers,1,display_value,Indian Customs
+observed_facts.identifiers,1,mentions,1
+observed_facts.identifiers,2,type,UPI_HANDLE
+observed_facts.identifiers,2,display_value,ve•••@okhdfcbank
+observed_facts.identifiers,2,mentions,1
+observed_facts.observed_matches,0,association_id,1
+observed_facts.observed_matches,0,other_incident_id,2
+observed_facts.observed_matches,0,other_incident_title,Customs Contraband Parcel Demand
+observed_facts.observed_matches,0,status,OBSERVED_MATCH
+observed_facts.observed_matches,0,match_type,EXACT_IDENTIFIER
+observed_facts.observed_matches,0,confidence,0.63
+observed_facts.observed_matches,0,base_confidence,0.75
+observed_facts.observed_matches.shared_identifiers,0,type,UPI_HANDLE
+observed_facts.observed_matches.shared_identifiers,0,display_value,ve•••@okhdfcbank
+observed_facts.observed_matches,0,explanation,Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents.
+observed_facts.observed_matches,0,algorithm_version,vigil@3.1.0
+model_inferences,0,stage_sequence,"[""AUTHORITY"", ""ALLEGATION"", ""THREAT"", ""ISOLATION"", ""URGENCY"", ""DEMAND""]"
+model_inferences,0,institution_class,CENTRAL_AGENCY
+model_inferences,0,payment_channel,UPI
+model_inferences.tactics,0,label,AUTHORITY_IMPERSONATION
+model_inferences.tactics,0,stage,AUTHORITY
+model_inferences.tactics,0,count,1
+model_inferences.tactics,0,max_confidence,0.9
+model_inferences.tactics.excerpts,0,utterance_idx,0
+model_inferences.tactics.excerpts,0,text,Main CBI officer
+model_inferences.tactics,1,label,FALSE_ALLEGATION
+model_inferences.tactics,1,stage,ALLEGATION
+model_inferences.tactics,1,count,2
+model_inferences.tactics,1,max_confidence,0.85
+model_inferences.tactics.excerpts,1.0,utterance_idx,0
+model_inferences.tactics.excerpts,1.0,text,Aapke Aadhaar card par illegal parcel
+model_inferences.tactics.excerpts,1.1,utterance_idx,0
+model_inferences.tactics.excerpts,1.1,text,money laundering
+model_inferences.tactics,2,label,FINANCIAL_DEMAND
+model_inferences.tactics,2,stage,DEMAND
+model_inferences.tactics,2,count,2
+model_inferences.tactics,2,max_confidence,0.9
+model_inferences.tactics.excerpts,2.0,utterance_idx,2
+model_inferences.tactics.excerpts,2.0,text,verification deposit 50000 rupees verify-cbi@okhdfcbank
+model_inferences.tactics.excerpts,2.1,utterance_idx,2
+model_inferences.tactics.excerpts,2.1,text,transfer kijiye
+model_inferences.tactics,3,label,ISOLATION
+model_inferences.tactics,3,stage,ISOLATION
+model_inferences.tactics,3,count,2
+model_inferences.tactics,3,max_confidence,0.9
+model_inferences.tactics.excerpts,3.0,utterance_idx,2
+model_inferences.tactics.excerpts,3.0,text,Kisi ko mat
+model_inferences.tactics.excerpts,3.1,utterance_idx,2
+model_inferences.tactics.excerpts,3.1,text,surveillance par
+model_inferences.tactics,4,label,THREAT_INTIMIDATION
+model_inferences.tactics,4,stage,THREAT
+model_inferences.tactics,4,count,1
+model_inferences.tactics,4,max_confidence,0.9
+model_inferences.tactics.excerpts,4.0,utterance_idx,2
+model_inferences.tactics.excerpts,4.0,text,arrest warrant
+model_inferences.tactics,5,label,URGENCY
+model_inferences.tactics,5,stage,URGENCY
+model_inferences.tactics,5,count,1
+model_inferences.tactics,5,max_confidence,0.9
+model_inferences.tactics.excerpts,5.0,utterance_idx,2
+model_inferences.tactics.excerpts,5.0,text,turant
+model_inferences.risk,0,score,86
+model_inferences.risk,0,band,CRITICAL
+model_inferences.risk,0,version,risk@3.1.1
+model_inferences.risk,0,note,"Experimental heuristic, not a probability. Contributions sum exactly to the score."
+model_inferences.risk,0,injection_flags,[]
+model_inferences.risk.contributions,0,factor,F1 tactic presence: AUTHORITY
+model_inferences.risk.contributions,0,effect,SUPPORTING
+model_inferences.risk.contributions,0,contribution,6
+model_inferences.risk.contributions,0,explanation,"The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+model_inferences.risk.contributions,0,rule_version,risk@3.1.1
+model_inferences.risk.contributions,1,factor,F1 tactic presence: ALLEGATION
+model_inferences.risk.contributions,1,effect,SUPPORTING
+model_inferences.risk.contributions,1,contribution,10
+model_inferences.risk.contributions,1,explanation,"The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+model_inferences.risk.contributions,1,rule_version,risk@3.1.1
+model_inferences.risk.contributions,2,factor,F1 tactic presence: THREAT
+model_inferences.risk.contributions,2,effect,SUPPORTING
+model_inferences.risk.contributions,2,contribution,14
+model_inferences.risk.contributions,2,explanation,"The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
+model_inferences.risk.contributions,2,rule_version,risk@3.1.1
+model_inferences.risk.contributions,3,factor,F1 tactic presence: ISOLATION
+model_inferences.risk.contributions,3,effect,SUPPORTING
+model_inferences.risk.contributions,3,contribution,16
+model_inferences.risk.contributions,3,explanation,"The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+model_inferences.risk.contributions,3,rule_version,risk@3.1.1
+model_inferences.risk.contributions,4,factor,F1 tactic presence: URGENCY
+model_inferences.risk.contributions,4,effect,SUPPORTING
+model_inferences.risk.contributions,4,contribution,8
+model_inferences.risk.contributions,4,explanation,"The urgency stage was detected (URGENCY, rule confidence 0.90)."
+model_inferences.risk.contributions,4,rule_version,risk@3.1.1
+model_inferences.risk.contributions,5,factor,F1 tactic presence: DEMAND
+model_inferences.risk.contributions,5,effect,SUPPORTING
+model_inferences.risk.contributions,5,contribution,18
+model_inferences.risk.contributions,5,explanation,"The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+model_inferences.risk.contributions,5,rule_version,risk@3.1.1
+model_inferences.risk.contributions,6,factor,F1 cap
+model_inferences.risk.contributions,6,effect,MITIGATING
+model_inferences.risk.contributions,6,contribution,'-2
+model_inferences.risk.contributions,6,explanation,Tactic-presence factors are capped at +70 in total.
+model_inferences.risk.contributions,6,rule_version,risk@3.1.1
+model_inferences.risk.contributions,7,factor,F2 canonical order observed
+model_inferences.risk.contributions,7,effect,SUPPORTING
+model_inferences.risk.contributions,7,contribution,10
+model_inferences.risk.contributions,7,explanation,"6 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+model_inferences.risk.contributions,7,rule_version,risk@3.1.1
+model_inferences.risk.contributions,8,factor,F3 OBSERVED_MATCH to a higher-risk incident
+model_inferences.risk.contributions,8,effect,SUPPORTING
+model_inferences.risk.contributions,8,contribution,6
+model_inferences.risk.contributions,8,explanation,"Shares an identical normalised identifier with 1 incident(s) scoring ELEVATED or above. This is an observation, not proof of one campaign."
+model_inferences.risk.contributions,8,rule_version,risk@3.1.1
+model_inferences.behavioural_candidates,0,association_id,2
+model_inferences.behavioural_candidates,0,other_incident_id,4
+model_inferences.behavioural_candidates,0,other_incident_title,CBI-style call with rotated identifiers
+model_inferences.behavioural_candidates,0,status,CANDIDATE_ASSOCIATION
+model_inferences.behavioural_candidates,0,match_type,PLAYBOOK
+model_inferences.behavioural_candidates,0,confidence,0.98
+model_inferences.behavioural_candidates,0,base_confidence,1.0
+model_inferences.behavioural_candidates,0,shared_identifiers,[]
+model_inferences.behavioural_candidates,0,explanation,"Both incidents follow the same 6-stage script (AUTHORITY → ALLEGATION → THREAT → ISOLATION → URGENCY → DEMAND). Behavioural (playbook) similarity is 1.00, at or above the 0.75 candidate threshold. This is a candidate for investigation, not a confirmed link. Language and channel were not used."
+model_inferences.behavioural_candidates,0,algorithm_version,fingerprint@3.1.0
+model_inferences.campaign_hypotheses,0,id,1
+model_inferences.campaign_hypotheses,0,title,Campaign hypothesis: 3 related incidents (claimed institution: Central Agency)
+model_inferences.campaign_hypotheses,0,status,HYPOTHESIS_UNREVIEWED
+model_inferences.campaign_hypotheses,0,confidence,0.805
+counter_evidence.findings,0,association_id,1
+counter_evidence.findings,0,rule_id,CE-5
+counter_evidence.findings,0,kind,INCONSISTENT_IMPERSONATION
+counter_evidence.findings,0,severity,MEDIUM
+counter_evidence.findings,0,observation,The incidents claim different institutions (Central Agency vs Courier Customs).
+counter_evidence.findings,0,explanation,"One group can impersonate several institutions, but a different claimed institution makes a common origin less likely."
+counter_evidence.findings,0,confidence_impact,'-0.1
+counter_evidence.findings,0,rule_version,ce@3.1.0
+counter_evidence.findings,1,association_id,1
+counter_evidence.findings,1,rule_id,CE-7
+counter_evidence.findings,1,kind,LANGUAGE_DIFFERENCE
+counter_evidence.findings,1,severity,LOW
+counter_evidence.findings,1,observation,The incidents are in different languages (mixed vs en).
+counter_evidence.findings,1,explanation,"Recorded as context only: campaigns target many languages, so this is not a contradiction."
+counter_evidence.findings,1,confidence_impact,'-0.02
+counter_evidence.findings,1,rule_version,ce@3.1.0
+counter_evidence.findings,2,association_id,2
+counter_evidence.findings,2,rule_id,CE-7
+counter_evidence.findings,2,kind,LANGUAGE_DIFFERENCE
+counter_evidence.findings,2,severity,LOW
+counter_evidence.findings,2,observation,The incidents are in different languages (mixed vs en).
+counter_evidence.findings,2,explanation,"Recorded as context only: campaigns target many languages, so this is not a contradiction."
+counter_evidence.findings,2,confidence_impact,'-0.02
+counter_evidence.findings,2,rule_version,ce@3.1.0
+counter_evidence,0,disputed_or_rejected_links,[]
+limitations,0,value,All data is synthetic. Nothing in this report is evidence about a real person or organisation.
+limitations,1,value,A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.
+limitations,2,value,"An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both."
+limitations,3,value,"A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart."
+limitations,4,value,"The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability."
+limitations,5,value,"Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic."
+limitations,6,value,"Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list."
+limitations,7,value,"Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."

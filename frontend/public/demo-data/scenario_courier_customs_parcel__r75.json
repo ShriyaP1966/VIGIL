@@ -1,0 +1,120 @@
+{
+  "name": "courier_customs_parcel",
+  "title": "Courier / customs parcel demand",
+  "category": "positive",
+  "description": "Three incidents of one instance (T6) with a UPI payment demand and a credential request.",
+  "rotation": 0.75,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0076",
+      "channel": "call",
+      "language": "hi-Latn",
+      "excerpt": "Main Blue Dart customer support se Anil Verma bol raha hoon. Aapke parcel mein illegal saman mila hai. Agar call kat jaye to +91 98765 29218 par call karna.",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION"
+      ],
+      "risk": {
+        "score": 16,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION"
+      ]
+    },
+    {
+      "id": "inc_0077",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is Blue Dart customer support, I am Meera Nair. Customs duty is pending on your international shipment. If we get disconnected, call me back on +91 98765 94092.",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION"
+      ],
+      "risk": {
+        "score": 16,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION"
+      ]
+    },
+    {
+      "id": "inc_0078",
+      "channel": "call",
+      "language": "hi-Latn",
+      "excerpt": "Main Blue Dart customer support se Sunita Rao bol raha hoon. Agar call kat jaye to +91 98765 77342 par call karna. Theek hai, bataiye kya karna hai. Aapke parcel mein illegal saman mila hai. Theek hai",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "CREDENTIAL_REQUEST",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 70,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "URGENCY",
+        "DEMAND"
+      ]
+    }
+  ],
+  "links": [],
+  "hypotheses": [],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 0,
+    "disputed_links": 0,
+    "hypotheses": 0
+  },
+  "checks": [
+    {
+      "name": "Observed identifier links",
+      "expected": "0 (the pairs whose texts mention the same identifier; rotation 0.75)",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "informational",
+      "actual": 0,
+      "passed": null
+    },
+    {
+      "name": "One hypothesis holds all incidents",
+      "expected": "not required",
+      "actual": false,
+      "passed": null
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

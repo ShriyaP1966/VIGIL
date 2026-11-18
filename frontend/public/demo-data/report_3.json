@@ -1,0 +1,122 @@
+{
+  "report_version": "report@1.0",
+  "synthetic": true,
+  "incident": {
+    "id": 3,
+    "title": "HDFC Official Branch Alert",
+    "source_channel": "sms",
+    "language": "en",
+    "status": "open",
+    "created_at": "2026-11-18T14:29:40.242266"
+  },
+  "observed_facts": {
+    "evidence": [
+      {
+        "id": 3,
+        "type": "message",
+        "sha256": "5065767a25d7d4e99ff2169faaf747cf3b7372885ca58d3d0cac834fc79f4b6f",
+        "provenance": "seed:scenario_03",
+        "characters": 237
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "PHONE",
+        "display_value": "1930",
+        "mentions": 1
+      }
+    ],
+    "observed_matches": []
+  },
+  "model_inferences": {
+    "stage_sequence": [],
+    "institution_class": "BANK",
+    "payment_channel": "NONE",
+    "tactics": [
+      {
+        "label": "LEGITIMATE",
+        "stage": null,
+        "count": 4,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 0,
+            "text": "has been dispatched"
+          },
+          {
+            "utterance_idx": 0,
+            "text": "visit your nearest bank branch"
+          },
+          {
+            "utterance_idx": 0,
+            "text": "national helpline"
+          }
+        ]
+      }
+    ],
+    "risk": {
+      "score": 0,
+      "band": "LOW",
+      "version": "risk@3.1.1",
+      "note": "Experimental heuristic, not a probability. Contributions sum exactly to the score.",
+      "injection_flags": [],
+      "contributions": []
+    },
+    "behavioural_candidates": [],
+    "campaign_hypotheses": []
+  },
+  "analyst_actions": [],
+  "counter_evidence": {
+    "findings": [
+      {
+        "association_id": 3,
+        "rule_id": "CE-3",
+        "kind": "BENIGN_CONTEXT_IDENTIFIER",
+        "severity": "HIGH",
+        "observation": "The shared identifier is used in a benign context: 1930 is a public identifier (National Cyber Crime Helpline).",
+        "explanation": "Genuine notices and scam calls can both cite an official identifier, so seeing it twice says nothing about a common origin. The match is disputed until an analyst decides.",
+        "confidence_impact": -0.4,
+        "rule_version": "ce@3.1.0"
+      },
+      {
+        "association_id": 3,
+        "rule_id": "CE-5",
+        "kind": "INCONSISTENT_IMPERSONATION",
+        "severity": "MEDIUM",
+        "observation": "The incidents claim different institutions (Bank vs Courier Customs).",
+        "explanation": "One group can impersonate several institutions, but a different claimed institution makes a common origin less likely.",
+        "confidence_impact": -0.1,
+        "rule_version": "ce@3.1.0"
+      }
+    ],
+    "disputed_or_rejected_links": [
+      {
+        "association_id": 3,
+        "other_incident_id": 5,
+        "other_incident_title": "Customs call that cites the public cybercrime helpline",
+        "status": "DISPUTED_ASSOCIATION",
+        "match_type": "EXACT_IDENTIFIER",
+        "confidence": 0.2,
+        "base_confidence": 0.7,
+        "shared_identifiers": [
+          {
+            "type": "PHONE",
+            "display_value": "1930"
+          }
+        ],
+        "explanation": "Exact normalized PHONE '1930' observed in evidence of both incidents.",
+        "algorithm_version": "vigil@3.1.0"
+      }
+    ]
+  },
+  "limitations": [
+    "All data is synthetic. Nothing in this report is evidence about a real person or organisation.",
+    "A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.",
+    "An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both.",
+    "A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart.",
+    "The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability.",
+    "Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic.",
+    "Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list.",
+    "Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."
+  ]
+}

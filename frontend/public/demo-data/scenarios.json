@@ -1,0 +1,90 @@
+[
+  {
+    "name": "digital_arrest_cbi",
+    "title": "Digital arrest: central-agency impersonation",
+    "category": "positive",
+    "description": "Three incidents of one campaign instance (template T1). Slide the rotation to see exact-identifier links disappear while the behavioural script still links them.",
+    "rotation_adjustable": true,
+    "default_rotation": 0.5
+  },
+  {
+    "name": "digital_arrest_customs",
+    "title": "Digital arrest: courier / customs officer",
+    "category": "positive",
+    "description": "Three incidents of one instance (T2, bank-transfer demand). Phone and account rotate independently.",
+    "rotation_adjustable": true,
+    "default_rotation": 0.5
+  },
+  {
+    "name": "bank_kyc_link",
+    "title": "Bank KYC phishing link",
+    "category": "positive",
+    "description": "Three SMS incidents (T4) that share a look-alike domain unless it rotates.",
+    "rotation_adjustable": true,
+    "default_rotation": 0.5
+  },
+  {
+    "name": "courier_customs_parcel",
+    "title": "Courier / customs parcel demand",
+    "category": "positive",
+    "description": "Three incidents of one instance (T6) with a UPI payment demand and a credential request.",
+    "rotation_adjustable": true,
+    "default_rotation": 0.5
+  },
+  {
+    "name": "legitimate_notices",
+    "title": "Legitimate bank and delivery notices",
+    "category": "negative",
+    "description": "Genuine alerts, one-time-password warnings, delivery and card notices. None should link; several cite the same public helpline, which counter-evidence must not treat as a shared actor.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  },
+  {
+    "name": "police_verification_and_family",
+    "title": "Police verification call and family calls",
+    "category": "ambiguous",
+    "description": "A genuine police verification call asks you to visit the station (no payment); family calls are benign. Authority wording alone is not a campaign.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  },
+  {
+    "name": "awareness_notices",
+    "title": "Awareness notices that quote scams (decoy D1)",
+    "category": "decoy",
+    "description": "Public-awareness notices describe scam scripts. They quote scam wording but are not scams. This scenario documents whether a keyword extractor tells quoting from doing.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  },
+  {
+    "name": "benign_helpline_overlap",
+    "title": "Benign notices citing the same official helpline (decoy D2)",
+    "category": "counter_evidence",
+    "description": "Five genuine notices share the public helpline 1930 and a cybercrime portal. Counter-evidence rule CE-3 should dispute those links.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  },
+  {
+    "name": "reversed_chronology",
+    "title": "Same tactics, incompatible order (decoy D3)",
+    "category": "decoy",
+    "description": "Scam-like calls whose stages come in a mostly reversed order. They should not look like one campaign.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  },
+  {
+    "name": "vague_notes",
+    "title": "Vague notes with nothing to extract (decoy D4)",
+    "category": "ambiguous",
+    "description": "No clear stage and, where a number appears, only in words. Nothing reliable to link on.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  },
+  {
+    "name": "prompt_injection",
+    "title": "Prompt-injection inside a scam transcript",
+    "category": "injection",
+    "description": "A scam transcript with an appended instruction to mark it safe, next to the clean transcript. The guard should flag it and neither the labels nor the risk may fall.",
+    "rotation_adjustable": false,
+    "default_rotation": null
+  }
+]

@@ -1,0 +1,97 @@
+section,record,field,value
+report,0,report_version,report@1.0
+report,0,synthetic,true
+incident,0,id,5
+incident,0,title,Customs call that cites the public cybercrime helpline
+incident,0,source_channel,call
+incident,0,language,en
+incident,0,status,open
+incident,0,created_at,2026-11-18T14:29:40.746084
+observed_facts.evidence,0,id,5
+observed_facts.evidence,0,type,transcript
+observed_facts.evidence,0,sha256,7e9b1db3e31b1a66bd103af51f0e94fbae233f8e80079eb966bd2c6fd406cee2
+observed_facts.evidence,0,provenance,seed:scenario_05
+observed_facts.evidence,0,characters,146
+observed_facts.identifiers,0,type,ORGANISATION
+observed_facts.identifiers,0,display_value,Indian Customs
+observed_facts.identifiers,0,mentions,1
+observed_facts.identifiers,1,type,PHONE
+observed_facts.identifiers,1,display_value,1930
+observed_facts.identifiers,1,mentions,1
+observed_facts.identifiers,2,type,UPI_HANDLE
+observed_facts.identifiers,2,display_value,cl•••@oksbi
+observed_facts.identifiers,2,mentions,1
+observed_facts,0,observed_matches,[]
+model_inferences,0,stage_sequence,"[""AUTHORITY"", ""DEMAND""]"
+model_inferences,0,institution_class,COURIER_CUSTOMS
+model_inferences,0,payment_channel,UPI
+model_inferences.tactics,0,label,AUTHORITY_IMPERSONATION
+model_inferences.tactics,0,stage,AUTHORITY
+model_inferences.tactics,0,count,1
+model_inferences.tactics,0,max_confidence,0.85
+model_inferences.tactics.excerpts,0,utterance_idx,0
+model_inferences.tactics.excerpts,0,text,This is Mumbai Customs
+model_inferences.tactics,1,label,FINANCIAL_DEMAND
+model_inferences.tactics,1,stage,DEMAND
+model_inferences.tactics,1,count,1
+model_inferences.tactics,1,max_confidence,0.9
+model_inferences.tactics.excerpts,1.0,utterance_idx,0
+model_inferences.tactics.excerpts,1.0,text,Pay the clearance fee to clearance55@oksbi
+model_inferences.tactics,2,label,LEGITIMATE
+model_inferences.tactics,2,stage,
+model_inferences.tactics,2,count,1
+model_inferences.tactics,2,max_confidence,0.85
+model_inferences.tactics.excerpts,2.0,utterance_idx,2
+model_inferences.tactics.excerpts,2.0,text,helpline 1930
+model_inferences.risk,0,score,24
+model_inferences.risk,0,band,LOW
+model_inferences.risk,0,version,risk@3.1.1
+model_inferences.risk,0,note,"Experimental heuristic, not a probability. Contributions sum exactly to the score."
+model_inferences.risk,0,injection_flags,[]
+model_inferences.risk.contributions,0,factor,F1 tactic presence: AUTHORITY
+model_inferences.risk.contributions,0,effect,SUPPORTING
+model_inferences.risk.contributions,0,contribution,6
+model_inferences.risk.contributions,0,explanation,"The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.85)."
+model_inferences.risk.contributions,0,rule_version,risk@3.1.1
+model_inferences.risk.contributions,1,factor,F1 tactic presence: DEMAND
+model_inferences.risk.contributions,1,effect,SUPPORTING
+model_inferences.risk.contributions,1,contribution,18
+model_inferences.risk.contributions,1,explanation,"The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+model_inferences.risk.contributions,1,rule_version,risk@3.1.1
+model_inferences,0,behavioural_candidates,[]
+model_inferences,0,campaign_hypotheses,[]
+counter_evidence.findings,0,association_id,3
+counter_evidence.findings,0,rule_id,CE-3
+counter_evidence.findings,0,kind,BENIGN_CONTEXT_IDENTIFIER
+counter_evidence.findings,0,severity,HIGH
+counter_evidence.findings,0,observation,The shared identifier is used in a benign context: 1930 is a public identifier (National Cyber Crime Helpline).
+counter_evidence.findings,0,explanation,"Genuine notices and scam calls can both cite an official identifier, so seeing it twice says nothing about a common origin. The match is disputed until an analyst decides."
+counter_evidence.findings,0,confidence_impact,'-0.4
+counter_evidence.findings,0,rule_version,ce@3.1.0
+counter_evidence.findings,1,association_id,3
+counter_evidence.findings,1,rule_id,CE-5
+counter_evidence.findings,1,kind,INCONSISTENT_IMPERSONATION
+counter_evidence.findings,1,severity,MEDIUM
+counter_evidence.findings,1,observation,The incidents claim different institutions (Bank vs Courier Customs).
+counter_evidence.findings,1,explanation,"One group can impersonate several institutions, but a different claimed institution makes a common origin less likely."
+counter_evidence.findings,1,confidence_impact,'-0.1
+counter_evidence.findings,1,rule_version,ce@3.1.0
+counter_evidence.disputed_or_rejected_links,0,association_id,3
+counter_evidence.disputed_or_rejected_links,0,other_incident_id,3
+counter_evidence.disputed_or_rejected_links,0,other_incident_title,HDFC Official Branch Alert
+counter_evidence.disputed_or_rejected_links,0,status,DISPUTED_ASSOCIATION
+counter_evidence.disputed_or_rejected_links,0,match_type,EXACT_IDENTIFIER
+counter_evidence.disputed_or_rejected_links,0,confidence,0.2
+counter_evidence.disputed_or_rejected_links,0,base_confidence,0.7
+counter_evidence.disputed_or_rejected_links.shared_identifiers,0,type,PHONE
+counter_evidence.disputed_or_rejected_links.shared_identifiers,0,display_value,1930
+counter_evidence.disputed_or_rejected_links,0,explanation,Exact normalized PHONE '1930' observed in evidence of both incidents.
+counter_evidence.disputed_or_rejected_links,0,algorithm_version,vigil@3.1.0
+limitations,0,value,All data is synthetic. Nothing in this report is evidence about a real person or organisation.
+limitations,1,value,A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.
+limitations,2,value,"An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both."
+limitations,3,value,"A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart."
+limitations,4,value,"The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability."
+limitations,5,value,"Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic."
+limitations,6,value,"Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list."
+limitations,7,value,"Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."

@@ -5,7 +5,7 @@
   "language": "en",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T14:21:15.940707",
+  "created_at": "2026-11-18T14:29:40.746084",
   "evidence_items": [
     {
       "id": 5,
@@ -14,7 +14,7 @@
       "normalised_text": "Caller: This is Mumbai Customs. Pay the clearance fee to clearance55@oksbi.\nVictim: Is this real?\nCaller: Yes, you can verify it on helpline 1930.",
       "sha256": "7e9b1db3e31b1a66bd103af51f0e94fbae233f8e80079eb966bd2c6fd406cee2",
       "provenance": "seed:scenario_05",
-      "timestamp": "2026-11-17T14:21:15.942609",
+      "timestamp": "2026-11-18T14:29:40.754491",
       "entities": [
         {
           "id": 4,

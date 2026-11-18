@@ -5,7 +5,7 @@
   "language": "en",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T14:21:16.199273",
+  "created_at": "2026-11-18T14:29:42.059522",
   "evidence_items": [
     {
       "id": 8,
@@ -14,7 +14,7 @@
       "normalised_text": "Caller: This is Officer Rathod from the Customs Department. Call me back on +91 98765 11111.\nCaller: Transfer the clearance fee to alpha11@okaxis.",
       "sha256": "b93d8c31b4b95bbc374e0eab220c2faf55a8508666e74f9679db11ce0bb2d0f8",
       "provenance": "seed:scenario_08",
-      "timestamp": "2026-11-17T14:21:16.200996",
+      "timestamp": "2026-11-18T14:29:42.069586",
       "entities": [
         {
           "id": 9,

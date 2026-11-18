@@ -1,0 +1,120 @@
+{
+  "name": "police_verification_and_family",
+  "title": "Police verification call and family calls",
+  "category": "ambiguous",
+  "description": "A genuine police verification call asks you to visit the station (no payment); family calls are benign. Authority wording alone is not a campaign.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0119",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Hello, this is Deepak Mehta from the local police station. Your passport verification is scheduled for tomorrow. Please visit the station with your original documents. No payment is required. Yes, I a",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY"
+      ]
+    },
+    {
+      "id": "inc_0120",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Hello, this is Kavita Iyer from the local police station. Your passport verification is scheduled for tomorrow. Please visit the station with your original documents. No payment is required. Yes, I am",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY"
+      ]
+    },
+    {
+      "id": "inc_0125",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Call me when you reach, I will keep the food ready. Okay, what should I do?",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0126",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Your uncle is visiting this weekend, please plan accordingly. Sir, I did not do anything.",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    }
+  ],
+  "links": [],
+  "hypotheses": [],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 0,
+    "disputed_links": 0,
+    "hypotheses": 0
+  },
+  "checks": [
+    {
+      "name": "Observed links after counter-evidence",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Campaign hypotheses",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

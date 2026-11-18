@@ -1,0 +1,179 @@
+{
+  "name": "digital_arrest_customs",
+  "title": "Digital arrest: courier / customs officer",
+  "category": "positive",
+  "description": "Three incidents of one instance (T2, bank-transfer demand). Phone and account rotate independently.",
+  "rotation": 0.0,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0016",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is Prakash Joshi from FedEx customs clearance, I am connecting you to the Mumbai Customs Department. If we get disconnected, call me back on +91 98765 66646. I understand, tell me. Your passport ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "ISOLATION",
+        "THREAT_INTIMIDATION"
+      ],
+      "risk": {
+        "score": 68,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION"
+      ]
+    },
+    {
+      "id": "inc_0017",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Mumbai Customs Department speaking. I am Inspector Vikram Singh. If we get disconnected, call me back on +91 98765 66646. Okay, what should I do? We found fake passports in a package registered to you",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 92,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "DEMAND",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0018",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Mumbai Customs Department speaking. I am Inspector Kavita Iyer. We found fake passports in a package registered to you. If we get disconnected, call me back on +91 98765 66646. Okay, what should I do?",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 92,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "DEMAND",
+        "URGENCY"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0016",
+      "b": "inc_0017",
+      "status": "OBSERVED_MATCH",
+      "match_type": "COMBINED",
+      "shared": [
+        "PHONE:+919876566646"
+      ],
+      "confidence": 0.7
+    },
+    {
+      "a": "inc_0016",
+      "b": "inc_0018",
+      "status": "OBSERVED_MATCH",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:+919876566646"
+      ],
+      "confidence": 0.6
+    },
+    {
+      "a": "inc_0017",
+      "b": "inc_0018",
+      "status": "OBSERVED_MATCH",
+      "match_type": "COMBINED",
+      "shared": [
+        "PHONE:+919876566646"
+      ],
+      "confidence": 0.6
+    }
+  ],
+  "hypotheses": [
+    {
+      "members": [
+        "inc_0016",
+        "inc_0017",
+        "inc_0018"
+      ],
+      "confidence": 0.6333333333333333,
+      "status": "HYPOTHESIS_UNREVIEWED",
+      "bases": [
+        "OBSERVED"
+      ]
+    }
+  ],
+  "summary": {
+    "observed_links": 3,
+    "candidate_links": 0,
+    "disputed_links": 0,
+    "hypotheses": 1
+  },
+  "checks": [
+    {
+      "name": "Observed identifier links",
+      "expected": "3 (the pairs whose texts mention the same identifier; rotation 0)",
+      "actual": 3,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "informational",
+      "actual": 0,
+      "passed": null
+    },
+    {
+      "name": "One hypothesis holds all incidents",
+      "expected": "not required",
+      "actual": true,
+      "passed": null
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

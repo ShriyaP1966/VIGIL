@@ -1,0 +1,168 @@
+{
+  "name": "bank_kyc_link",
+  "title": "Bank KYC phishing link",
+  "category": "positive",
+  "description": "Three SMS incidents (T4) that share a look-alike domain unless it rotates.",
+  "rotation": 0.75,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0046",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Dear customer, this is the ICICI Bank customer care team. Your PAN is not updated and KYC verification is pending. Your account will be blocked permanently. Act within 30 minutes. Click https://accoun",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "CREDENTIAL_REQUEST",
+        "FALSE_ALLEGATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 66,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0047",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "From PNB Security Team: important notice for your account. We detected suspicious activity on your account. Your debit card will be deactivated and your account frozen. Act within 45 minutes. Provide ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "CREDENTIAL_REQUEST",
+        "FALSE_ALLEGATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 66,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0048",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "From SBI Security Team: important notice for your account. Your KYC has expired and your account details are incomplete. Your account will be suspended within the day. Update immediately to avoid this",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "CREDENTIAL_REQUEST",
+        "FALSE_ALLEGATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 66,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "URGENCY"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0046",
+      "b": "inc_0047",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.9444
+    },
+    {
+      "a": "inc_0046",
+      "b": "inc_0048",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.9444
+    },
+    {
+      "a": "inc_0047",
+      "b": "inc_0048",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 1.0
+    }
+  ],
+  "hypotheses": [
+    {
+      "members": [
+        "inc_0046",
+        "inc_0047",
+        "inc_0048"
+      ],
+      "confidence": 0.9629629629629631,
+      "status": "HYPOTHESIS_UNREVIEWED",
+      "bases": [
+        "CANDIDATE"
+      ]
+    }
+  ],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 3,
+    "disputed_links": 0,
+    "hypotheses": 1
+  },
+  "checks": [
+    {
+      "name": "Observed identifier links",
+      "expected": "0 (the pairs whose texts mention the same identifier; rotation 0.75)",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "informational",
+      "actual": 3,
+      "passed": null
+    },
+    {
+      "name": "One hypothesis holds all incidents",
+      "expected": "not required",
+      "actual": true,
+      "passed": null
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

@@ -1,0 +1,234 @@
+{
+  "name": "benign_helpline_overlap",
+  "title": "Benign notices citing the same official helpline (decoy D2)",
+  "category": "counter_evidence",
+  "description": "Five genuine notices share the public helpline 1930 and a cybercrime portal. Counter-evidence rule CE-3 should dispute those links.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0136",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Dear customer, to report a suspected fraudulent transaction call the National Cyber Crime Helpline 1930 or visit cybercrime.gov.in. ICICI Bank will never ask for your PIN.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0137",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "SBI reminder: if you notice unauthorised activity on your card, block it in the app and call the helpline 1930. You can also file a complaint at cybercrime.gov.in.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0138",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Safety tip: before paying a stranger, check with the official helpline 1930. Your statement is available at hdfcbank.com. Never share your password.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0139",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your complaint was recorded. You can track it at cybercrime.gov.in. For urgent help call 1930.",
+      "detected_labels": [
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 8,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0140",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Dear customer, your new debit card is now active. For any queries visit hdfcbank.com or call the official helpline 1930.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0136",
+      "b": "inc_0139",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0136",
+      "b": "inc_0140",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.2
+    },
+    {
+      "a": "inc_0139",
+      "b": "inc_0140",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.2
+    },
+    {
+      "a": "inc_0136",
+      "b": "inc_0138",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0138",
+      "b": "inc_0139",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0138",
+      "b": "inc_0140",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0136",
+      "b": "inc_0137",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0137",
+      "b": "inc_0139",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0137",
+      "b": "inc_0140",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.2
+    },
+    {
+      "a": "inc_0137",
+      "b": "inc_0138",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    }
+  ],
+  "hypotheses": [],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 0,
+    "disputed_links": 10,
+    "hypotheses": 0
+  },
+  "checks": [
+    {
+      "name": "Observed links after counter-evidence",
+      "expected": "0 (CE-3: the helpline is a public identifier)",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Links disputed by counter-evidence",
+      "expected": "at least 1",
+      "actual": 10,
+      "passed": true
+    },
+    {
+      "name": "Campaign hypotheses",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

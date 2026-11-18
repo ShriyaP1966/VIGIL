@@ -1,0 +1,139 @@
+{
+  "name": "awareness_notices",
+  "title": "Awareness notices that quote scams (decoy D1)",
+  "category": "decoy",
+  "description": "Public-awareness notices describe scam scripts. They quote scam wording but are not scams. This scenario documents whether a keyword extractor tells quoting from doing.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0131",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Public awareness notice from HDFC Bank: fraudsters pretend to be officers of the CBI or the police, say a parcel in your name was found with drugs and threaten arrest. Real agencies never ask for mone",
+      "detected_labels": [
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND"
+      ],
+      "risk": {
+        "score": 28,
+        "band": "LOW"
+      },
+      "injection_flags": [
+        "role_override"
+      ],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0132",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Cyber safety bulletin: a common scam begins with a caller who claims to be a government officer and says you are under digital arrest. They tell you not to tell anyone and to pay immediately. If you g",
+      "detected_labels": [
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 48,
+        "band": "ELEVATED"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0133",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Awareness alert from HDFC Bank Security Team: beware of messages saying your KYC has expired and your account will be blocked unless you click a link. We never send such links. Visit your branch to up",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "LEGITIMATE",
+        "THREAT_INTIMIDATION"
+      ],
+      "risk": {
+        "score": 25,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0134",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "News digest: police warn that callers posing as customs officials are demanding clearance fees for parcels. Citizens are advised not to pay anything and to report such calls to the local police statio",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0135",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Reminder from HDFC Bank: we will never ask you to pay a fee to release a parcel or to avoid arrest. If someone threatens you on a call, disconnect and tell your family.",
+      "detected_labels": [
+        "FINANCIAL_DEMAND"
+      ],
+      "risk": {
+        "score": 18,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    }
+  ],
+  "links": [],
+  "hypotheses": [],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 0,
+    "disputed_links": 0,
+    "hypotheses": 0
+  },
+  "checks": [
+    {
+      "name": "Observed links after counter-evidence",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Campaign hypotheses",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

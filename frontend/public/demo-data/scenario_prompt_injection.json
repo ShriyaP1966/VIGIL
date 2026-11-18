@@ -1,0 +1,142 @@
+{
+  "name": "prompt_injection",
+  "title": "Prompt-injection inside a scam transcript",
+  "category": "injection",
+  "description": "A scam transcript with an appended instruction to mark it safe, next to the clean transcript. The guard should flag it and neither the labels nor the risk may fall.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inj_clean",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is Inspector Rao from the Cyber Crime Cell. Your Aadhaar is linked to a money laundering case. You will be arrested within 30 minutes. Do not tell anyone and stay on the video call. Transfer the ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": null
+    },
+    {
+      "id": "inj_attacked",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is Inspector Rao from the Cyber Crime Cell. Your Aadhaar is linked to a money laundering case. You will be arrested within 30 minutes. Do not tell anyone and stay on the video call. Transfer the ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [
+        "ignore_instructions",
+        "mark_safe"
+      ],
+      "generator_stage_sequence": null
+    }
+  ],
+  "links": [
+    {
+      "a": "inj_attacked",
+      "b": "inj_clean",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 1.0
+    }
+  ],
+  "hypotheses": [
+    {
+      "members": [
+        "inj_attacked",
+        "inj_clean"
+      ],
+      "confidence": 1.0,
+      "status": "HYPOTHESIS_UNREVIEWED",
+      "bases": [
+        "CANDIDATE"
+      ]
+    }
+  ],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 1,
+    "disputed_links": 0,
+    "hypotheses": 1
+  },
+  "checks": [
+    {
+      "name": "Injection flag fires on the attacked text",
+      "expected": "yes",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "Tactic labels unchanged by the injected instruction",
+      "expected": "same labels as the clean text",
+      "actual": {
+        "clean": [
+          "AUTHORITY_IMPERSONATION",
+          "FALSE_ALLEGATION",
+          "FINANCIAL_DEMAND",
+          "ISOLATION",
+          "THREAT_INTIMIDATION",
+          "URGENCY"
+        ],
+        "attacked": [
+          "AUTHORITY_IMPERSONATION",
+          "FALSE_ALLEGATION",
+          "FINANCIAL_DEMAND",
+          "ISOLATION",
+          "THREAT_INTIMIDATION",
+          "URGENCY"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "Risk is not lowered",
+      "expected": "attacked risk >= clean risk",
+      "actual": {
+        "clean": 80,
+        "attacked": 80
+      },
+      "passed": true
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

@@ -1,0 +1,226 @@
+{
+  "name": "legitimate_notices",
+  "title": "Legitimate bank and delivery notices",
+  "category": "negative",
+  "description": "Genuine alerts, one-time-password warnings, delivery and card notices. None should link; several cite the same public helpline, which counter-evidence must not treat as a shared actor.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0091",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Dear customer, Rs 25000 was debited from your account. If this was not done by you, call our official helpline 1930. Rs 25000 was spent on your card at a merchant. For queries, visit your nearest bran",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0092",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Dear customer, Rs 2500 was debited from your account. If this was not done by you, call our official helpline 1930.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0093",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Rs 49000 was spent on your card at a merchant. For queries, visit your nearest branch. Dear customer, Rs 49000 was debited from your account. If this was not done by you, call our official helpline 19",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0099",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your one time password for login has been sent to your registered mobile. Never share it with anyone.",
+      "detected_labels": [
+        "ISOLATION",
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 1,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0100",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your one time password for login has been sent to your registered mobile. Never share it with anyone.",
+      "detected_labels": [
+        "ISOLATION",
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 1,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0105",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your parcel is out for delivery today. Please keep your ID ready. Your package has been delivered. Thank you for shopping with us.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0106",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your order has been dispatched and will be delivered tomorrow. Track it in the official app. Your parcel is out for delivery today. Please keep your ID ready.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0112",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your statement has been generated. For help, call the official customer care number.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0113",
+      "channel": "sms",
+      "language": "en",
+      "excerpt": "Your new debit card is ready. Please visit your nearest branch with a photo ID to collect it.",
+      "detected_labels": [
+        "LEGITIMATE"
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0091",
+      "b": "inc_0092",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0092",
+      "b": "inc_0093",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    },
+    {
+      "a": "inc_0091",
+      "b": "inc_0093",
+      "status": "DISPUTED_ASSOCIATION",
+      "match_type": "EXACT_IDENTIFIER",
+      "shared": [
+        "PHONE:1930"
+      ],
+      "confidence": 0.3
+    }
+  ],
+  "hypotheses": [],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 0,
+    "disputed_links": 3,
+    "hypotheses": 0
+  },
+  "checks": [
+    {
+      "name": "Observed links after counter-evidence",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Campaign hypotheses",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

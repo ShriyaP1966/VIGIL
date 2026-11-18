@@ -1,0 +1,151 @@
+{
+  "report_version": "report@1.0",
+  "synthetic": true,
+  "incident": {
+    "id": 9,
+    "title": "Payment check B: same callback number, different payment handle",
+    "source_channel": "call",
+    "language": "en",
+    "status": "open",
+    "created_at": "2026-11-18T14:29:42.286281"
+  },
+  "observed_facts": {
+    "evidence": [
+      {
+        "id": 9,
+        "type": "transcript",
+        "sha256": "2636cb8326af01ed74c86e26a62abbc30f720d9e7c5932c6db9630cfba102b8d",
+        "provenance": "seed:scenario_09",
+        "characters": 144
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "ORGANISATION",
+        "display_value": "Indian Customs",
+        "mentions": 1
+      },
+      {
+        "type": "PHONE",
+        "display_value": "+91 98•••••11",
+        "mentions": 1
+      },
+      {
+        "type": "UPI_HANDLE",
+        "display_value": "be•••@oksbi",
+        "mentions": 1
+      }
+    ],
+    "observed_matches": [
+      {
+        "association_id": 5,
+        "other_incident_id": 8,
+        "other_incident_title": "Payment check A: callback number, first payment handle",
+        "status": "OBSERVED_MATCH",
+        "match_type": "EXACT_IDENTIFIER",
+        "confidence": 0.6,
+        "base_confidence": 0.7,
+        "shared_identifiers": [
+          {
+            "type": "PHONE",
+            "display_value": "+91 98•••••11"
+          }
+        ],
+        "explanation": "Exact normalized PHONE '+91 98•••••11' observed in evidence of both incidents.",
+        "algorithm_version": "vigil@3.1.0"
+      }
+    ]
+  },
+  "model_inferences": {
+    "stage_sequence": [
+      "AUTHORITY",
+      "DEMAND"
+    ],
+    "institution_class": "COURIER_CUSTOMS",
+    "payment_channel": "UPI",
+    "tactics": [
+      {
+        "label": "AUTHORITY_IMPERSONATION",
+        "stage": "AUTHORITY",
+        "count": 1,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 0,
+            "text": "This is Officer Rathod from the Customs Department"
+          }
+        ]
+      },
+      {
+        "label": "FINANCIAL_DEMAND",
+        "stage": "DEMAND",
+        "count": 1,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 1,
+            "text": "Transfer the clearance fee to beta22@oksbi"
+          }
+        ]
+      }
+    ],
+    "risk": {
+      "score": 24,
+      "band": "LOW",
+      "version": "risk@3.1.1",
+      "note": "Experimental heuristic, not a probability. Contributions sum exactly to the score.",
+      "injection_flags": [],
+      "contributions": [
+        {
+          "factor": "F1 tactic presence: AUTHORITY",
+          "effect": "SUPPORTING",
+          "contribution": 6,
+          "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F1 tactic presence: DEMAND",
+          "effect": "SUPPORTING",
+          "contribution": 18,
+          "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90).",
+          "rule_version": "risk@3.1.1"
+        }
+      ]
+    },
+    "behavioural_candidates": [],
+    "campaign_hypotheses": [
+      {
+        "id": 2,
+        "title": "Campaign hypothesis: 2 related incidents (claimed institution: Courier Customs)",
+        "status": "HYPOTHESIS_UNREVIEWED",
+        "confidence": 0.6
+      }
+    ]
+  },
+  "analyst_actions": [],
+  "counter_evidence": {
+    "findings": [
+      {
+        "association_id": 5,
+        "rule_id": "CE-2",
+        "kind": "DIFFERENT_PAYMENT_DESTINATION",
+        "severity": "MEDIUM",
+        "observation": "Both incidents share +91 98•••••11, but they ask for payment to different handles (al•••@okaxis vs be•••@oksbi).",
+        "explanation": "The same contact point paired with different payment destinations may be a reused or recycled identifier rather than one operation.",
+        "confidence_impact": -0.1,
+        "rule_version": "ce@3.1.0"
+      }
+    ],
+    "disputed_or_rejected_links": []
+  },
+  "limitations": [
+    "All data is synthetic. Nothing in this report is evidence about a real person or organisation.",
+    "A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.",
+    "An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both.",
+    "A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart.",
+    "The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability.",
+    "Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic.",
+    "Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list.",
+    "Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."
+  ]
+}

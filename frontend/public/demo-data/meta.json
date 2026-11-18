@@ -4,5 +4,8 @@
   "note": "Precomputed from the real pipeline on synthetic seed data. Not real incidents.",
   "incidents": 9,
   "associations": 5,
-  "campaign_hypotheses": 2
+  "campaign_hypotheses": 2,
+  "scenarios": 11,
+  "scenario_files": 27,
+  "simulation_scripts": 4
 }

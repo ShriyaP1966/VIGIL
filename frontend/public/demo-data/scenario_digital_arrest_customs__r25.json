@@ -1,0 +1,169 @@
+{
+  "name": "digital_arrest_customs",
+  "title": "Digital arrest: courier / customs officer",
+  "category": "positive",
+  "description": "Three incidents of one instance (T2, bank-transfer demand). Phone and account rotate independently.",
+  "rotation": 0.25,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0016",
+      "channel": "call",
+      "language": "hi-Latn",
+      "excerpt": "Main Narcotics Control Bureau ka officer Vikram Singh bol raha hoon. Agar call kat jaye to +91 98765 44503 par call karna. Ji boliye, main sun raha hoon. Aapke naam par ek parcel pakda gaya hai jisme ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "DEMAND",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0017",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is Rajesh Sharma from FedEx customs clearance, I am connecting you to the Mumbai Customs Department. If we get disconnected, call me back on +91 98765 78649. Sir, I did not do anything. A courier",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "DEMAND",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0018",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is Deepak Mehta from FedEx customs clearance, I am connecting you to the Mumbai Customs Department. If we get disconnected, call me back on +91 98765 95187. Okay, what should I do? We found fake ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "DEMAND",
+        "URGENCY"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0016",
+      "b": "inc_0017",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.8257
+    },
+    {
+      "a": "inc_0016",
+      "b": "inc_0018",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.6578
+    }
+  ],
+  "hypotheses": [
+    {
+      "members": [
+        "inc_0016",
+        "inc_0017",
+        "inc_0018"
+      ],
+      "confidence": 0.7417592592592592,
+      "status": "HYPOTHESIS_UNREVIEWED",
+      "bases": [
+        "CANDIDATE"
+      ]
+    }
+  ],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 2,
+    "disputed_links": 0,
+    "hypotheses": 1
+  },
+  "checks": [
+    {
+      "name": "Observed identifier links",
+      "expected": "0 (the pairs whose texts mention the same identifier; rotation 0.25)",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "informational",
+      "actual": 2,
+      "passed": null
+    },
+    {
+      "name": "One hypothesis holds all incidents",
+      "expected": "not required",
+      "actual": true,
+      "passed": null
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

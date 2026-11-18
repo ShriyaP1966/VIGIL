@@ -1,0 +1,1418 @@
+{
+  "name": "digital_arrest_hinglish",
+  "frames": [
+    {
+      "turns": 1,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 16,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 2,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 16,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 3,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 16,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 4,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 16,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Sir maine kuch galat nahi kiya.",
+          "tactics": [],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 5,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": true,
+          "first_turn": 4
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 40,
+        "band": "ELEVATED",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          },
+          {
+            "factor": "F1 tactic presence: THREAT",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 14,
+            "effect": "SUPPORTING",
+            "explanation": "The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F2 canonical order observed",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "3 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Sir maine kuch galat nahi kiya.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 4,
+          "speaker": "caller",
+          "text": "Agar aap sahyog nahi karenge to aapko giraftaar kar liya jayega, arrest warrant jaari ho chuka hai.",
+          "tactics": [
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 38,
+              "end": 47,
+              "confidence": 0.9
+            },
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 65,
+              "end": 85,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "ELEVATED",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call.",
+          "Threats of arrest or a warrant over a call are a pressure tactic.",
+          "Hang up, then call the official number printed on your card or statement, or the national cyber crime helpline 1930. You can report at cybercrime.gov.in."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।",
+          "फोन पर गिरफ्तारी या वारंट की धमकी दबाव बनाने की चाल है।",
+          "कॉल काट दें, फिर अपने कार्ड या स्टेटमेंट पर छपे आधिकारिक नंबर पर, या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें। आप cybercrime.gov.in पर रिपोर्ट भी कर सकते हैं।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 6,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": true,
+          "first_turn": 4
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 40,
+        "band": "ELEVATED",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          },
+          {
+            "factor": "F1 tactic presence: THREAT",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 14,
+            "effect": "SUPPORTING",
+            "explanation": "The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F2 canonical order observed",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "3 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Sir maine kuch galat nahi kiya.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 4,
+          "speaker": "caller",
+          "text": "Agar aap sahyog nahi karenge to aapko giraftaar kar liya jayega, arrest warrant jaari ho chuka hai.",
+          "tactics": [
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 38,
+              "end": 47,
+              "confidence": 0.9
+            },
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 65,
+              "end": 85,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 5,
+          "speaker": "victim",
+          "text": "Theek hai, bataiye kya karna hai.",
+          "tactics": [],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "ELEVATED",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call.",
+          "Threats of arrest or a warrant over a call are a pressure tactic.",
+          "Hang up, then call the official number printed on your card or statement, or the national cyber crime helpline 1930. You can report at cybercrime.gov.in."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।",
+          "फोन पर गिरफ्तारी या वारंट की धमकी दबाव बनाने की चाल है।",
+          "कॉल काट दें, फिर अपने कार्ड या स्टेटमेंट पर छपे आधिकारिक नंबर पर, या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें। आप cybercrime.gov.in पर रिपोर्ट भी कर सकते हैं।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 7,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": true,
+          "first_turn": 4
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": true,
+          "first_turn": 6
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 56,
+        "band": "ELEVATED",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          },
+          {
+            "factor": "F1 tactic presence: THREAT",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 14,
+            "effect": "SUPPORTING",
+            "explanation": "The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ISOLATION",
+            "evidence_ref": "utterance:7",
+            "rule_version": "risk@3.1.1",
+            "contribution": 16,
+            "effect": "SUPPORTING",
+            "explanation": "The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F2 canonical order observed",
+            "evidence_ref": "utterance:7",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "4 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Sir maine kuch galat nahi kiya.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 4,
+          "speaker": "caller",
+          "text": "Agar aap sahyog nahi karenge to aapko giraftaar kar liya jayega, arrest warrant jaari ho chuka hai.",
+          "tactics": [
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 38,
+              "end": 47,
+              "confidence": 0.9
+            },
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 65,
+              "end": 85,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 5,
+          "speaker": "victim",
+          "text": "Theek hai, bataiye kya karna hai.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 6,
+          "speaker": "caller",
+          "text": "Yeh confidential case hai, kisi ko mat batana, family ko bhi nahi. Aap video call par bane rahiye.",
+          "tactics": [
+            {
+              "label": "ISOLATION",
+              "start": 4,
+              "end": 21,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 27,
+              "end": 38,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 71,
+              "end": 97,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "ELEVATED",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call.",
+          "Threats of arrest or a warrant over a call are a pressure tactic.",
+          "Being told to keep this secret is a warning sign. Talk to someone you trust.",
+          "Hang up, then call the official number printed on your card or statement, or the national cyber crime helpline 1930. You can report at cybercrime.gov.in."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।",
+          "फोन पर गिरफ्तारी या वारंट की धमकी दबाव बनाने की चाल है।",
+          "आपसे यह बात गुप्त रखने को कहा जा रहा है, यह खतरे का संकेत है। किसी भरोसेमंद व्यक्ति से बात करें।",
+          "कॉल काट दें, फिर अपने कार्ड या स्टेटमेंट पर छपे आधिकारिक नंबर पर, या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें। आप cybercrime.gov.in पर रिपोर्ट भी कर सकते हैं।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 8,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": true,
+          "first_turn": 4
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": true,
+          "first_turn": 6
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 56,
+        "band": "ELEVATED",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          },
+          {
+            "factor": "F1 tactic presence: THREAT",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 14,
+            "effect": "SUPPORTING",
+            "explanation": "The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ISOLATION",
+            "evidence_ref": "utterance:7",
+            "rule_version": "risk@3.1.1",
+            "contribution": 16,
+            "effect": "SUPPORTING",
+            "explanation": "The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F2 canonical order observed",
+            "evidence_ref": "utterance:7",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "4 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Sir maine kuch galat nahi kiya.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 4,
+          "speaker": "caller",
+          "text": "Agar aap sahyog nahi karenge to aapko giraftaar kar liya jayega, arrest warrant jaari ho chuka hai.",
+          "tactics": [
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 38,
+              "end": 47,
+              "confidence": 0.9
+            },
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 65,
+              "end": 85,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 5,
+          "speaker": "victim",
+          "text": "Theek hai, bataiye kya karna hai.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 6,
+          "speaker": "caller",
+          "text": "Yeh confidential case hai, kisi ko mat batana, family ko bhi nahi. Aap video call par bane rahiye.",
+          "tactics": [
+            {
+              "label": "ISOLATION",
+              "start": 4,
+              "end": 21,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 27,
+              "end": 38,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 71,
+              "end": 97,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 7,
+          "speaker": "victim",
+          "text": "Ji.",
+          "tactics": [],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "ELEVATED",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call.",
+          "Threats of arrest or a warrant over a call are a pressure tactic.",
+          "Being told to keep this secret is a warning sign. Talk to someone you trust.",
+          "Hang up, then call the official number printed on your card or statement, or the national cyber crime helpline 1930. You can report at cybercrime.gov.in."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।",
+          "फोन पर गिरफ्तारी या वारंट की धमकी दबाव बनाने की चाल है।",
+          "आपसे यह बात गुप्त रखने को कहा जा रहा है, यह खतरे का संकेत है। किसी भरोसेमंद व्यक्ति से बात करें।",
+          "कॉल काट दें, फिर अपने कार्ड या स्टेटमेंट पर छपे आधिकारिक नंबर पर, या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें। आप cybercrime.gov.in पर रिपोर्ट भी कर सकते हैं।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 9,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": true,
+          "first_turn": 0
+        },
+        {
+          "stage": "THREAT",
+          "reached": true,
+          "first_turn": 4
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": true,
+          "first_turn": 6
+        },
+        {
+          "stage": "URGENCY",
+          "reached": true,
+          "first_turn": 8
+        },
+        {
+          "stage": "DEMAND",
+          "reached": true,
+          "first_turn": 8
+        }
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL",
+        "version": "risk@3.1.1",
+        "contributions": [
+          {
+            "factor": "F1 tactic presence: AUTHORITY",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 6,
+            "effect": "SUPPORTING",
+            "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ALLEGATION",
+            "evidence_ref": "utterance:1",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.85)."
+          },
+          {
+            "factor": "F1 tactic presence: THREAT",
+            "evidence_ref": "utterance:5",
+            "rule_version": "risk@3.1.1",
+            "contribution": 14,
+            "effect": "SUPPORTING",
+            "explanation": "The threat stage was detected (THREAT_INTIMIDATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: ISOLATION",
+            "evidence_ref": "utterance:7",
+            "rule_version": "risk@3.1.1",
+            "contribution": 16,
+            "effect": "SUPPORTING",
+            "explanation": "The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: URGENCY",
+            "evidence_ref": "utterance:9",
+            "rule_version": "risk@3.1.1",
+            "contribution": 8,
+            "effect": "SUPPORTING",
+            "explanation": "The urgency stage was detected (URGENCY, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 tactic presence: DEMAND",
+            "evidence_ref": "utterance:9",
+            "rule_version": "risk@3.1.1",
+            "contribution": 18,
+            "effect": "SUPPORTING",
+            "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+          },
+          {
+            "factor": "F1 cap",
+            "evidence_ref": "global",
+            "rule_version": "risk@3.1.1",
+            "contribution": -2,
+            "effect": "MITIGATING",
+            "explanation": "Tactic-presence factors are capped at +70 in total."
+          },
+          {
+            "factor": "F2 canonical order observed",
+            "evidence_ref": "utterance:9",
+            "rule_version": "risk@3.1.1",
+            "contribution": 10,
+            "effect": "SUPPORTING",
+            "explanation": "6 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand)."
+          }
+        ]
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Main CBI ka officer Anil Verma bol raha hoon, aapke naam par ek case darj hai.",
+          "tactics": [
+            {
+              "label": "AUTHORITY_IMPERSONATION",
+              "start": 0,
+              "end": 19,
+              "confidence": 0.9
+            },
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 46,
+              "end": 68,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Ji boliye, main sun raha hoon.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "Aapke aadhaar par money laundering ka case darj hai aur ek parcel mein drugs mile hain.",
+          "tactics": [
+            {
+              "label": "FALSE_ALLEGATION",
+              "start": 0,
+              "end": 34,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Sir maine kuch galat nahi kiya.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 4,
+          "speaker": "caller",
+          "text": "Agar aap sahyog nahi karenge to aapko giraftaar kar liya jayega, arrest warrant jaari ho chuka hai.",
+          "tactics": [
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 38,
+              "end": 47,
+              "confidence": 0.9
+            },
+            {
+              "label": "THREAT_INTIMIDATION",
+              "start": 65,
+              "end": 85,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 5,
+          "speaker": "victim",
+          "text": "Theek hai, bataiye kya karna hai.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 6,
+          "speaker": "caller",
+          "text": "Yeh confidential case hai, kisi ko mat batana, family ko bhi nahi. Aap video call par bane rahiye.",
+          "tactics": [
+            {
+              "label": "ISOLATION",
+              "start": 4,
+              "end": 21,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 27,
+              "end": 38,
+              "confidence": 0.9
+            },
+            {
+              "label": "ISOLATION",
+              "start": 71,
+              "end": 97,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 7,
+          "speaker": "victim",
+          "text": "Ji.",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 8,
+          "speaker": "caller",
+          "text": "Turant abhi karo. 50000 rupaye clearance47@okicici par transfer kijiye, jaanch ke baad wapas milenge.",
+          "tactics": [
+            {
+              "label": "URGENCY",
+              "start": 0,
+              "end": 6,
+              "confidence": 0.9
+            },
+            {
+              "label": "FINANCIAL_DEMAND",
+              "start": 55,
+              "end": 70,
+              "confidence": 0.9
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "CRITICAL",
+        "en": [
+          "A real agency does not run an investigation or an arrest over a phone or video call.",
+          "Threats of arrest or a warrant over a call are a pressure tactic.",
+          "Being told to keep this secret is a warning sign. Talk to someone you trust.",
+          "Pressure to act within minutes is a tactic. Take your time.",
+          "Do not transfer money for 'verification', a 'deposit' or 'clearance'.",
+          "Hang up, then call the official number printed on your card or statement, or the national cyber crime helpline 1930. You can report at cybercrime.gov.in."
+        ],
+        "hi": [
+          "कोई भी असली एजेंसी फोन या वीडियो कॉल पर जांच या गिरफ्तारी नहीं करती।",
+          "फोन पर गिरफ्तारी या वारंट की धमकी दबाव बनाने की चाल है।",
+          "आपसे यह बात गुप्त रखने को कहा जा रहा है, यह खतरे का संकेत है। किसी भरोसेमंद व्यक्ति से बात करें।",
+          "कुछ ही मिनटों में कार्रवाई का दबाव एक चाल है। शांति से समय लें।",
+          "'वेरिफिकेशन', 'डिपॉज़िट' या 'क्लियरेंस' के नाम पर पैसे ट्रांसफर न करें।",
+          "कॉल काट दें, फिर अपने कार्ड या स्टेटमेंट पर छपे आधिकारिक नंबर पर, या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें। आप cybercrime.gov.in पर रिपोर्ट भी कर सकते हैं।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    }
+  ]
+}

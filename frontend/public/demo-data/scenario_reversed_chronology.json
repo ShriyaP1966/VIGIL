@@ -1,0 +1,187 @@
+{
+  "name": "reversed_chronology",
+  "title": "Same tactics, incompatible order (decoy D3)",
+  "category": "decoy",
+  "description": "Scam-like calls whose stages come in a mostly reversed order. They should not look like one campaign.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0141",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "You are under digital arrest. Stay on the video call and do not disconnect. Okay, what should I do? Pay the clearance fee of Rs 15000 to the UPI ID kyc53@okicici for verification. Yes, I am listening.",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "ISOLATION",
+        "DEMAND",
+        "THREAT",
+        "AUTHORITY",
+        "ALLEGATION",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0142",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Pay the clearance fee of Rs 50000 to the UPI ID support56@okicici for verification. Please, I will cooperate. This is a confidential investigation. Do not tell anyone, not even your family or lawyer. ",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "DEMAND",
+        "ISOLATION",
+        "AUTHORITY",
+        "THREAT",
+        "ALLEGATION",
+        "URGENCY"
+      ]
+    },
+    {
+      "id": "inc_0143",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "To verify your accounts, transfer 15000 rupees as a refundable deposit to support97@okhdfcbank. Please, I will cooperate. A non-bailable warrant is ready, and our team will arrive at your home. Sir, I",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 70,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "DEMAND",
+        "THREAT",
+        "ALLEGATION",
+        "AUTHORITY",
+        "URGENCY",
+        "ISOLATION"
+      ]
+    },
+    {
+      "id": "inc_0144",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "There is no time, we need this done right now. Sir, I did not do anything. This is a confidential investigation. Do not tell anyone, not even your family or lawyer. Sir, I did not do anything. A non-b",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 70,
+        "band": "HIGH"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "URGENCY",
+        "ISOLATION",
+        "THREAT",
+        "DEMAND",
+        "ALLEGATION",
+        "AUTHORITY"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0141",
+      "b": "inc_0142",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.7737
+    }
+  ],
+  "hypotheses": [
+    {
+      "members": [
+        "inc_0141",
+        "inc_0142"
+      ],
+      "confidence": 0.7737037037037037,
+      "status": "HYPOTHESIS_UNREVIEWED",
+      "bases": [
+        "CANDIDATE"
+      ]
+    }
+  ],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 1,
+    "disputed_links": 0,
+    "hypotheses": 1
+  },
+  "checks": [
+    {
+      "name": "Observed links after counter-evidence",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "0",
+      "actual": 1,
+      "passed": false
+    },
+    {
+      "name": "Campaign hypotheses",
+      "expected": "0",
+      "actual": 1,
+      "passed": false
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": false,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

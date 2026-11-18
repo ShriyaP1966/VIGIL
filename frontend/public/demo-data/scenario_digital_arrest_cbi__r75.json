@@ -1,0 +1,177 @@
+{
+  "name": "digital_arrest_cbi",
+  "title": "Digital arrest: central-agency impersonation",
+  "category": "positive",
+  "description": "Three incidents of one campaign instance (template T1). Slide the rotation to see exact-identifier links disappear while the behavioural script still links them.",
+  "rotation": 0.75,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0001",
+      "channel": "call",
+      "language": "hi-Latn",
+      "excerpt": "Main CBI ka officer Imran Khan bol raha hoon, mera badge number 86387 hai. Agar call kat jaye to +91 98765 52445 par call karna. Theek hai, bataiye kya karna hai. Aapke aadhaar par money laundering ka",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ]
+    },
+    {
+      "id": "inc_0002",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Good afternoon. I am Senior Officer Kavita Iyer of the CBI cyber division speaking to you. If we get disconnected, call me back on +91 98765 58810. I understand, tell me. Your SIM card was used in a s",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ]
+    },
+    {
+      "id": "inc_0003",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Hello, this is Officer Anil Verma from the Central Bureau of Investigation. My badge number is 17952. A parcel booked using your mobile number was found with drugs and fake passports. If we get discon",
+      "detected_labels": [
+        "AUTHORITY_IMPERSONATION",
+        "FALSE_ALLEGATION",
+        "FINANCIAL_DEMAND",
+        "ISOLATION",
+        "THREAT_INTIMIDATION",
+        "URGENCY"
+      ],
+      "risk": {
+        "score": 80,
+        "band": "CRITICAL"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": [
+        "AUTHORITY",
+        "ALLEGATION",
+        "THREAT",
+        "ISOLATION",
+        "URGENCY",
+        "DEMAND"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "a": "inc_0001",
+      "b": "inc_0002",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.98
+    },
+    {
+      "a": "inc_0001",
+      "b": "inc_0003",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 0.98
+    },
+    {
+      "a": "inc_0002",
+      "b": "inc_0003",
+      "status": "CANDIDATE_ASSOCIATION",
+      "match_type": "PLAYBOOK",
+      "shared": [],
+      "confidence": 1.0
+    }
+  ],
+  "hypotheses": [
+    {
+      "members": [
+        "inc_0001",
+        "inc_0002",
+        "inc_0003"
+      ],
+      "confidence": 0.9866666666666667,
+      "status": "HYPOTHESIS_UNREVIEWED",
+      "bases": [
+        "CANDIDATE"
+      ]
+    }
+  ],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 3,
+    "disputed_links": 0,
+    "hypotheses": 1
+  },
+  "checks": [
+    {
+      "name": "Observed identifier links",
+      "expected": "0 (the pairs whose texts mention the same identifier; rotation 0.75)",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "informational",
+      "actual": 3,
+      "passed": null
+    },
+    {
+      "name": "One hypothesis holds all incidents",
+      "expected": "not required",
+      "actual": true,
+      "passed": null
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

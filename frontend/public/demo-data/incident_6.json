@@ -5,7 +5,7 @@
   "language": "en",
   "status": "open",
   "is_synthetic": true,
-  "created_at": "2026-11-17T14:21:16.034540",
+  "created_at": "2026-11-18T14:29:41.409927",
   "evidence_items": [
     {
       "id": 6,
@@ -14,7 +14,7 @@
       "normalised_text": "Caller: This is Inspector Kulkarni from the Cyber Crime Cell.\nCaller: Do not tell anyone and stay on the video call.\nCaller: Act within 20 minutes.\nCaller: Transfer the security deposit to settlement31@ybl.",
       "sha256": "d876a14c1f9efb31e8cba3180af6b2015d0efc33fca2a4e1d70b0c88f58812a3",
       "provenance": "seed:scenario_06",
-      "timestamp": "2026-11-17T14:21:16.036242",
+      "timestamp": "2026-11-18T14:29:41.417486",
       "entities": [
         {
           "id": 7,

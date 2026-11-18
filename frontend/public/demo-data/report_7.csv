@@ -1,0 +1,104 @@
+section,record,field,value
+report,0,report_version,report@1.0
+report,0,synthetic,true
+incident,0,id,7
+incident,0,title,Chronology check B: reversed script
+incident,0,source_channel,call
+incident,0,language,en
+incident,0,status,open
+incident,0,created_at,2026-11-18T14:29:41.627799
+observed_facts.evidence,0,id,7
+observed_facts.evidence,0,type,transcript
+observed_facts.evidence,0,sha256,7f126902d93f7476890d801d2b82fe90e3e33b6dd7ce139c0ffb923be15ceca2
+observed_facts.evidence,0,provenance,seed:scenario_07
+observed_facts.evidence,0,characters,206
+observed_facts.identifiers,0,type,ORGANISATION
+observed_facts.identifiers,0,display_value,Cyber Crime Cell
+observed_facts.identifiers,0,mentions,1
+observed_facts.identifiers,1,type,UPI_HANDLE
+observed_facts.identifiers,1,display_value,se•••@ybl
+observed_facts.identifiers,1,mentions,1
+observed_facts,0,observed_matches,[]
+model_inferences,0,stage_sequence,"[""DEMAND"", ""URGENCY"", ""ISOLATION"", ""AUTHORITY""]"
+model_inferences,0,institution_class,POLICE
+model_inferences,0,payment_channel,UPI
+model_inferences.tactics,0,label,AUTHORITY_IMPERSONATION
+model_inferences.tactics,0,stage,AUTHORITY
+model_inferences.tactics,0,count,1
+model_inferences.tactics,0,max_confidence,0.9
+model_inferences.tactics.excerpts,0,utterance_idx,3
+model_inferences.tactics.excerpts,0,text,This is Inspector Kulkarni from the Cyber Crime
+model_inferences.tactics,1,label,FINANCIAL_DEMAND
+model_inferences.tactics,1,stage,DEMAND
+model_inferences.tactics,1,count,1
+model_inferences.tactics,1,max_confidence,0.9
+model_inferences.tactics.excerpts,1.0,utterance_idx,0
+model_inferences.tactics.excerpts,1.0,text,Transfer the security deposit to settlement31@ybl
+model_inferences.tactics,2,label,ISOLATION
+model_inferences.tactics,2,stage,ISOLATION
+model_inferences.tactics,2,count,2
+model_inferences.tactics,2,max_confidence,0.9
+model_inferences.tactics.excerpts,2.0,utterance_idx,2
+model_inferences.tactics.excerpts,2.0,text,Do not tell anyone
+model_inferences.tactics.excerpts,2.1,utterance_idx,2
+model_inferences.tactics.excerpts,2.1,text,stay on the video call
+model_inferences.tactics,3,label,URGENCY
+model_inferences.tactics,3,stage,URGENCY
+model_inferences.tactics,3,count,1
+model_inferences.tactics,3,max_confidence,0.9
+model_inferences.tactics.excerpts,3.0,utterance_idx,1
+model_inferences.tactics.excerpts,3.0,text,within 20 minutes
+model_inferences.risk,0,score,48
+model_inferences.risk,0,band,ELEVATED
+model_inferences.risk,0,version,risk@3.1.1
+model_inferences.risk,0,note,"Experimental heuristic, not a probability. Contributions sum exactly to the score."
+model_inferences.risk,0,injection_flags,[]
+model_inferences.risk.contributions,0,factor,F1 tactic presence: AUTHORITY
+model_inferences.risk.contributions,0,effect,SUPPORTING
+model_inferences.risk.contributions,0,contribution,6
+model_inferences.risk.contributions,0,explanation,"The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.90)."
+model_inferences.risk.contributions,0,rule_version,risk@3.1.1
+model_inferences.risk.contributions,1,factor,F1 tactic presence: ISOLATION
+model_inferences.risk.contributions,1,effect,SUPPORTING
+model_inferences.risk.contributions,1,contribution,16
+model_inferences.risk.contributions,1,explanation,"The isolation stage was detected (ISOLATION, rule confidence 0.90)."
+model_inferences.risk.contributions,1,rule_version,risk@3.1.1
+model_inferences.risk.contributions,2,factor,F1 tactic presence: URGENCY
+model_inferences.risk.contributions,2,effect,SUPPORTING
+model_inferences.risk.contributions,2,contribution,8
+model_inferences.risk.contributions,2,explanation,"The urgency stage was detected (URGENCY, rule confidence 0.90)."
+model_inferences.risk.contributions,2,rule_version,risk@3.1.1
+model_inferences.risk.contributions,3,factor,F1 tactic presence: DEMAND
+model_inferences.risk.contributions,3,effect,SUPPORTING
+model_inferences.risk.contributions,3,contribution,18
+model_inferences.risk.contributions,3,explanation,"The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90)."
+model_inferences.risk.contributions,3,rule_version,risk@3.1.1
+model_inferences,0,behavioural_candidates,[]
+model_inferences,0,campaign_hypotheses,[]
+counter_evidence.findings,0,association_id,4
+counter_evidence.findings,0,rule_id,CE-1
+counter_evidence.findings,0,kind,INCOMPATIBLE_CHRONOLOGY
+counter_evidence.findings,0,severity,HIGH
+counter_evidence.findings,0,observation,"4 shared stages (AUTHORITY, ISOLATION, URGENCY, DEMAND) occur in conflicting order; only 0% of the stage pairs appear in the same relative order."
+counter_evidence.findings,0,explanation,A script usually runs in one order. The same tactics in a conflicting order are weak evidence that the two incidents come from the same playbook.
+counter_evidence.findings,0,confidence_impact,'-0.3
+counter_evidence.findings,0,rule_version,ce@3.1.0
+counter_evidence.disputed_or_rejected_links,0,association_id,4
+counter_evidence.disputed_or_rejected_links,0,other_incident_id,6
+counter_evidence.disputed_or_rejected_links,0,other_incident_title,Chronology check A: forward script
+counter_evidence.disputed_or_rejected_links,0,status,DISPUTED_ASSOCIATION
+counter_evidence.disputed_or_rejected_links,0,match_type,EXACT_IDENTIFIER
+counter_evidence.disputed_or_rejected_links,0,confidence,0.45
+counter_evidence.disputed_or_rejected_links,0,base_confidence,0.75
+counter_evidence.disputed_or_rejected_links.shared_identifiers,0,type,UPI_HANDLE
+counter_evidence.disputed_or_rejected_links.shared_identifiers,0,display_value,se•••@ybl
+counter_evidence.disputed_or_rejected_links,0,explanation,Exact normalized UPI_HANDLE 'se•••@ybl' observed in evidence of both incidents.
+counter_evidence.disputed_or_rejected_links,0,algorithm_version,vigil@3.1.0
+limitations,0,value,All data is synthetic. Nothing in this report is evidence about a real person or organisation.
+limitations,1,value,A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.
+limitations,2,value,"An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both."
+limitations,3,value,"A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart."
+limitations,4,value,"The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability."
+limitations,5,value,"Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic."
+limitations,6,value,"Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list."
+limitations,7,value,"Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."

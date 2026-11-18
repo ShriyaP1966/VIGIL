@@ -1,6 +1,6 @@
 import json
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from collections import defaultdict
 
 from sqlalchemy import func
@@ -16,6 +16,7 @@ from backend.app.schemas.schemas import (
     TacticSpan, InjectionSpan, UtteranceSchema
 )
 from backend.app.services.incident_service import create_incident, add_evidence_to_incident, run_incident_analysis
+from backend.app.services.report_service import build_report, to_csv
 
 router = APIRouter()
 
@@ -205,3 +206,24 @@ def get_incident_detail_helper(db: Session, incident_id: int) -> IncidentDetailR
         analysis=analysis_schema,
         redactions=[RedactionSummary(kind=k, count=c) for k, c in redaction_counts],
     )
+
+
+@router.get("/incidents/{incident_id}/report")
+def api_incident_report(
+    incident_id: int,
+    format: str = Query("json", pattern="^(json|csv)$"),
+    db: Session = Depends(get_db),
+):
+    """Structured report that keeps observed facts, model inferences, analyst actions, counter-evidence and
+    limitations apart (blueprint §9). JSON, or CSV as a download."""
+    try:
+        report = build_report(db, incident_id)
+    except LookupError:
+        raise HTTPException(status_code=404, detail="Incident not found") from None
+    if format == "csv":
+        return Response(
+            content=to_csv(report), media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="vigil_report_incident_{incident_id}.csv"'},
+        )
+    return report
+

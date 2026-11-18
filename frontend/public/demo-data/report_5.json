@@ -1,0 +1,166 @@
+{
+  "report_version": "report@1.0",
+  "synthetic": true,
+  "incident": {
+    "id": 5,
+    "title": "Customs call that cites the public cybercrime helpline",
+    "source_channel": "call",
+    "language": "en",
+    "status": "open",
+    "created_at": "2026-11-18T14:29:40.746084"
+  },
+  "observed_facts": {
+    "evidence": [
+      {
+        "id": 5,
+        "type": "transcript",
+        "sha256": "7e9b1db3e31b1a66bd103af51f0e94fbae233f8e80079eb966bd2c6fd406cee2",
+        "provenance": "seed:scenario_05",
+        "characters": 146
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "ORGANISATION",
+        "display_value": "Indian Customs",
+        "mentions": 1
+      },
+      {
+        "type": "PHONE",
+        "display_value": "1930",
+        "mentions": 1
+      },
+      {
+        "type": "UPI_HANDLE",
+        "display_value": "cl•••@oksbi",
+        "mentions": 1
+      }
+    ],
+    "observed_matches": []
+  },
+  "model_inferences": {
+    "stage_sequence": [
+      "AUTHORITY",
+      "DEMAND"
+    ],
+    "institution_class": "COURIER_CUSTOMS",
+    "payment_channel": "UPI",
+    "tactics": [
+      {
+        "label": "AUTHORITY_IMPERSONATION",
+        "stage": "AUTHORITY",
+        "count": 1,
+        "max_confidence": 0.85,
+        "excerpts": [
+          {
+            "utterance_idx": 0,
+            "text": "This is Mumbai Customs"
+          }
+        ]
+      },
+      {
+        "label": "FINANCIAL_DEMAND",
+        "stage": "DEMAND",
+        "count": 1,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 0,
+            "text": "Pay the clearance fee to clearance55@oksbi"
+          }
+        ]
+      },
+      {
+        "label": "LEGITIMATE",
+        "stage": null,
+        "count": 1,
+        "max_confidence": 0.85,
+        "excerpts": [
+          {
+            "utterance_idx": 2,
+            "text": "helpline 1930"
+          }
+        ]
+      }
+    ],
+    "risk": {
+      "score": 24,
+      "band": "LOW",
+      "version": "risk@3.1.1",
+      "note": "Experimental heuristic, not a probability. Contributions sum exactly to the score.",
+      "injection_flags": [],
+      "contributions": [
+        {
+          "factor": "F1 tactic presence: AUTHORITY",
+          "effect": "SUPPORTING",
+          "contribution": 6,
+          "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.85).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F1 tactic presence: DEMAND",
+          "effect": "SUPPORTING",
+          "contribution": 18,
+          "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90).",
+          "rule_version": "risk@3.1.1"
+        }
+      ]
+    },
+    "behavioural_candidates": [],
+    "campaign_hypotheses": []
+  },
+  "analyst_actions": [],
+  "counter_evidence": {
+    "findings": [
+      {
+        "association_id": 3,
+        "rule_id": "CE-3",
+        "kind": "BENIGN_CONTEXT_IDENTIFIER",
+        "severity": "HIGH",
+        "observation": "The shared identifier is used in a benign context: 1930 is a public identifier (National Cyber Crime Helpline).",
+        "explanation": "Genuine notices and scam calls can both cite an official identifier, so seeing it twice says nothing about a common origin. The match is disputed until an analyst decides.",
+        "confidence_impact": -0.4,
+        "rule_version": "ce@3.1.0"
+      },
+      {
+        "association_id": 3,
+        "rule_id": "CE-5",
+        "kind": "INCONSISTENT_IMPERSONATION",
+        "severity": "MEDIUM",
+        "observation": "The incidents claim different institutions (Bank vs Courier Customs).",
+        "explanation": "One group can impersonate several institutions, but a different claimed institution makes a common origin less likely.",
+        "confidence_impact": -0.1,
+        "rule_version": "ce@3.1.0"
+      }
+    ],
+    "disputed_or_rejected_links": [
+      {
+        "association_id": 3,
+        "other_incident_id": 3,
+        "other_incident_title": "HDFC Official Branch Alert",
+        "status": "DISPUTED_ASSOCIATION",
+        "match_type": "EXACT_IDENTIFIER",
+        "confidence": 0.2,
+        "base_confidence": 0.7,
+        "shared_identifiers": [
+          {
+            "type": "PHONE",
+            "display_value": "1930"
+          }
+        ],
+        "explanation": "Exact normalized PHONE '1930' observed in evidence of both incidents.",
+        "algorithm_version": "vigil@3.1.0"
+      }
+    ]
+  },
+  "limitations": [
+    "All data is synthetic. Nothing in this report is evidence about a real person or organisation.",
+    "A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.",
+    "An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both.",
+    "A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart.",
+    "The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability.",
+    "Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic.",
+    "Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list.",
+    "Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."
+  ]
+}

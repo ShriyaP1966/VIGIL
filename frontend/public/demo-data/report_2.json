@@ -1,0 +1,214 @@
+{
+  "report_version": "report@1.0",
+  "synthetic": true,
+  "incident": {
+    "id": 2,
+    "title": "Customs Contraband Parcel Demand",
+    "source_channel": "call",
+    "language": "en",
+    "status": "open",
+    "created_at": "2026-11-18T14:29:39.753768"
+  },
+  "observed_facts": {
+    "evidence": [
+      {
+        "id": 2,
+        "type": "transcript",
+        "sha256": "1fb67b6608e9ee14ecf4500dd933a8b19b4235633b42c5b6549d4807062311c7",
+        "provenance": "seed:scenario_02",
+        "characters": 308
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "ORGANISATION",
+        "display_value": "Indian Customs",
+        "mentions": 1
+      },
+      {
+        "type": "UPI_HANDLE",
+        "display_value": "ve•••@okhdfcbank",
+        "mentions": 1
+      }
+    ],
+    "observed_matches": [
+      {
+        "association_id": 1,
+        "other_incident_id": 1,
+        "other_incident_title": "Digital Arrest Threat — CBI Officer Impersonation",
+        "status": "OBSERVED_MATCH",
+        "match_type": "EXACT_IDENTIFIER",
+        "confidence": 0.63,
+        "base_confidence": 0.75,
+        "shared_identifiers": [
+          {
+            "type": "UPI_HANDLE",
+            "display_value": "ve•••@okhdfcbank"
+          }
+        ],
+        "explanation": "Exact normalized UPI_HANDLE 've•••@okhdfcbank' observed in evidence of both incidents.",
+        "algorithm_version": "vigil@3.1.0"
+      }
+    ]
+  },
+  "model_inferences": {
+    "stage_sequence": [
+      "AUTHORITY",
+      "ALLEGATION",
+      "URGENCY",
+      "DEMAND"
+    ],
+    "institution_class": "COURIER_CUSTOMS",
+    "payment_channel": "UPI",
+    "tactics": [
+      {
+        "label": "AUTHORITY_IMPERSONATION",
+        "stage": "AUTHORITY",
+        "count": 1,
+        "max_confidence": 0.85,
+        "excerpts": [
+          {
+            "utterance_idx": 0,
+            "text": "This is Mumbai Customs"
+          }
+        ]
+      },
+      {
+        "label": "FALSE_ALLEGATION",
+        "stage": "ALLEGATION",
+        "count": 1,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 0,
+            "text": "package registered in your name contains counterfeit"
+          }
+        ]
+      },
+      {
+        "label": "FINANCIAL_DEMAND",
+        "stage": "DEMAND",
+        "count": 1,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 2,
+            "text": "transfer clearance charges immediately to verify-cbi@okhdfcbank"
+          }
+        ]
+      },
+      {
+        "label": "URGENCY",
+        "stage": "URGENCY",
+        "count": 2,
+        "max_confidence": 0.9,
+        "excerpts": [
+          {
+            "utterance_idx": 2,
+            "text": "immediately"
+          },
+          {
+            "utterance_idx": 2,
+            "text": "within 30 minutes"
+          }
+        ]
+      }
+    ],
+    "risk": {
+      "score": 58,
+      "band": "ELEVATED",
+      "version": "risk@3.1.1",
+      "note": "Experimental heuristic, not a probability. Contributions sum exactly to the score.",
+      "injection_flags": [],
+      "contributions": [
+        {
+          "factor": "F1 tactic presence: AUTHORITY",
+          "effect": "SUPPORTING",
+          "contribution": 6,
+          "explanation": "The authority stage was detected (AUTHORITY_IMPERSONATION, rule confidence 0.85).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F1 tactic presence: ALLEGATION",
+          "effect": "SUPPORTING",
+          "contribution": 10,
+          "explanation": "The allegation stage was detected (FALSE_ALLEGATION, rule confidence 0.90).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F1 tactic presence: URGENCY",
+          "effect": "SUPPORTING",
+          "contribution": 8,
+          "explanation": "The urgency stage was detected (URGENCY, rule confidence 0.90).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F1 tactic presence: DEMAND",
+          "effect": "SUPPORTING",
+          "contribution": 18,
+          "explanation": "The demand stage was detected (FINANCIAL_DEMAND, rule confidence 0.90).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F2 canonical order observed",
+          "effect": "SUPPORTING",
+          "contribution": 10,
+          "explanation": "4 stages appear in the typical scam order (authority, allegation, threat, isolation, urgency, demand).",
+          "rule_version": "risk@3.1.1"
+        },
+        {
+          "factor": "F3 OBSERVED_MATCH to a higher-risk incident",
+          "effect": "SUPPORTING",
+          "contribution": 6,
+          "explanation": "Shares an identical normalised identifier with 1 incident(s) scoring ELEVATED or above. This is an observation, not proof of one campaign.",
+          "rule_version": "risk@3.1.1"
+        }
+      ]
+    },
+    "behavioural_candidates": [],
+    "campaign_hypotheses": [
+      {
+        "id": 1,
+        "title": "Campaign hypothesis: 3 related incidents (claimed institution: Central Agency)",
+        "status": "HYPOTHESIS_UNREVIEWED",
+        "confidence": 0.805
+      }
+    ]
+  },
+  "analyst_actions": [],
+  "counter_evidence": {
+    "findings": [
+      {
+        "association_id": 1,
+        "rule_id": "CE-5",
+        "kind": "INCONSISTENT_IMPERSONATION",
+        "severity": "MEDIUM",
+        "observation": "The incidents claim different institutions (Central Agency vs Courier Customs).",
+        "explanation": "One group can impersonate several institutions, but a different claimed institution makes a common origin less likely.",
+        "confidence_impact": -0.1,
+        "rule_version": "ce@3.1.0"
+      },
+      {
+        "association_id": 1,
+        "rule_id": "CE-7",
+        "kind": "LANGUAGE_DIFFERENCE",
+        "severity": "LOW",
+        "observation": "The incidents are in different languages (mixed vs en).",
+        "explanation": "Recorded as context only: campaigns target many languages, so this is not a contradiction.",
+        "confidence_impact": -0.02,
+        "rule_version": "ce@3.1.0"
+      }
+    ],
+    "disputed_or_rejected_links": []
+  },
+  "limitations": [
+    "All data is synthetic. Nothing in this report is evidence about a real person or organisation.",
+    "A campaign hypothesis groups incidents that may be related. It is not an established finding and does not attribute activity to any person or organisation; an analyst must review it.",
+    "An OBSERVED_MATCH means the same normalised identifier appears in two evidence records. It is an observation, not proof that one actor is behind both.",
+    "A CANDIDATE_ASSOCIATION means a similar script (playbook), with no shared identifier. The fingerprint recognises a script family, not a specific group, and it cannot tell two incidents of one script apart.",
+    "The risk score is an experimental heuristic with a-priori weights, uncalibrated; it is not a probability.",
+    "Tactic labels come from a hand-written keyword lexicon. It matches wording, not intent, so quoted or reported scam wording can be labelled as a scam tactic.",
+    "Counter-evidence rules CE-6 and CE-8 are not implemented, and rule coverage of benign identifiers is a small starter list.",
+    "Secrets (OTP, PIN, CVV, password, card, Aadhaar) are removed at ingestion on a best-effort basis; only counts of removals are kept."
+  ]
+}

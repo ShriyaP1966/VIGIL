@@ -1,0 +1,123 @@
+{
+  "name": "vague_notes",
+  "title": "Vague notes with nothing to extract (decoy D4)",
+  "category": "ambiguous",
+  "description": "No clear stage and, where a number appears, only in words. Nothing reliable to link on.",
+  "rotation": null,
+  "seed": 7,
+  "incidents": [
+    {
+      "id": "inc_0146",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Hello, I am calling about your parcel. Please check your details with the office and call us back. Please, I will cooperate.",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0147",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "This is a reminder about your account. There may be an issue, please contact the branch when you can. You can reach me on nine eight seven six five zero eight seven one five. Sir, I did not do anythin",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0148",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "I am from the department regarding a matter in your name. We will send the details later. Okay, what should I do?",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0149",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Sir, there was a delivery problem. Someone will contact you again about it. Call nine eight seven six five eight two four nine five if you want. Sir, I did not do anything.",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    },
+    {
+      "id": "inc_0150",
+      "channel": "call",
+      "language": "en",
+      "excerpt": "Your connection may need some verification soon. We will inform you about the next steps. I understand, tell me.",
+      "detected_labels": [],
+      "risk": {
+        "score": 0,
+        "band": "LOW"
+      },
+      "injection_flags": [],
+      "generator_stage_sequence": []
+    }
+  ],
+  "links": [],
+  "hypotheses": [],
+  "summary": {
+    "observed_links": 0,
+    "candidate_links": 0,
+    "disputed_links": 0,
+    "hypotheses": 0
+  },
+  "checks": [
+    {
+      "name": "Observed links after counter-evidence",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Behavioural candidate links",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Campaign hypotheses",
+      "expected": "0",
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "I1: an observed match needs exactly equal identifiers",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I2: behaviour alone never creates an observed match",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "I4: every campaign is an unreviewed hypothesis",
+      "expected": "always",
+      "actual": true,
+      "passed": true
+    }
+  ],
+  "matches_expected": true,
+  "disclaimer": "Synthetic scenario replayed through the real pipeline in an isolated, throwaway database. A linked group is only a hypothesis for an analyst to review, not an established finding, and nothing here is evidence about a real person or organisation."
+}

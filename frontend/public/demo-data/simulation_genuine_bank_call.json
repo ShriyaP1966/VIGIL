@@ -1,0 +1,345 @@
+{
+  "name": "genuine_bank_call",
+  "frames": [
+    {
+      "turns": 1,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": []
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Hello, this is the customer care team of your bank. We are calling to say your statement has been dispatched.",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 89,
+              "end": 108,
+              "confidence": 0.8
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "No scam pattern has been detected so far. This is a simulation."
+        ],
+        "hi": [
+          "अब तक ठगी का कोई पैटर्न नहीं मिला। यह केवल एक सिमुलेशन है।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 2,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": []
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Hello, this is the customer care team of your bank. We are calling to say your statement has been dispatched.",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 89,
+              "end": 108,
+              "confidence": 0.8
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Thank you. Do I need to do anything?",
+          "tactics": [],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "No scam pattern has been detected so far. This is a simulation."
+        ],
+        "hi": [
+          "अब तक ठगी का कोई पैटर्न नहीं मिला। यह केवल एक सिमुलेशन है।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 3,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": []
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Hello, this is the customer care team of your bank. We are calling to say your statement has been dispatched.",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 89,
+              "end": 108,
+              "confidence": 0.8
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Thank you. Do I need to do anything?",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "No payment is required. We will never ask for your OTP or PIN. If you have questions, visit your nearest branch with a photo ID.",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 0,
+              "end": 22,
+              "confidence": 0.85
+            },
+            {
+              "label": "LEGITIMATE",
+              "start": 86,
+              "end": 111,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "No scam pattern has been detected so far. This is a simulation."
+        ],
+        "hi": [
+          "अब तक ठगी का कोई पैटर्न नहीं मिला। यह केवल एक सिमुलेशन है।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    },
+    {
+      "turns": 4,
+      "stages": [
+        {
+          "stage": "AUTHORITY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ALLEGATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "THREAT",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "ISOLATION",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "URGENCY",
+          "reached": false,
+          "first_turn": null
+        },
+        {
+          "stage": "DEMAND",
+          "reached": false,
+          "first_turn": null
+        }
+      ],
+      "risk": {
+        "score": 0,
+        "band": "LOW",
+        "version": "risk@3.1.1",
+        "contributions": []
+      },
+      "utterances": [
+        {
+          "idx": 0,
+          "speaker": "caller",
+          "text": "Hello, this is the customer care team of your bank. We are calling to say your statement has been dispatched.",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 89,
+              "end": 108,
+              "confidence": 0.8
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 1,
+          "speaker": "victim",
+          "text": "Thank you. Do I need to do anything?",
+          "tactics": [],
+          "injection_spans": []
+        },
+        {
+          "idx": 2,
+          "speaker": "caller",
+          "text": "No payment is required. We will never ask for your OTP or PIN. If you have questions, visit your nearest branch with a photo ID.",
+          "tactics": [
+            {
+              "label": "LEGITIMATE",
+              "start": 0,
+              "end": 22,
+              "confidence": 0.85
+            },
+            {
+              "label": "LEGITIMATE",
+              "start": 86,
+              "end": 111,
+              "confidence": 0.85
+            }
+          ],
+          "injection_spans": []
+        },
+        {
+          "idx": 3,
+          "speaker": "victim",
+          "text": "Okay, I will visit.",
+          "tactics": [],
+          "injection_spans": []
+        }
+      ],
+      "injection_flags": [],
+      "guidance": {
+        "level": "LOW",
+        "en": [
+          "No scam pattern has been detected so far. This is a simulation."
+        ],
+        "hi": [
+          "अब तक ठगी का कोई पैटर्न नहीं मिला। यह केवल एक सिमुलेशन है।"
+        ]
+      },
+      "disclaimer": "Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls. The risk indicator is an experimental heuristic, not a probability."
+    }
+  ]
+}
