@@ -1,6 +1,7 @@
 import {
   GraphData, IncidentDetail, IncidentListItem, AssociationInspectorData,
-  CampaignDetail, CampaignListItem, ReviewDecision,
+  CampaignDetail, CampaignListItem, ReviewDecision, ScenarioInfo, ScenarioRun, IncidentReport,
+  SimulationScript, SimulationFrame,
 } from '../../types';
 import { API_BASE_URL } from './config';
 import { readApiError } from './errors';
@@ -19,6 +20,12 @@ async function postReview<T>(path: string, decision: ReviewDecision, note?: stri
   });
   if (!res.ok) throw new Error(await readApiError(res, 'Failed to save the review'));
   return res.json();
+}
+
+async function getText(path: string, what: string): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}${path}`);
+  if (!res.ok) throw new Error(await readApiError(res, `Failed to load ${what}`));
+  return res.text();
 }
 
 export const httpAdapter = {
@@ -67,5 +74,41 @@ export const httpAdapter = {
   async clearAllData(): Promise<void> {
     const res = await fetch(`${API_BASE_URL}/api/v1/data?confirm=true`, { method: 'DELETE' });
     if (!res.ok) throw new Error(await readApiError(res, 'Failed to clear data'));
+  },
+
+  listScenarios(): Promise<ScenarioInfo[]> {
+    return getJson('/api/v1/scenarios', 'scenarios');
+  },
+
+  async runScenario(name: string, rotation: number | null): Promise<ScenarioRun> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/scenarios/${encodeURIComponent(name)}/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rotation == null ? {} : { rotation }),
+    });
+    if (!res.ok) throw new Error(await readApiError(res, 'Failed to run the scenario'));
+    return res.json();
+  },
+
+  getReport(id: number): Promise<IncidentReport> {
+    return getJson(`/api/v1/incidents/${id}/report`, `report for incident ${id}`);
+  },
+
+  getReportCsv(id: number): Promise<string> {
+    return getText(`/api/v1/incidents/${id}/report?format=csv`, `CSV report for incident ${id}`);
+  },
+
+  listSimulations(): Promise<SimulationScript[]> {
+    return getJson('/api/v1/simulations', 'call simulations');
+  },
+
+  async getSimulationFrame(script: SimulationScript, step: number): Promise<SimulationFrame> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/simulations/live-call/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ utterances: script.utterances.slice(0, step), language: script.language }),
+    });
+    if (!res.ok) throw new Error(await readApiError(res, 'Failed to analyse the simulated call'));
+    return res.json();
   },
 };

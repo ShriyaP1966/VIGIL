@@ -6,6 +6,7 @@ import type { ViewMode } from '../types';
  * these paths. Pure functions only, so the routing can be unit-tested without a browser.
  *
  *   /                      Overview
+ *   /incidents             Investigations list (search and filters)
  *   /incidents/new         New investigation
  *   /incidents/<id>        Investigation detail
  *   /graph                 Intelligence graph
@@ -34,6 +35,7 @@ export interface Route {
 
 const FIXED: Record<string, ViewMode> = {
   '/': 'overview',
+  '/incidents': 'investigations',
   '/incidents/new': 'new_investigation',
   '/graph': 'graph',
   '/campaigns': 'campaigns',
@@ -45,6 +47,7 @@ const FIXED: Record<string, ViewMode> = {
 
 export const TITLES: Record<RouteView, string> = {
   overview: 'Overview',
+  investigations: 'Investigations',
   new_investigation: 'New investigation',
   investigation_detail: 'Investigation',
   graph: 'Intelligence graph',
@@ -99,6 +102,7 @@ export function parseLocation(pathname: string, search = ''): Route {
 export function pathFor(view: ViewMode, id?: number): string {
   switch (view) {
     case 'overview': return '/';
+    case 'investigations': return '/incidents';
     case 'new_investigation': return '/incidents/new';
     case 'investigation_detail': return id != null ? `/incidents/${id}` : '/';
     case 'graph': return '/graph';
@@ -117,5 +121,6 @@ export function withAssoc(path: string, assocId: number | null): string {
 
 /** The sidebar highlights the section a route belongs to. */
 export function sectionOf(route: Route): ViewMode | null {
-  return route.view === 'not_found' ? null : route.view;
+  if (route.view === 'not_found') return null;
+  return route.view === 'investigation_detail' ? 'investigations' : route.view;   // a case belongs to the list
 }

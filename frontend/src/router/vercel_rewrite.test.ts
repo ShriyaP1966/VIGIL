@@ -16,7 +16,7 @@ describe('frontend/vercel.json SPA rewrite', () => {
     expect(rewrite.destination).toBe('/index.html');
   });
 
-  const views: ViewMode[] = ['overview', 'new_investigation', 'graph', 'campaigns', 'scenario_lab', 'simulated_live_call', 'reports', 'settings'];
+  const views: ViewMode[] = ['overview', 'investigations', 'new_investigation', 'graph', 'campaigns', 'scenario_lab', 'simulated_live_call', 'reports', 'settings'];
 
   it.each(views)('rewrites the %s page URL (a refresh or deep link reaches the app)', (view) => {
     const path = pathFor(view);

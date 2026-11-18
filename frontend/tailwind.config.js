@@ -25,12 +25,12 @@ export default {
           low: '#22C55E',
           elevated: '#EAB308',
           high: '#F59E0B',
-          critical: '#EF4444',
+          critical: '#F87171',     // 5.3:1 on the lightest panel; also readable as a solid fill with dark text
         },
         text: {
           primary: '#F8FAFC',
           secondary: '#94A3B8',
-          muted: '#64748B',
+          muted: '#8796AB',     // 4.9:1 on the lightest panel (WCAG AA); the earlier #64748B measured 3.1-3.7:1
         }
       },
       fontFamily: {

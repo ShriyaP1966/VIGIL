@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSegments, isCanonicalOrder, stageChips } from './segments';
+import { alignmentRows, buildSegments, isCanonicalOrder, stageChips } from './segments';
 
 const t = (label: string, start: number, end: number) => ({ label, start, end, confidence: 0.9 });
 
@@ -60,5 +60,19 @@ describe('stage chips', () => {
     expect(isCanonicalOrder(['AUTHORITY', 'THREAT', 'DEMAND'])).toBe(true);
     expect(isCanonicalOrder(['DEMAND', 'THREAT'])).toBe(false);
     expect(isCanonicalOrder([])).toBe(true);
+  });
+});
+
+describe('alignmentRows', () => {
+  it('gives every incident the same six columns, with the order each stage appeared', () => {
+    const rows = alignmentRows([
+      { id: 1, sequence: ['AUTHORITY', 'ALLEGATION', 'DEMAND'] },
+      { id: 2, sequence: ['DEMAND', 'AUTHORITY'] },
+      { id: 3, sequence: undefined },
+    ]);
+    expect(rows.map(r => r.cells.map(c => c.stage))).toEqual(Array(3).fill(['AUTHORITY', 'ALLEGATION', 'THREAT', 'ISOLATION', 'URGENCY', 'DEMAND']));
+    expect(rows[0].cells.map(c => c.order)).toEqual([1, 2, null, null, null, 3]);
+    expect(rows[1].cells.map(c => c.order)).toEqual([2, null, null, null, null, 1]);
+    expect(rows.map(r => r.inOrder)).toEqual([true, false, true]);
   });
 });

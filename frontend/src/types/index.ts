@@ -1,7 +1,8 @@
 export type ViewMode = 
   | 'overview' 
-  | 'new_investigation' 
-  | 'investigation_detail' 
+  | 'investigations'
+  | 'new_investigation'
+  | 'investigation_detail'
   | 'graph' 
   | 'campaigns' 
   | 'scenario_lab' 
@@ -268,4 +269,107 @@ export interface AssociationInspectorData {
     state: string;
     history: Array<any>;
   };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Scenario Lab, reports and the simulated call (Phase 6)
+// ---------------------------------------------------------------------------------------------
+
+export interface ScenarioInfo {
+  name: string;
+  title: string;
+  category: 'positive' | 'negative' | 'ambiguous' | 'decoy' | 'counter_evidence' | 'injection';
+  description: string;
+  rotation_adjustable: boolean;
+  default_rotation: number | null;
+}
+
+/** passed = null marks an informational line: the scenario states no requirement there. */
+export interface ScenarioCheck {
+  name: string;
+  expected: string;
+  actual: unknown;
+  passed: boolean | null;
+}
+
+export interface ScenarioRun {
+  name: string;
+  title: string;
+  category: ScenarioInfo['category'];
+  description: string;
+  rotation: number | null;
+  seed: number;
+  incidents: Array<{
+    id: string; channel: string; language: string; excerpt: string; detected_labels: string[];
+    risk: { score: number; band: RiskBand } | null; injection_flags: string[];
+    generator_stage_sequence: string[] | null;
+  }>;
+  links: Array<{ a: string; b: string; status: string; match_type: string; shared: string[]; confidence: number }>;
+  hypotheses: Array<{ members: string[]; confidence: number; status: string; bases: string[] }>;
+  summary: { observed_links: number; candidate_links: number; disputed_links: number; hypotheses: number };
+  checks: ScenarioCheck[];
+  matches_expected: boolean;
+  disclaimer: string;
+}
+
+export interface ReportAssociationRow {
+  association_id: number; other_incident_id: number; other_incident_title: string | null; status: string;
+  match_type: string; confidence: number; base_confidence: number; explanation: string;
+  shared_identifiers: Array<{ type: string; display_value: string }>; algorithm_version: string;
+}
+
+export interface IncidentReport {
+  report_version: string;
+  synthetic: boolean;
+  incident: { id: number; title: string; source_channel: string; language: string; status: string; created_at: string | null };
+  observed_facts: {
+    evidence: Array<{ id: number; type: string; sha256: string; provenance: string; characters: number }>;
+    identifiers: Array<{ type: string; display_value: string; mentions: number }>;
+    observed_matches: ReportAssociationRow[];
+  };
+  model_inferences: {
+    stage_sequence: string[];
+    institution_class: string | null;
+    payment_channel: string | null;
+    tactics: Array<{ label: string; stage: string | null; count: number; max_confidence: number; excerpts: Array<{ utterance_idx: number; text: string }> }>;
+    risk: {
+      score: number; band: RiskBand; version: string; note: string; injection_flags: string[];
+      contributions: Array<{ factor: string; effect: string; contribution: number; explanation: string; rule_version: string }>;
+    } | null;
+    behavioural_candidates: ReportAssociationRow[];
+    campaign_hypotheses: Array<{ id: number; title: string; status: string; confidence: number }>;
+  };
+  analyst_actions: Array<{
+    target_type: string; target_id: number; decision: string; note: string | null;
+    previous_status: string; new_status: string; recorded_at: string | null;
+  }>;
+  counter_evidence: {
+    findings: Array<{
+      association_id: number; rule_id: string; kind: string; severity: string; observation: string;
+      explanation: string; confidence_impact: number; rule_version: string;
+    }>;
+    disputed_or_rejected_links: ReportAssociationRow[];
+  };
+  limitations: string[];
+}
+
+export interface SimulationScript {
+  name: string;
+  title: string;
+  language: string;
+  description: string;
+  turns: number;
+  utterances: Array<{ speaker: string; text: string }>;
+}
+
+export interface SimulationFrame {
+  turns: number;
+  stages: Array<{ stage: string; reached: boolean; first_turn: number | null }>;
+  risk: { score: number; band: RiskBand; version: string | null; contributions: RiskContribution[] };
+  utterances: Array<{
+    idx: number; speaker: string; text: string; tactics: TacticSpan[]; injection_spans: InjectionSpan[];
+  }>;
+  injection_flags: string[];
+  guidance: { level: RiskBand; en: string[]; hi: string[] };
+  disclaimer: string;
 }

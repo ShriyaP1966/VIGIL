@@ -3,7 +3,8 @@ import { staticAdapter } from './static_adapter';
 import { API_BASE_URL } from './config';
 import {
   GraphData, IncidentDetail, IncidentListItem, AssociationInspectorData,
-  CampaignDetail, CampaignListItem, ReviewDecision,
+  CampaignDetail, CampaignListItem, ReviewDecision, ScenarioInfo, ScenarioRun, IncidentReport,
+  SimulationScript, SimulationFrame,
 } from '../../types';
 
 /**
@@ -134,6 +135,37 @@ class ApiClient {
   public async reviewCampaign(id: number, decision: ReviewDecision, note?: string): Promise<CampaignDetail> {
     await this.ready;
     return this.adapter.reviewCampaign(id, decision, note);
+  }
+
+  public async listScenarios(): Promise<ScenarioInfo[]> {
+    await this.ready;
+    return this.adapter.listScenarios();
+  }
+
+  /** Live: any rotation from 0 to 1. Hosted demo: snapped to the five precomputed levels. */
+  public async runScenario(name: string, rotation: number | null): Promise<ScenarioRun> {
+    await this.ready;
+    return this.adapter.runScenario(name, rotation);
+  }
+
+  public async getReport(id: number): Promise<IncidentReport> {
+    await this.ready;
+    return this.adapter.getReport(id);
+  }
+
+  public async getReportCsv(id: number): Promise<string> {
+    await this.ready;
+    return this.adapter.getReportCsv(id);
+  }
+
+  public async listSimulations(): Promise<SimulationScript[]> {
+    await this.ready;
+    return this.adapter.listSimulations();
+  }
+
+  public async getSimulationFrame(script: SimulationScript, step: number): Promise<SimulationFrame> {
+    await this.ready;
+    return this.adapter.getSimulationFrame(script, step);
   }
 
   public async clearAllData(): Promise<void> {

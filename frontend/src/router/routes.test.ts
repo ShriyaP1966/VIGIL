@@ -5,6 +5,7 @@ import type { ViewMode } from '../types';
 describe('parseLocation: every page is a real URL', () => {
   const cases: Array<[string, string, Partial<ReturnType<typeof parseLocation>>]> = [
     ['/', '', { view: 'overview' }],
+    ['/incidents', '', { view: 'investigations' }],
     ['/incidents/new', '', { view: 'new_investigation' }],
     ['/incidents/12', '', { view: 'investigation_detail', incidentId: 12 }],
     ['/graph', '', { view: 'graph' }],
@@ -49,7 +50,7 @@ describe('parseLocation: every page is a real URL', () => {
     expect(parseLocation('/associations/8')).toMatchObject({ view: 'graph', assocId: 8, redirectTo: '/graph?assoc=8' });
   });
 
-  it.each(['/nope', '/incidents', '/incidents/abc', '/incidents/0', '/incidents/-1', '/incidents/1/extra', '/campaigns/x',
+  it.each(['/nope', '/incidents/abc', '/incidents/0', '/incidents/-1', '/incidents/1/extra', '/campaigns/x',
     '/associations/x', '/graph/extra', '/Graph', '/api/v1/health', '/demo-data/missing.json'])(
     'shows "page not found" for %s', (pathname) => {
       const r = parseLocation(pathname);
@@ -64,7 +65,7 @@ describe('parseLocation: every page is a real URL', () => {
 });
 
 describe('pathFor and withAssoc build the URLs that parseLocation reads back', () => {
-  const views: ViewMode[] = ['overview', 'new_investigation', 'graph', 'campaigns', 'scenario_lab', 'simulated_live_call', 'reports', 'settings'];
+  const views: ViewMode[] = ['overview', 'investigations', 'new_investigation', 'graph', 'campaigns', 'scenario_lab', 'simulated_live_call', 'reports', 'settings'];
 
   it.each(views)('%s round-trips', (view) => {
     expect(parseLocation(pathFor(view)).view).toBe(view);
@@ -85,7 +86,7 @@ describe('pathFor and withAssoc build the URLs that parseLocation reads back', (
 
   it('every route has a page title and the sidebar section follows the route', () => {
     for (const view of [...views, 'investigation_detail', 'not_found'] as const) expect(TITLES[view]).toBeTruthy();
-    expect(sectionOf(parseLocation('/incidents/2'))).toBe('investigation_detail');
+    expect(sectionOf(parseLocation('/incidents/2'))).toBe('investigations');   // a case belongs to the list
     expect(sectionOf(parseLocation('/nope'))).toBeNull();
   });
 });

@@ -5,7 +5,7 @@ import type { CampaignDetail, CampaignLink, CampaignListItem, ReviewDecision } f
 import { FindingCard } from '../components/counterevidence/FindingCard';
 import { SEVERITY_LABEL, severityTone } from '../components/counterevidence/finding_view';
 import { ReviewControls } from '../components/review/ReviewControls';
-import { stageChips } from '../components/tactics/segments';
+import { alignmentRows, stageChips } from '../components/tactics/segments';
 import { basisLabel, basisTone, confidencePct, linkSummary, statusTone } from '../components/campaigns/campaign_view';
 
 interface CampaignsProps {
@@ -182,7 +182,7 @@ export const Campaigns: React.FC<CampaignsProps> = ({
                         <ol className="flex flex-wrap gap-1" aria-label="Stages observed">
                           {stageChips(m.stage_sequence).map(c => (
                             <li key={c.stage} className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${
-                              c.observed ? 'border-accent-primary/40 text-accent-primary bg-accent-primary/10' : 'border-border-subtle text-text-muted opacity-50'}`}>
+                              c.observed ? 'border-accent-primary/40 text-accent-primary bg-accent-primary/10' : 'border-border-subtle text-text-muted'}`}>
                               {c.order ? `${c.order}. ` : ''}{c.stage}
                             </li>
                           ))}
@@ -190,6 +190,40 @@ export const Campaigns: React.FC<CampaignsProps> = ({
                       </li>
                     ))}
                   </ul>
+                </div>
+
+                <div className="bg-bg-card border border-border-subtle rounded-lg p-5 space-y-3">
+                  <h3 className="text-sm font-semibold text-text-primary">Playbook alignment, side by side</h3>
+                  <p className="text-[11px] text-text-muted">
+                    Each row is one incident; each column a stage of the usual script. A number is the order in which the stage appeared. A shared script is a lead, not proof of one actor.
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <caption className="sr-only">Stage order of every incident in this hypothesis</caption>
+                      <thead className="text-[10px] uppercase text-text-muted">
+                        <tr>
+                          <th scope="col" className="py-1 pr-3">Incident</th>
+                          {alignmentRows(detail.members.map(m => ({ id: m.incident_id, sequence: m.stage_sequence })))[0]?.cells.map(c => (
+                            <th key={c.stage} scope="col" className="py-1 px-1 text-center">{c.stage.slice(0, 5)}</th>
+                          ))}
+                          <th scope="col" className="py-1 pl-2">Order</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border-subtle">
+                        {alignmentRows(detail.members.map(m => ({ id: m.incident_id, sequence: m.stage_sequence }))).map(row => (
+                          <tr key={row.id}>
+                            <th scope="row" className="py-1.5 pr-3 font-mono text-text-primary">INC-{String(row.id).padStart(4, '0')}</th>
+                            {row.cells.map(c => (
+                              <td key={c.stage} className={`py-1.5 px-1 text-center font-mono ${c.order ? 'text-accent-primary font-bold' : 'text-text-muted'}`}>
+                                <span aria-label={c.order ? `${c.stage} was stage ${c.order}` : `${c.stage} not seen`}>{c.order ?? '–'}</span>
+                              </td>
+                            ))}
+                            <td className="py-1.5 pl-2 text-text-secondary">{row.inOrder ? 'usual order' : 'different order'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 <div className="bg-bg-card border border-border-subtle rounded-lg p-5 space-y-3">

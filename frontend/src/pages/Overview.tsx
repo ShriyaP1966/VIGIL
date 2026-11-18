@@ -102,6 +102,25 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         </div>
       </div>
 
+      {/* Graph snapshot: counts read from the same graph the Intelligence Graph page draws */}
+      {graphData && (
+        <section aria-labelledby="ov-graph" className="bg-bg-card border border-border-subtle rounded-lg p-5 flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h2 id="ov-graph" className="text-base font-semibold text-text-primary">Graph snapshot</h2>
+            <p className="text-xs text-text-secondary">
+              {graphData.nodes.filter(n => n.type === 'incident').length} incidents, {totalEntities} indicators.
+              Links: {observedMatches} observed, {candidateAssocs} behaviour-only candidate, {graphData.edges.filter(e => e.type === 'DISPUTED_ASSOCIATION').length} disputed.
+            </p>
+            <p className="text-[11px] text-text-muted">An observed link is an exact identifier match; a candidate is a similar script. Neither is proof of one actor.</p>
+          </div>
+          <div className="flex flex-wrap gap-3 text-xs font-medium">
+            <button type="button" onClick={() => onNavigate('graph')} className="text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded">Open the graph</button>
+            <button type="button" onClick={() => onNavigate('campaigns')} className="text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded">Campaign hypotheses</button>
+            <button type="button" onClick={() => onNavigate('investigations')} className="text-accent-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded">All investigations</button>
+          </div>
+        </section>
+      )}
+
       {/* Recent Incidents Feed */}
       <div className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden">
         <div className="px-4 sm:px-6 py-4 border-b border-border-subtle flex flex-wrap items-center justify-between gap-2">

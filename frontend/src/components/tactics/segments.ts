@@ -82,3 +82,15 @@ export function isCanonicalOrder(sequence: string[] | undefined): boolean {
   const idx = (sequence ?? []).map(s => (CANONICAL_STAGES as readonly string[]).indexOf(s)).filter(i => i >= 0);
   return idx.every((v, i) => i === 0 || idx[i - 1] < v);
 }
+
+export interface AlignmentRow {
+  id: number;
+  cells: StageChip[];
+  inOrder: boolean;
+}
+
+/** One row per incident with the six stages as columns (the order each stage appeared, or null), for the
+ *  side-by-side playbook comparison. `inOrder` is false when a stage came earlier than a stage that precedes it. */
+export function alignmentRows(rows: Array<{ id: number; sequence: string[] | undefined }>): AlignmentRow[] {
+  return rows.map(r => ({ id: r.id, cells: stageChips(r.sequence), inOrder: isCanonicalOrder(r.sequence) }));
+}

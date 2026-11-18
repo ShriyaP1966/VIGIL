@@ -1,17 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Suspense, lazy, useState, useEffect, useCallback } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { TopBar } from './components/layout/TopBar';
 import { InspectorShell } from './components/layout/InspectorShell';
 import { Overview } from './pages/Overview';
 import { NewInvestigation } from './pages/NewInvestigation';
 import { InvestigationDetail } from './pages/InvestigationDetail';
-import { IntelligenceGraph } from './pages/IntelligenceGraph';
+import { Skeleton } from './components/ui/States';
+
+// The graph pulls in React Flow (the largest dependency), so it loads only when that page is opened.
+const IntelligenceGraph = lazy(() => import('./pages/IntelligenceGraph').then(m => ({ default: m.IntelligenceGraph })));
 import { Campaigns } from './pages/Campaigns';
 import { ScenarioLab } from './pages/ScenarioLab';
 import { SimulatedLiveCall } from './pages/SimulatedLiveCall';
 import { Reports } from './pages/Reports';
 import { Settings } from './pages/Settings';
 import { NotFound } from './pages/NotFound';
+import { Investigations } from './pages/Investigations';
+import { ToastProvider } from './components/ui/Toast';
 import { apiClient, ApiMode } from './services/api/client';
 import { ViewMode, AssociationInspectorData, NodeInspectorInfo, ReviewDecision } from './types';
 import { getRouter, useRoute } from './router';
@@ -95,6 +100,7 @@ export const App: React.FC = () => {
   const inspectorOpen = shownAssociation != null || (route.assocId == null && nodeInfo != null);
 
   return (
+    <ToastProvider>
     <div className="flex h-screen w-full max-w-full overflow-hidden bg-bg-main text-text-primary">
       <Sidebar
         currentView={sectionOf(route)}
@@ -123,6 +129,8 @@ export const App: React.FC = () => {
             <Overview onNavigate={(view, id) => handleNavigate(view, id)} />
           )}
 
+          {route.view === 'investigations' && <Investigations />}
+
           {route.view === 'new_investigation' && (
             <NewInvestigation
               apiMode={apiMode}
@@ -141,12 +149,14 @@ export const App: React.FC = () => {
           )}
 
           {route.view === 'graph' && (
-            <IntelligenceGraph
-              refreshKey={refreshKey}
-              onInspectAssociation={handleInspectAssociation}
-              onInspectNode={handleInspectNode}
-              onSelectIncident={(id) => handleNavigate('investigation_detail', id)}
-            />
+            <Suspense fallback={<div className="p-4 sm:p-8"><Skeleton rows={4} label="Loading the graph" /></div>}>
+              <IntelligenceGraph
+                refreshKey={refreshKey}
+                onInspectAssociation={handleInspectAssociation}
+                onInspectNode={handleInspectNode}
+                onSelectIncident={(id) => handleNavigate('investigation_detail', id)}
+              />
+            </Suspense>
           )}
 
           {route.view === 'campaigns' && (
@@ -161,7 +171,7 @@ export const App: React.FC = () => {
             />
           )}
 
-          {route.view === 'scenario_lab' && <ScenarioLab />}
+          {route.view === 'scenario_lab' && <ScenarioLab apiMode={apiMode} />}
           {route.view === 'simulated_live_call' && <SimulatedLiveCall />}
           {route.view === 'reports' && <Reports />}
           {route.view === 'settings' && <Settings apiMode={apiMode} />}
@@ -179,6 +189,7 @@ export const App: React.FC = () => {
         onReviewAssociation={handleReviewAssociation}
       />
     </div>
+    </ToastProvider>
   );
 };
 

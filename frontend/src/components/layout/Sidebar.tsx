@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { 
   ShieldAlert, 
   LayoutDashboard, 
-  PlusCircle, 
+  PlusCircle,
+  ListChecks,
   Network, 
   Layers, 
   FlaskConical, 
@@ -35,11 +36,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, open 
 
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'investigations', label: 'Investigations', icon: ListChecks },
     { id: 'new_investigation', label: 'New Investigation', icon: PlusCircle },
     { id: 'graph', label: 'Intelligence Graph', icon: Network },
     { id: 'campaigns', label: 'Campaigns', icon: Layers },
     { id: 'scenario_lab', label: 'Scenario Lab', icon: FlaskConical },
-    { id: 'simulated_live_call', label: 'Simulated Call Analysis', icon: PhoneCall, badge: 'P1' },
+    { id: 'simulated_live_call', label: 'Simulated Call Analysis', icon: PhoneCall, badge: 'Sim' },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
