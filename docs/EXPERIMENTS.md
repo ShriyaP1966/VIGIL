@@ -407,8 +407,12 @@ End to end, first 20 incidents: mean 90.47 ms; last 20: mean 832.72 ms.
 End-to-end time grows with the number of earlier incidents because each new incident is compared with all of them
 (quadratic overall). It is fine at this size and is not claimed to scale.
 
-**E6 hand-written held-out set:** *not run.* The owner writes it (`data/heldout/README.md`); it is evaluated once,
-last. The harness refuses an empty file and a second run. **E8** (fingerprint ablation) is cut.
+**E6 held-out set:** *not run yet.* The 25 scenarios (19 scam, 6 legitimate) are in `data/heldout/` and are evaluated
+once, last. **Provenance: the set was drafted by a different language model (not Claude), then reviewed, edited and
+labelled by the owner, Shriya Patil.** **Scope: the set has no per-utterance tactic labels, so tactic-level scores
+(per-label F1, macro-F1) are not measured on it.** E6 will report only scenario-level scam detection (the share of scam
+scenarios in which the extractor labels at least one scam tactic) and the false-alarm rate on the legitimate
+scenarios. The harness refuses a second run. (Pre-registration amendment 2.) **E8** (fingerprint ablation) is cut.
 
 ## 8. Threats to validity and honest limits
 

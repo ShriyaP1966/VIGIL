@@ -82,8 +82,11 @@ to a split.
   uncertainty about the real world.
 * **The decoys were written by the author too** and are one reasonable reading of the blueprint's four types, not
   an adversarial set. They were fixed before any experiment and are not adjusted after results.
-* **Hand-written held-out set.** A separate set of about 25 scenarios is written by the project owner, kept out of
-  this repository's generator and evaluated once (`data/heldout/README.md`). It is the only unbiased check.
+* **Held-out set.** A separate set of 25 scenarios (19 scam, 6 legitimate) was drafted by a different language model
+  (not Claude), then reviewed, edited and labelled by the owner, Shriya Patil. It is kept out of this repository's
+  generator and evaluated once (`data/heldout/README.md`). It is the only check not written by the author of the
+  rules, but it is small, has no per-utterance tactic labels (so **tactic-level scores are not measured on it**), and a
+  language-model draft is not the same as real traffic.
 * **Languages other than English are thin**, and romanised Hindi varies widely in real life.
 
 ## Reproduce

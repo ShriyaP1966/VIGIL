@@ -32,7 +32,7 @@ This README describes the full v3.1 design. **Phases 1-5 are implemented so far*
 | Campaign hypotheses (always labelled hypothesis) with member basis, weakest link and review | |
 | Counter-evidence engine (chronology, payment destination, public identifiers, impersonation, language) with confidence adjustment and automatic disputes; findings stay visible after an analyst accepts | CE-6 and CE-8, the F4 risk factor, fuller entity and incident inspectors (deferred) |
 | Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | |
-| `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | The owner's hand-written held-out evaluation (E6): written by the owner, run once, last |
+| `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | The held-out evaluation (E6): set drafted by another language model and reviewed by the owner, run once, last |
 | Rule-based tactic extraction (English, Hinglish, a few Hindi/Marathi patterns) with exact spans | Simulated live call, reports, scenario lab UI (Phase 6) |
 | Stage-based risk indicator with an exact contribution ledger | Gemini extractor and ML classifier: **cut**, not planned for the deadline |
 | Prompt-injection guard (regex), manipulation badge, no mitigation for flagged text | |
@@ -190,7 +190,7 @@ What it shows, honestly:
 - **The fingerprint (D) recovers links that rotation hides, at a cost:** at r = 1 it is the only graph arm that finds pairs (candidate recall about 0.9), but its pairwise F1 is 0.05 under (a) (below the text baseline's 0.20) and about 0.5 under (b) (above the baseline's 0.43), and its false association rate is 0.23 to 0.34 against about 0.03 or less for the others. A minority of wrong candidate links (mostly bank-KYC to payment-link scripts) are chained by connected components into one 75-incident group.
 - **D does not beat the text baseline under (a) at any rotation level.** It is better described as a lead generator for an analyst than as an automatic grouping.
 - **Decoys were not clean:** awareness notices that quote scams (D1) and reversed-order calls (D3) were linked by candidate links in a large share of runs; legitimate negatives never were (0 of 2000).
-- **Not run:** the owner's hand-written held-out set (E6). Limits and threats to validity are in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md), section 8.
+- **Not run:** the held-out set (E6; 25 scenarios drafted by a different language model, not Claude, then reviewed, edited and labelled by the owner; scenario-level scores only, no tactic-level scores). Limits and threats to validity are in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md), section 8.
 
 Other suites (all from `scripts/evaluate_model.py`): E1 tactics macro-F1 on the v2 sample train/dev/test 0.97/0.99/0.97 (test is a fresh sample of the same templates, not independent; the extractor matches wording, so it also labels most awareness notices as scam tactics), E2 entities, E3 integrity, E5 injection 10 of 10 authored attacks, E7 latency (descriptive).
 

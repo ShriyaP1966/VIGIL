@@ -598,7 +598,9 @@ def suite_heldout(args, path: Path = HELDOUT_FILE, result_path: Path = HELDOUT_R
         raise HeldoutRefused(f"{path.name} is empty: the owner has not marked the held-out set as ready.")
     extractor = RuleExtractor()
     counts = {lab: Counter() for lab in TACTIC_LABELS}
-    legit_total = legit_fp = 0
+    legit_total = legit_fp = scam_total = scam_hit = 0
+    per_scenario = []
+    labelled = any(u.get("tactic_labels") for r in rows for u in r["utterances"])
     for row in rows:
         res = extractor.analyze([UtteranceInput(idx=i, speaker=u.get("speaker", "unknown"), text=u["text"])
                                  for i, u in enumerate(row["utterances"])])
@@ -613,6 +615,37 @@ def suite_heldout(args, path: Path = HELDOUT_FILE, result_path: Path = HELDOUT_R
         if row["is_legitimate"]:
             legit_total += 1
             legit_fp += any_scam
+        else:
+            scam_total += 1
+            scam_hit += any_scam
+        kind = next((p.split(":", 1)[1].strip() for p in str(row.get("notes", "")).split(";")
+                     if p.strip().startswith("type:")), None)
+        per_scenario.append({"id": row["id"], "type": kind, "is_legitimate": bool(row["is_legitimate"]),
+                             "scam_tactic_detected": bool(any_scam)})
+    scenario_level = {
+        "scam_scenarios": scam_total, "scam_scenarios_detected": scam_hit,
+        "scam_detection_rate": rnd(scam_hit / scam_total) if scam_total else None,
+        "legitimate_scenarios": legit_total, "legitimate_false_alarms": legit_fp,
+        "legitimate_false_alarm_rate": rnd(legit_fp / legit_total) if legit_total else None,
+        "definition": "a scenario counts as detected / as a false alarm when the rule extractor labels at least one "
+                      "non-LEGITIMATE tactic anywhere in it",
+    }
+    if not labelled:
+        # The owner's file carries no per-utterance gold tactic labels, so tactic-level scores are NOT measured.
+        return {
+            "suite": "heldout", "experiment": "E6", "command": "python scripts/evaluate_model.py --suite heldout",
+            "dataset": {"path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else path.name,
+                        "sha256_lf": sha256_lf(path), "scenarios": len(rows)},
+            "extractor": {"name": extractor.name, "version": extractor.version,
+                          "lexicon_sha256": sha256_of(DEFAULT_LEXICON)},
+            "metrics": {"scenario_level": scenario_level,
+                        "tactic_level": "not measured: the held-out file has no per-utterance tactic labels"},
+            "per_scenario": per_scenario,
+            "caveat": ("Drafted by a language model other than the assistant that built VIGIL, then reviewed, edited and "
+                       "labelled by the owner; evaluated once. Small and synthetic: indicative, not statistical proof. "
+                       "Only scenario-level scam detection and the false-alarm rate on legitimate scenarios are reported."),
+            "environment": environment(),
+        }
     per_label = {lab: {k: rnd(v) if isinstance(v, float) else v
                        for k, v in prf(c["tp"], c["fp"], c["fn"]).items()} for lab, c in counts.items()}
     supported = [lab for lab in TACTIC_LABELS if per_label[lab]["support"] > 0]
@@ -626,8 +659,10 @@ def suite_heldout(args, path: Path = HELDOUT_FILE, result_path: Path = HELDOUT_R
         "metrics": {"macro_f1_over_labels_with_support": rnd(macro), "labels_with_support": supported,
                     "per_label": per_label,
                     "legitimate_scenarios": legit_total, "legitimate_false_positives": legit_fp,
-                    "legitimate_false_positive_rate": rnd(legit_fp / legit_total) if legit_total else None},
-        "caveat": "Written by the project owner, evaluated once. Small and synthetic: indicative, not statistical proof.",
+                    "legitimate_false_positive_rate": rnd(legit_fp / legit_total) if legit_total else None,
+                    "scenario_level": scenario_level},
+        "per_scenario": per_scenario,
+        "caveat": "Reviewed and labelled by the project owner, evaluated once. Small and synthetic: indicative, not statistical proof.",
         "environment": environment(),
     }
 

@@ -163,7 +163,7 @@
 
 #### Tasks
 - [x] Dataset generator v2: 6 templates × 15 variants, 40 legitimate negatives, 20 decoys (four types), unique identifiers, script-family ground truth; the 10 injection attacks are in `data/injection_attacks.json`. Frozen and pre-registered (`docs/PREREGISTRATION.md`) before any experiment.
-- [ ] Author the 25 hand-written held-out evaluation scenarios. **Owner's task.** `data/heldout/README.md` documents the format and `heldout.jsonl` is an empty placeholder; nothing reads it until the owner says it is ready.
+- [x] The 25 held-out scenarios exist in `data/heldout/heldout.jsonl` (19 scam, 6 legitimate), drafted by a different language model (not Claude) and reviewed, edited and labelled by the owner, Shriya Patil. Format checked only; **not evaluated**. No per-utterance tactic labels, so tactic-level scores are not measured (scenario-level detection and false-alarm rate only).
 - [~] Evaluation harness `scripts/evaluate_model.py`: suites `tactics`, `entities`, `associations`, `rotation`, `injection`, `latency` run and committed; `heldout` is implemented and guarded (refuses an empty file and a second run) but **not run**.
 - [x] Hero Rotation Experiment (E4): arms A, B, C, D at r in 0, 0.25, 0.5, 0.75, 1.0, 10 seeds (1001-1010), both ground truths, two scored slices.
 - [x] Pairwise F1, false association rate, candidate precision/recall (`docs/experiments/rotation.json`).
@@ -175,7 +175,7 @@
 - [x] Every metric in `docs/EXPERIMENTS.md` is reproducible via CLI with recorded seeds (a test re-runs one full experiment cell and checks the tables against the JSON; the full E4 takes about 40 minutes).
 - [x] False association rate and candidate precision/recall explicitly reported for all arms.
 - [~] Suite E3: **0 I1 violations; 0 observed links touch a negative or decoy after counter-evidence** (1848 before it), negatives are never linked. **But decoys D1 (awareness notices) and D3 (reversed order) were linked by behaviour-only candidate links in a large share of runs**, so the blueprint goal that decoys must not form a campaign hypothesis is not met for them. Reported as is; the decoys were not changed.
-- [ ] Hand-written held-out suite evaluated exactly once and logged. **Pending the owner's set.**
+- [ ] Held-out suite evaluated exactly once and logged. **Set is ready; waiting for the owner's go-ahead to run it once, last.**
 - [x] Honest scientific interpretation documented (where D helps and where it degrades), including that D does not beat the text baseline under the instance truth.
 - [x] Generated rotation chart PNG committed (< 200 KB).
 

@@ -106,7 +106,7 @@ D3, D4), pairs among them, with predictions from the same full run. Both are alw
 
 * E1, E5: re-run on the frozen sample with the unchanged lexicon (decoys excluded from E1 and reported on the
   side). The E1 `test` numbers are a fresh sample of the same templates, not an independent test.
-* E6 (held-out set): written by the project owner, evaluated once at the end, never read before the owner says
+* E6 (held-out set; see amendment 2 for its provenance and scope): evaluated once at the end, never read before the owner says
   it is ready. The harness refuses to run on an empty file or to run twice.
 * E8 is cut. E2 (entities) and E7 (latency) are descriptive and have no pre-registered threshold.
 
@@ -128,3 +128,11 @@ how much the generator's randomness moves a number, not how the system would beh
    `backend/app/services/replay_service.py`; the arm definitions in section 4 are implemented exactly as written
    and `backend/tests/test_eval_experiments.py` checks them (including B and C read from one run versus separate
    ablated runs).
+
+2. **18 Nov 2026, before the held-out set was evaluated (E6 provenance and scope).** The held-out set was drafted by a
+   different language model (not Claude), then reviewed, edited and labelled by the owner, Shriya Patil; section 7's
+   "written by the project owner" is superseded by this. The owner's file has no per-utterance tactic labels, so E6
+   reports **scenario-level scam detection and the false-alarm rate on the legitimate scenarios only**; tactic-level
+   scores are **not measured** on it. The harness was changed accordingly before any E6 run (the run-once guard is
+   unchanged). Nothing in the generator, lexicon, fingerprint, counter-evidence rules or any threshold changed, and the
+   set's content was not used to change any of them.

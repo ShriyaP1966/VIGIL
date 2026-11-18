@@ -213,3 +213,25 @@ def test_heldout_validates_labels_and_fields(tmp_path):
     missing.write_text(json.dumps({"id": "H02"}), encoding="utf-8")
     with pytest.raises(evaluate_model.HeldoutRefused, match="missing field"):
         evaluate_model.load_heldout(missing)
+
+
+def test_heldout_without_gold_tactic_labels_reports_only_scenario_level_numbers(tmp_path):
+    """The owner's file carries no per-utterance tactic labels: tactic-level scores must be reported as not measured,
+    and scam detection / false alarms are counted per scenario. (Toy scenarios here, never the owner's file.)"""
+    scam = {"id": "T1", "source_channel": "call", "language": "en", "is_legitimate": False, "notes": "type: toy scam; group: none",
+            "utterances": [{"speaker": "caller", "text": "This is the CBI. You will be arrested today, transfer money now.", "tactic_labels": []}]}
+    fine = {"id": "T2", "source_channel": "sms", "language": "en", "is_legitimate": True, "notes": "type: legitimate",
+            "utterances": [{"speaker": "sender", "text": "Your statement has been generated. Visit your branch.", "tactic_labels": []}]}
+    quiet_scam = {"id": "T3", "source_channel": "sms", "language": "en", "is_legitimate": False, "notes": "type: toy quiet",
+                  "utterances": [{"speaker": "sender", "text": "Hello, please call us back.", "tactic_labels": []}]}
+    f = tmp_path / "unlabelled.jsonl"
+    f.write_text("\n".join(json.dumps(r) for r in (scam, fine, quiet_scam)) + "\n", encoding="utf-8")
+    result = evaluate_model.suite_heldout(None, path=f, result_path=tmp_path / "r.json")
+    m = result["metrics"]
+    assert m["tactic_level"].startswith("not measured")
+    assert "macro_f1_over_labels_with_support" not in m and "per_label" not in m
+    s = m["scenario_level"]
+    assert (s["scam_scenarios"], s["scam_scenarios_detected"], s["scam_detection_rate"]) == (2, 1, 0.5)
+    assert (s["legitimate_scenarios"], s["legitimate_false_alarms"], s["legitimate_false_alarm_rate"]) == (1, 0, 0.0)
+    assert [(p["id"], p["scam_tactic_detected"]) for p in result["per_scenario"]] == [("T1", True), ("T2", False), ("T3", False)]
+    assert result["per_scenario"][0]["type"] == "toy scam"
