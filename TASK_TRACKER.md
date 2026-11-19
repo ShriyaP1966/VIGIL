@@ -17,7 +17,7 @@
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ✅ Done as scoped by the owner (CE-6, CE-8, F4, `risk_weights.json` and fuller node inspectors deferred; CE-4 minimal); UI not yet viewed in a browser | - |
 | **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ✅ Done as scoped by the owner (E8 cut), and the held-out set (E6) was run once on 19 Nov 2026 (18 of 19 scam scenarios detected, 2 of 6 legitimate falsely flagged). **Findings:** identifier arms collapse at r = 1; the fingerprint recovers links but over-merges (false association rate 0.23-0.34) and does not beat the text baseline under the instance truth; decoys D1 and D3 were linked by candidate links (see docs/EXPERIMENTS.md) | Static demo data generator export (unchanged, re-verified) |
 | **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ✅ Done as scoped, except the owner's remote-device check and the Render backend (needs sign-in). Feature freeze declared. Post-hoc tuning experiment reported separately (EXPERIMENTS.md section 10) | **Final Production Deployment** (Vercel on push; Render pending) |
-| **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | ⚪ Pending | **Deployed Link Public Verification** |
+| **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | 🟡 Assistant's items done (README, docs, screenshots, demo script, fresh-clone, history audit, deployed-link script check). Owner's items remain: record the video, phone check, licence, make the repo public, submit | **Deployed Link Public Verification** (script done; phone check pending) |
 | **Phase 8** | Buffer & Emergency Fallback | 25 Nov 2026 | ⚪ Pending | Standby monitoring |
 
 ---
@@ -215,22 +215,23 @@
 **Objective:** Flawless submission package, verified fresh clone, and final submission.
 
 #### Tasks
-- [ ] Finalise `README.md`: include verified live demo URL, architecture diagram, methodology, and honest benchmark tables.
-- [ ] Finalise all documentation: `ARCHITECTURE.md`, `API_SPEC.md`, `PRIVACY.md`, `DATASET_CARD.md`, `MODEL_CARD.md`.
-- [ ] Capture and compress UI screenshots ($\le 8$ images, each $< 200\text{ KB}$).
-- [ ] Record 3-minute demo video following §19.2 script; host externally (YouTube/Drive); add link to README.
-- [ ] Execute **Fresh-Clone Test** (§11.5) in a clean directory outside the project.
-- [ ] Run `python scripts/preflight.py --history`: verify M1, M2, and M3 size limits; verify zero historical secrets or blobs $> 1\text{ MB}$.
-- [ ] Verify deployed link from an independent smartphone on cellular data.
-- [ ] Validate submission requirements on Hack2skill dashboard (§0.2).
-- [ ] Execute formal submission (Attempt 1 of 2).
+- [x] `README.md` finalised for judges: live URL, architecture diagram (Mermaid), pre-registered headline tables first (generated from the JSON, test-checked), the post-hoc row clearly labelled, the held-out result stated plainly including the 2 of 6 false alarms, a limitations section, an AI-assistants note. The quick start now says 9 seeded incidents.
+- [x] `ARCHITECTURE.md` rewritten as built; `docs/API_SPEC.md` and `docs/PRIVACY.md` written to match the code; dataset and model cards current.
+- [x] Eight screenshots from the live site in `docs/screenshots/` (all under 200 KB; `scripts/capture_screenshots.mjs`).
+- [~] 3-minute demo video: **script and shot list written** (`docs/DEMO_SCRIPT.md`, live site and synthetic data only); **recording and upload are the owner's**, then add the link to the README.
+- [x] Fresh-clone test on the final code commit (`a3e1fc2`), in an empty directory, no API keys: 481 backend and 140 frontend tests, build and preflight pass.
+- [x] `python scripts/preflight.py --history`: M1 4.2 MB, M2 2.2-2.8 MB, M3 pass, secret scan pass, no historical blob over 1 MB (largest 328 KB); independent history scan found no secret-like strings and no `.env`, database or key file.
+- [~] Deployed link: checked by script (40 of 40 checks, `scripts/check_deployed.mjs`); **the check from a real phone on cellular data is the owner's** (`docs/FINAL_CHECKLIST.md`).
+- [ ] Validate requirements on the Hack2skill dashboard. **Owner.**
+- [ ] Formal submission. **Owner.**
+- [ ] Make the repository public. **Owner** (checklist in `docs/FINAL_CHECKLIST.md`; no LICENSE file exists yet: the owner must choose one).
 
 #### Done Means Checkpoint
-- [ ] Fresh clone successfully sets up and runs offline using only README instructions with zero API keys.
-- [ ] `preflight.py --history` passes all checks (M1 < 8 MB, M2 < 9 MB, M3 < 9 MB, only `main` branch).
-- [ ] Public GitHub repository confirmed accessible in logged-out private browser session.
-- [ ] Live deployed link loads instantly, demonstrates all features, and displays appropriate mode badges.
-- [ ] Submission successfully recorded on competition portal before evening of 24 Nov.
+- [x] Fresh clone sets up and runs offline using only the README's instructions with zero API keys (also run in live mode: 50 of 50 browser checks against the clone's own backend, in the earlier clone test).
+- [x] `preflight.py --history` passes all checks (M1 < 8 MB, M2 < 9 MB, M3 < 9 MB, only `main`).
+- [ ] Public repository confirmed accessible in a logged-out private session. **After the owner flips it.**
+- [x] Live link loads, works with no backend, and shows the synthetic-data labels on desktop and phone width (script); deep links survive a refresh.
+- [ ] Submission recorded on the competition portal. **Owner.**
 
 ---
 
