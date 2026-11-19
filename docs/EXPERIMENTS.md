@@ -478,6 +478,12 @@ Tactic-level scores: **not measured: the held-out file has no per-utterance tact
 * **Decoys were authored by the same person** and are one reasonable reading of the blueprint's four types, fixed
   before the experiments.
 * **The 1848 and similar counts are pooled over runs** that share templates, so they are not independent.
+* **The held-out false alarms are a real weakness.** On the held-out set, 18 of 19 scam scenarios had a scam tactic
+  detected (the miss is H21, a cut-off call), and **2 of 6 legitimate scenarios (H15 and H17) were flagged as scams, a
+  false-alarm rate of 2 of 6.** The likely cause is that the extractor matches wording rather than intent, for example an
+  awareness notice that quotes scam phrases; **this is unverified** (the scenarios' tactic events were not examined
+  afterwards, to avoid tuning on them). The set is small and synthetic, **tactic-level scores were not measured**, and
+  the rules were **not** changed afterwards. A future fix would use the speaker's role and intent, not only wording.
 * **No result here is a statement about real scam traffic or real people.**
 
 ## 9. Change log of the experiment protocol

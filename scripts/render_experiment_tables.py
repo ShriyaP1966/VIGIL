@@ -16,6 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DOC = ROOT / "docs" / "EXPERIMENTS.md"
+README = ROOT / "README.md"
 EXP = ROOT / "docs" / "experiments"
 ARMS = ["A", "B", "C", "D"]
 TRUTH = {"a": "(a) same campaign instance", "b": "(b) same script family"}
@@ -232,11 +233,60 @@ SECTIONS = {
 }
 
 
-def render(text: str) -> str:
-    for name, fn in SECTIONS.items():
+def _f1far(c: dict) -> str:
+    f, a = c["f1"]["mean"], c["far"]["mean"]
+    return "n/a" if f is None else f"{f:.2f} / {a:.3f}"
+
+
+def readme_headline() -> str:
+    """Compact pre-registered headline for the README: F1 / false association rate, all 150 incidents, 10 seeds."""
+    agg = json.loads((EXP / "rotation.json").read_text(encoding="utf-8"))["aggregate"]["all"]
+    out = []
+    for g, title in TRUTH.items():
+        out.append(f"**Ground truth {title}**; cells are pairwise F1 / false association rate:\n")
+        out.append(table(["rotation r"] + [f"{a}" for a in ARMS],
+                         [[lv] + [_f1far(agg[g][lv][a]) for a in ARMS] for lv in ("0.0", "0.5", "1.0")]))
+        out.append("")
+    return "\n".join(out).rstrip()
+
+
+def readme_posthoc() -> str:
+    """Post-hoc row for the README: the pre-registered arm D next to the dev-tuned variant on fresh seeds."""
+    d = json.loads((EXP / "posthoc_fresh.json").read_text(encoding="utf-8"))
+    agg = d["aggregate"]["all"]
+    out = []
+    for g, title in TRUTH.items():
+        out.append(f"**{title}** (fresh seeds, F1 / false association rate):\n")
+        out.append(table(["rotation r", "D, pre-registered (T=0.75)", f"D, post-hoc ({d['chosen_on_dev']['variant']})"],
+                         [[lv, _f1far(agg[g][lv]["D"]), _f1far(agg[g][lv]["D_tuned"])] for lv in ("0.0", "0.5", "1.0")]))
+        out.append("")
+    return "\n".join(out).rstrip()
+
+
+def readme_heldout() -> str:
+    d = json.loads((EXP / "heldout.json").read_text(encoding="utf-8"))
+    s = d["metrics"]["scenario_level"]
+    ps = d["per_scenario"]
+    missed = ", ".join(p["id"] for p in ps if not p["is_legitimate"] and not p["scam_tactic_detected"]) or "none"
+    flagged = ", ".join(p["id"] for p in ps if p["is_legitimate"] and p["scam_tactic_detected"]) or "none"
+    return table(["held-out measure (run once)", "result", "which"], [
+        ["Scam scenarios with a scam tactic detected", f"{s['scam_scenarios_detected']} of {s['scam_scenarios']}", f"missed: {missed}"],
+        ["Legitimate scenarios flagged as scams (false alarms)", f"{s['legitimate_false_alarms']} of {s['legitimate_scenarios']}", f"flagged: {flagged}"],
+        ["Tactic-level scores", "not measured", "no per-utterance labels in the set"]])
+
+
+README_SECTIONS = {
+    "readme-headline": readme_headline,
+    "readme-posthoc": readme_posthoc,
+    "readme-heldout": readme_heldout,
+}
+
+
+def render(text: str, sections: dict | None = None) -> str:
+    for name, fn in (sections or SECTIONS).items():
         pattern = re.compile(rf"<!-- BEGIN:{name} -->.*?<!-- END:{name} -->", re.S)
         if not pattern.search(text):
-            raise SystemExit(f"marker {name!r} not found in {DOC.name}")
+            raise SystemExit(f"marker {name!r} not found")
         block = f"<!-- BEGIN:{name} -->\n{fn()}\n<!-- END:{name} -->"
         text = pattern.sub(lambda _m: block, text)
     return text
@@ -246,16 +296,21 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
-    current = DOC.read_text(encoding="utf-8")
-    new = render(current.replace("\r\n", "\n"))
+    stale = False
+    for path, sections in ((DOC, None), (README, README_SECTIONS)):
+        current = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+        new = render(current, sections)
+        if args.check:
+            if new != current:
+                print(f"{path.relative_to(ROOT)} is out of date: run python scripts/render_experiment_tables.py")
+                stale = True
+        else:
+            path.write_text(new, encoding="utf-8", newline="\n")
+            print(f"Updated {path.relative_to(ROOT)}")
     if args.check:
-        if new != current.replace("\r\n", "\n"):
-            print("docs/EXPERIMENTS.md is out of date: run python scripts/render_experiment_tables.py")
-            return 1
-        print("docs/EXPERIMENTS.md tables match docs/experiments/*.json")
-        return 0
-    DOC.write_text(new, encoding="utf-8", newline="\n")
-    print(f"Updated {DOC.relative_to(ROOT)}")
+        if not stale:
+            print("docs/EXPERIMENTS.md and README.md tables match docs/experiments/*.json")
+        return 1 if stale else 0
     return 0
 
 

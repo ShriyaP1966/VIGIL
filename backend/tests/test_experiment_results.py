@@ -51,6 +51,24 @@ def test_experiments_document_tables_are_generated_from_the_json():
     assert tables.render(text) == text, "docs/EXPERIMENTS.md is stale: run scripts/render_experiment_tables.py"
 
 
+def test_readme_tables_are_generated_from_the_json():
+    text = (ROOT / "README.md").read_text(encoding="utf-8").replace("\r\n", "\n")
+    assert tables.render(text, tables.README_SECTIONS) == text, "README.md is stale: run scripts/render_experiment_tables.py"
+
+
+def test_readme_states_the_held_out_result_and_its_limits_plainly():
+    """The README must not soften the held-out false alarms, and must carry the required caveats."""
+    import json as _json
+    held = _json.loads((EXP / "heldout.json").read_text(encoding="utf-8"))["metrics"]["scenario_level"]
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert f"{held['scam_scenarios_detected']} of {held['scam_scenarios']} scam scenarios" in readme
+    assert f"{held['legitimate_false_alarms']} of {held['legitimate_scenarios']}" in readme
+    for needle in ("H21", "H15", "H17", "wording, not intent", "unverified", "not measured", "small", "synthetic",
+                   "were **not** changed afterwards", "speaker's role and intent", "drafted by a different language model"):
+        assert needle in readme, needle
+    assert "T_CANDIDATE = 0.75" in readme and "Post-hoc" in readme            # the headline and the post-hoc row are labelled
+
+
 def test_chart_exists_and_is_small():
     for name in ("rotation_all.png", "rotation_test.png"):
         size = (EXP / name).stat().st_size

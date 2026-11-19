@@ -14,7 +14,7 @@ interface TopBarProps {
 const MODE_LABEL: Record<ApiMode, { short: string; long: string }> = {
   live: { short: 'Live', long: 'Live analysis' },
   waking: { short: 'Waking', long: 'Waking analysis server… (precomputed data shown)' },
-  static: { short: 'Demo', long: 'Hosted demo: precomputed synthetic data' },
+  static: { short: 'Synthetic demo', long: 'Hosted demo: precomputed synthetic data' },
 };
 
 export const TopBar: React.FC<TopBarProps> = ({ apiMode, onNewInvestigation, onOpenMenu, menuOpen = false }) => {
@@ -33,15 +33,15 @@ export const TopBar: React.FC<TopBarProps> = ({ apiMode, onNewInvestigation, onO
         <Menu className="w-5 h-5" aria-hidden="true" />
       </button>
 
-      {/* Search Bar: hidden on phones (it is disabled until a later phase anyway) */}
+      {/* Search Bar: hidden on phones (search lives on the Investigations page) */}
       <div className="hidden sm:block flex-1 max-w-md min-w-0 relative">
         <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           disabled
-          aria-label="Search (available in a later phase)"
-          title="Search arrives in a later phase"
-          placeholder="Search arrives in a later phase"
+          aria-label="Search: use the Investigations page"
+          title="Search and filters are on the Investigations page"
+          placeholder="Search: see Investigations"
           className="w-full bg-bg-card border border-border-subtle rounded-md pl-9 pr-4 py-1.5 text-sm text-text-primary placeholder:text-text-muted cursor-not-allowed opacity-60"
         />
       </div>
