@@ -235,3 +235,15 @@ def test_heldout_without_gold_tactic_labels_reports_only_scenario_level_numbers(
     assert (s["legitimate_scenarios"], s["legitimate_false_alarms"], s["legitimate_false_alarm_rate"]) == (1, 0, 0.0)
     assert [(p["id"], p["scam_tactic_detected"]) for p in result["per_scenario"]] == [("T1", True), ("T2", False), ("T3", False)]
     assert result["per_scenario"][0]["type"] == "toy scam"
+
+
+def test_the_committed_heldout_result_exists_and_the_run_once_guard_refuses_a_second_run():
+    """The owner's held-out set was evaluated once (docs/experiments/heldout.json). This test never re-evaluates it
+    and never reads the scenarios: the guard refuses before the file is opened."""
+    result = json.loads((ROOT / "docs" / "experiments" / "heldout.json").read_text(encoding="utf-8"))
+    m = result["metrics"]["scenario_level"]
+    assert (m["scam_scenarios"], m["legitimate_scenarios"]) == (19, 6)
+    assert result["metrics"]["tactic_level"].startswith("not measured")
+    assert result["extractor"]["lexicon_sha256"] == evaluate_model.sha256_of(ROOT / "data" / "lexicon.json")
+    with pytest.raises(evaluate_model.HeldoutRefused, match="once"):
+        evaluate_model.suite_heldout(None)

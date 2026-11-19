@@ -1,0 +1,184 @@
+{
+ "suite": "heldout",
+ "experiment": "E6",
+ "command": "python scripts/evaluate_model.py --suite heldout",
+ "dataset": {
+  "path": "data\\heldout\\heldout.jsonl",
+  "sha256_lf": "944b67d74e072018605c7b9f448a3fe4a86a5bd303d5b129d9f48d4584eacceb",
+  "scenarios": 25
+ },
+ "extractor": {
+  "name": "rules",
+  "version": "rules@1.0",
+  "lexicon_sha256": "5621851d011fce7ac8cfb6200fc306b74351eb13ffa2f02e2711c5b6e08d8149"
+ },
+ "metrics": {
+  "scenario_level": {
+   "scam_scenarios": 19,
+   "scam_scenarios_detected": 18,
+   "scam_detection_rate": 0.9474,
+   "legitimate_scenarios": 6,
+   "legitimate_false_alarms": 2,
+   "legitimate_false_alarm_rate": 0.3333,
+   "definition": "a scenario counts as detected / as a false alarm when the rule extractor labels at least one non-LEGITIMATE tactic anywhere in it"
+  },
+  "tactic_level": "not measured: the held-out file has no per-utterance tactic labels"
+ },
+ "per_scenario": [
+  {
+   "id": "H01",
+   "type": "digital arrest",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H02",
+   "type": "digital arrest",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H03",
+   "type": "digital arrest",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H04",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H05",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H06",
+   "type": "courier/customs",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H07",
+   "type": "courier/customs",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H08",
+   "type": "electricity bill",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H09",
+   "type": "digital arrest",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H10",
+   "type": "digital arrest",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H11",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H12",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H13",
+   "type": "courier/customs",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H14",
+   "type": "lottery",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H15",
+   "type": "legitimate",
+   "is_legitimate": true,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H16",
+   "type": "legitimate",
+   "is_legitimate": true,
+   "scam_tactic_detected": false
+  },
+  {
+   "id": "H17",
+   "type": "legitimate",
+   "is_legitimate": true,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H18",
+   "type": "legitimate",
+   "is_legitimate": true,
+   "scam_tactic_detected": false
+  },
+  {
+   "id": "H19",
+   "type": "legitimate",
+   "is_legitimate": true,
+   "scam_tactic_detected": false
+  },
+  {
+   "id": "H20",
+   "type": "legitimate",
+   "is_legitimate": true,
+   "scam_tactic_detected": false
+  },
+  {
+   "id": "H21",
+   "type": "unclear (cut-off call)",
+   "is_legitimate": false,
+   "scam_tactic_detected": false
+  },
+  {
+   "id": "H22",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H23",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H24",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  },
+  {
+   "id": "H25",
+   "type": "fake bank kyc",
+   "is_legitimate": false,
+   "scam_tactic_detected": true
+  }
+ ],
+ "caveat": "Drafted by a language model other than the assistant that built VIGIL, then reviewed, edited and labelled by the owner; evaluated once. Small and synthetic: indicative, not statistical proof. Only scenario-level scam detection and the false-alarm rate on legitimate scenarios are reported.",
+ "environment": {
+  "python": "3.13.15",
+  "platform": "Windows-11-10.0.26200-SP0"
+ }
+}

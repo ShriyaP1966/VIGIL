@@ -407,12 +407,61 @@ End to end, first 20 incidents: mean 90.47 ms; last 20: mean 832.72 ms.
 End-to-end time grows with the number of earlier incidents because each new incident is compared with all of them
 (quadratic overall). It is fine at this size and is not claimed to scale.
 
-**E6 held-out set:** *not run yet.* The 25 scenarios (19 scam, 6 legitimate) are in `data/heldout/` and are evaluated
-once, last. **Provenance: the set was drafted by a different language model (not Claude), then reviewed, edited and
-labelled by the owner, Shriya Patil.** **Scope: the set has no per-utterance tactic labels, so tactic-level scores
-(per-label F1, macro-F1) are not measured on it.** E6 will report only scenario-level scam detection (the share of scam
-scenarios in which the extractor labels at least one scam tactic) and the false-alarm rate on the legitimate
-scenarios. The harness refuses a second run. (Pre-registration amendment 2.) **E8** (fingerprint ablation) is cut.
+**E6 held-out set: run once (19 Nov 2026), on the frozen pre-registered configuration, then closed.** The 25 scenarios
+(19 scam, 6 legitimate) are in `data/heldout/`. **Provenance: the set was drafted by a different language model (not
+Claude), then reviewed, edited and labelled by the owner, Shriya Patil.** **Scope: the set has no per-utterance tactic
+labels, so tactic-level scores (per-label F1, macro-F1) are not measured on it.** E6 reports only scenario-level scam
+detection (a scam scenario counts as detected when the extractor labels at least one scam tactic anywhere in it) and
+the false-alarm rate on the legitimate scenarios (a legitimate scenario is a false alarm when it does). The run
+(`python scripts/evaluate_model.py --suite heldout`, `docs/experiments/heldout.json`) used only the rule extractor and
+its lexicon, unchanged since before the experiments; no fingerprint threshold is involved, so `T_candidate` (0.75) and
+the post-hoc variant are irrelevant here. It was run **once**; the harness refuses a second run, and no rule, lexicon,
+threshold or test was changed afterwards or in response. (Pre-registration amendment 2.) **E8** (fingerprint ablation)
+is cut.
+
+<!-- BEGIN:heldout -->
+| scenario-level measure | count | rate |
+|---|---:|---:|
+| Scam scenarios with at least one scam tactic detected | 18 of 19 | 0.9474 |
+| Legitimate scenarios falsely flagged as a scam | 2 of 6 | 0.3333 |
+
+Missed scam scenarios: H21. Falsely flagged legitimate scenarios: H15, H17.
+
+Scam scenarios detected, by the owner's scenario type:
+
+| type | detected |
+|---|---:|
+| courier/customs | 3 of 3 |
+| digital arrest | 5 of 5 |
+| electricity bill | 1 of 1 |
+| fake bank kyc | 8 of 8 |
+| lottery | 1 of 1 |
+| unclear (cut-off call) | 0 of 1 |
+
+Tactic-level scores: **not measured: the held-out file has no per-utterance tactic labels**. Extractor `rules@1.0`, lexicon sha256 `5621851d011fce7a…` (the frozen pre-registered lexicon).
+<!-- END:heldout -->
+
+**Reading it, with its limits:**
+
+* **Scam detection was high, 18 of 19, but the miss is the instructive one.** The one scam scenario with no scam tactic
+  detected is the owner's "unclear (cut-off call)" scenario (H21), a call that stops before any demand. A keyword
+  extractor can only react to what was said; an unfinished call gives it little. The owner marked this scenario as a
+  tricky case.
+* **The false-alarm rate was not low: 2 of 6 legitimate scenarios (H15, H17) were flagged.** With six legitimate
+  scenarios one scenario is 17 percentage points, so the rate is very imprecise, but it is a real weakness and not a
+  rounding artefact. I did not examine these scenarios' tactic events after the run, to avoid reading the set for
+  tuning. From the text the owner supplied, the likely cause is the one already seen on the generated decoys: the
+  extractor matches **wording, not intent**. H17 is a public-safety advisory that quotes scam phrases (the same weakness
+  as decoy D1 in E1 and E3) and H15 is a genuine bank debit alert that includes an urgent "call immediately" cue. That
+  explanation is an inference and was not verified.
+* **Consistent with earlier findings:** the lexicon is sensitive (it flags nearly every scam) and not specific (it also
+  flags some legitimate notices). A detection rate this high next to a false-alarm rate this high means a flag from the
+  extractor is a prompt to look, not evidence that something is a scam.
+* **Caveats.** Small n (19 scam, 6 legitimate), so no confidence in the exact rates; **the set was drafted by a different
+  language model and reviewed, edited and labelled by the owner**, so its style reflects a model's idea of these scams;
+  **all text is synthetic** (invented names and numbers after the owner's mechanical clean-up); one scam type
+  (bank KYC) is eight of the 19. It is the only evaluation not written by the author of the rules, but it does not
+  predict performance on real traffic. A low or mixed result is reported as it is.
 
 ## 8. Threats to validity and honest limits
 

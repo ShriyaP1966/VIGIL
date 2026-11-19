@@ -50,9 +50,10 @@ real victims' data; any use that treats a risk score as a probability.
 * **E3, E4** (association integrity and the rotation experiment): `docs/EXPERIMENTS.md`, pre-registered in
   `docs/PREREGISTRATION.md`.
 * **E6** held-out set (25 scenarios, drafted by a different language model, not Claude, then reviewed, edited and
-  labelled by the owner, Shriya Patil): evaluated once at the end; not yet run. It has no per-utterance tactic labels,
-  so **tactic-level scores are not measured on it**; only scenario-level scam detection and the false-alarm rate on the
-  legitimate scenarios will be reported.
+  labelled by the owner, Shriya Patil), run once on the frozen configuration: the extractor detected a scam tactic in
+  **18 of 19** scam scenarios and flagged **2 of 6** legitimate scenarios as scams. It has no per-utterance tactic
+  labels, so **tactic-level scores are not measured on it**. Small and synthetic. The false alarms look like the known
+  wording-not-intent weakness (an advisory that quotes scam phrases; a genuine alert with an urgent cue); not verified.
 
 ## Known weaknesses
 

@@ -15,7 +15,7 @@
 | **Phase 2** | Intelligence Core (Tactics, Guard, Data v1) | 19 Nov 2026 | ✅ Done as scoped by the owner (Gemini, scikit-learn tier and delimiter sandboxing cut); UI not yet viewed in a browser | - |
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ✅ Done as scoped by the owner (dwell, fuzzy candidates, CE-8, side-by-side UI and graph hull cut); UI not yet viewed in a browser. **Finding:** the fingerprint recognises a script family, not a campaign instance (see DEVELOPMENT_LOG Session 5) | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ✅ Done as scoped by the owner (CE-6, CE-8, F4, `risk_weights.json` and fuller node inspectors deferred; CE-4 minimal); UI not yet viewed in a browser | - |
-| **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ✅ Done as scoped by the owner (E8 cut), except the owner's hand-written held-out set (E6), which the owner writes and the harness runs once. **Findings:** identifier arms collapse at r = 1; the fingerprint recovers links but over-merges (false association rate 0.23-0.34) and does not beat the text baseline under the instance truth; decoys D1 and D3 were linked by candidate links (see docs/EXPERIMENTS.md) | Static demo data generator export (unchanged, re-verified) |
+| **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ✅ Done as scoped by the owner (E8 cut), and the held-out set (E6) was run once on 19 Nov 2026 (18 of 19 scam scenarios detected, 2 of 6 legitimate falsely flagged). **Findings:** identifier arms collapse at r = 1; the fingerprint recovers links but over-merges (false association rate 0.23-0.34) and does not beat the text baseline under the instance truth; decoys D1 and D3 were linked by candidate links (see docs/EXPERIMENTS.md) | Static demo data generator export (unchanged, re-verified) |
 | **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ✅ Done as scoped, except the owner's remote-device check and the Render backend (needs sign-in). Feature freeze declared. Post-hoc tuning experiment reported separately (EXPERIMENTS.md section 10) | **Final Production Deployment** (Vercel on push; Render pending) |
 | **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | ⚪ Pending | **Deployed Link Public Verification** |
 | **Phase 8** | Buffer & Emergency Fallback | 25 Nov 2026 | ⚪ Pending | Standby monitoring |
@@ -163,7 +163,7 @@
 
 #### Tasks
 - [x] Dataset generator v2: 6 templates × 15 variants, 40 legitimate negatives, 20 decoys (four types), unique identifiers, script-family ground truth; the 10 injection attacks are in `data/injection_attacks.json`. Frozen and pre-registered (`docs/PREREGISTRATION.md`) before any experiment.
-- [x] The 25 held-out scenarios exist in `data/heldout/heldout.jsonl` (19 scam, 6 legitimate), drafted by a different language model (not Claude) and reviewed, edited and labelled by the owner, Shriya Patil. Format checked only; **not evaluated**. No per-utterance tactic labels, so tactic-level scores are not measured (scenario-level detection and false-alarm rate only).
+- [x] The 25 held-out scenarios exist in `data/heldout/heldout.jsonl` (19 scam, 6 legitimate), drafted by a different language model (not Claude) and reviewed, edited and labelled by the owner, Shriya Patil. Format checked only; **evaluated once** (see below). No per-utterance tactic labels, so tactic-level scores are not measured (scenario-level detection and false-alarm rate only).
 - [~] Evaluation harness `scripts/evaluate_model.py`: suites `tactics`, `entities`, `associations`, `rotation`, `injection`, `latency` run and committed; `heldout` is implemented and guarded (refuses an empty file and a second run) but **not run**.
 - [x] Hero Rotation Experiment (E4): arms A, B, C, D at r in 0, 0.25, 0.5, 0.75, 1.0, 10 seeds (1001-1010), both ground truths, two scored slices.
 - [x] Pairwise F1, false association rate, candidate precision/recall (`docs/experiments/rotation.json`).
@@ -175,7 +175,7 @@
 - [x] Every metric in `docs/EXPERIMENTS.md` is reproducible via CLI with recorded seeds (a test re-runs one full experiment cell and checks the tables against the JSON; the full E4 takes about 40 minutes).
 - [x] False association rate and candidate precision/recall explicitly reported for all arms.
 - [~] Suite E3: **0 I1 violations; 0 observed links touch a negative or decoy after counter-evidence** (1848 before it), negatives are never linked. **But decoys D1 (awareness notices) and D3 (reversed order) were linked by behaviour-only candidate links in a large share of runs**, so the blueprint goal that decoys must not form a campaign hypothesis is not met for them. Reported as is; the decoys were not changed.
-- [ ] Held-out suite evaluated exactly once and logged. **Set is ready; waiting for the owner's go-ahead to run it once, last.**
+- [x] Held-out suite evaluated exactly once and logged (19 Nov 2026): **18 of 19 scam scenarios detected (missed H21), 2 of 6 legitimate scenarios falsely flagged (H15, H17)**; tactic-level scores not measured. Not re-run.
 - [x] Honest scientific interpretation documented (where D helps and where it degrades), including that D does not beat the text baseline under the instance truth.
 - [x] Generated rotation chart PNG committed (< 200 KB).
 

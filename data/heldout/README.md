@@ -16,7 +16,8 @@ real person, organisation or identifier.
 ## File
 
 `data/heldout/heldout.jsonl`: one JSON object per line (UTF-8). Lines that are blank or start with `#` are
-ignored. It holds the owner's 25 scenarios and has **not been evaluated yet**.
+ignored. It holds the owner's 25 scenarios. It was **evaluated once on 19 Nov 2026** (result in `docs/experiments/heldout.json`)
+and is not to be run again.
 
 Conventions used in this file: `type: <scenario type>; group: <group>; tricky` is recorded in `notes` (ignored by the
 evaluation). The `whatsapp` channel is recorded as `sms` with `channel: whatsapp` in `notes`. `hinglish` is `hi-Latn`.

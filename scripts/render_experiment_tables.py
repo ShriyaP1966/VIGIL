@@ -190,7 +190,35 @@ def posthoc_fresh_tables() -> str:
     return "\n".join(out)
 
 
+def heldout_table() -> str:
+    d = json.loads((EXP / "heldout.json").read_text(encoding="utf-8"))
+    s = d["metrics"]["scenario_level"]
+    ps = d["per_scenario"]
+    by_type: dict[str, list[int]] = {}
+    for p in ps:
+        if not p["is_legitimate"]:
+            c = by_type.setdefault(p["type"] or "unspecified", [0, 0])
+            c[1] += 1
+            c[0] += p["scam_tactic_detected"]
+    missed = [p["id"] for p in ps if not p["is_legitimate"] and not p["scam_tactic_detected"]]
+    false_alarms = [p["id"] for p in ps if p["is_legitimate"] and p["scam_tactic_detected"]]
+    rows = [["Scam scenarios with at least one scam tactic detected", f"{s['scam_scenarios_detected']} of {s['scam_scenarios']}",
+             f"{s['scam_detection_rate']}"],
+            ["Legitimate scenarios falsely flagged as a scam", f"{s['legitimate_false_alarms']} of {s['legitimate_scenarios']}",
+             f"{s['legitimate_false_alarm_rate']}"]]
+    out = [table(["scenario-level measure", "count", "rate"], rows), "",
+           f"Missed scam scenarios: {', '.join(missed) if missed else 'none'}. "
+           f"Falsely flagged legitimate scenarios: {', '.join(false_alarms) if false_alarms else 'none'}.", "",
+           "Scam scenarios detected, by the owner's scenario type:", "",
+           table(["type", "detected"], [[k, f"{a} of {b}"] for k, (a, b) in sorted(by_type.items())]), "",
+           f"Tactic-level scores: **{d['metrics']['tactic_level']}**. Extractor `{d['extractor']['name']}@"
+           f"{d['extractor']['version'].split('@')[-1]}`, lexicon sha256 `{d['extractor']['lexicon_sha256'][:16]}…` "
+           "(the frozen pre-registered lexicon)."]
+    return "\n".join(out)
+
+
 SECTIONS = {
+    "heldout": heldout_table,
     "posthoc-tune": posthoc_tune_table,
     "posthoc-fresh": posthoc_fresh_tables,
     "rotation-all": lambda: rotation_tables("all"),

@@ -86,7 +86,8 @@ to a split.
   (not Claude), then reviewed, edited and labelled by the owner, Shriya Patil. It is kept out of this repository's
   generator and evaluated once (`data/heldout/README.md`). It is the only check not written by the author of the
   rules, but it is small, has no per-utterance tactic labels (so **tactic-level scores are not measured on it**), and a
-  language-model draft is not the same as real traffic.
+  language-model draft is not the same as real traffic. It was evaluated once (19 Nov 2026): 18 of 19 scam scenarios
+  detected, 2 of 6 legitimate scenarios falsely flagged (docs/EXPERIMENTS.md, section 7).
 * **Languages other than English are thin**, and romanised Hindi varies widely in real life.
 
 ## Reproduce
