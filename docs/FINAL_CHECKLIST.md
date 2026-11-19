@@ -5,8 +5,8 @@ assistant and the results are recorded in `DEVELOPMENT_LOG.md` (Session 9).
 
 ## A. Before you flip the repository to public
 
-1. **(owner) Decide the licence.** The repository has **no LICENSE file** and the README no longer claims one. A public repo
-   with no licence means "all rights reserved". Choose one (for example MIT) and add `LICENSE`, then mention it in the README.
+1. **Licence: done.** `LICENSE` (MIT, copyright 2026 Shriya Patil) is at the repository root and the README carries the badge
+   and a Licence section.
 2. **History audit.** `python scripts/preflight.py --history` must pass: size measures M1, M2, M3 within limits, no blob over
    1 MB, only `main`, **no secrets in any commit**. (Run on the final commit; result in the log.)
 3. **Local secrets are not in git.** `frontend/.env.local` (written by the Vercel CLI, contains a deployment token) and

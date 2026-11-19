@@ -3,6 +3,8 @@
 > **Cross-channel scam intelligence: turning scattered scam evidence into explainable, reviewable investigations.**
 > PromptWars × AI Vibeathon 2026 submission. **All data is synthetic.**
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 **Live demo: https://vigil-demo-eta.vercel.app** (a static site on precomputed synthetic data; every page has its own URL).
 Demo video: *link to be added by the owner.* Documentation: [Architecture](ARCHITECTURE.md) ·
 [API](docs/API_SPEC.md) · [Privacy](docs/PRIVACY.md) · [Experiments](docs/EXPERIMENTS.md) ·
@@ -254,3 +256,7 @@ phase gates: [TASK_TRACKER.md](TASK_TRACKER.md); original plan: [PROJECT_BLUEPRI
 Possible next steps (not built): a hosted backend, verifying the held-out false-alarm cause and using speaker role and intent,
 instance-level behavioural features, multi-tenant access control and audit trails, privacy-preserving sharing of indicator
 playbooks between institutions, and an assessment under India's DPDP Act 2023 before any real data.
+
+## 10. Licence
+
+MIT, copyright 2026 Shriya Patil. See [LICENSE](LICENSE). The data in this repository is synthetic.

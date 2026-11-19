@@ -17,7 +17,7 @@
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ✅ Done as scoped by the owner (CE-6, CE-8, F4, `risk_weights.json` and fuller node inspectors deferred; CE-4 minimal); UI not yet viewed in a browser | - |
 | **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ✅ Done as scoped by the owner (E8 cut), and the held-out set (E6) was run once on 19 Nov 2026 (18 of 19 scam scenarios detected, 2 of 6 legitimate falsely flagged). **Findings:** identifier arms collapse at r = 1; the fingerprint recovers links but over-merges (false association rate 0.23-0.34) and does not beat the text baseline under the instance truth; decoys D1 and D3 were linked by candidate links (see docs/EXPERIMENTS.md) | Static demo data generator export (unchanged, re-verified) |
 | **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ✅ Done as scoped, except the owner's remote-device check and the Render backend (needs sign-in). Feature freeze declared. Post-hoc tuning experiment reported separately (EXPERIMENTS.md section 10) | **Final Production Deployment** (Vercel on push; Render pending) |
-| **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | 🟡 Assistant's items done (README, docs, screenshots, demo script, fresh-clone, history audit, deployed-link script check). Owner's items remain: record the video, phone check, licence, make the repo public, submit | **Deployed Link Public Verification** (script done; phone check pending) |
+| **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | 🟡 Assistant's items done (README, docs, screenshots, demo script, fresh-clone, history audit, deployed-link script check). Owner's items remain: record the video, phone check, make the repo public, submit (the licence is added) | **Deployed Link Public Verification** (script done; phone check pending) |
 | **Phase 8** | Buffer & Emergency Fallback | 25 Nov 2026 | ⚪ Pending | Standby monitoring |
 
 ---
@@ -224,7 +224,7 @@
 - [~] Deployed link: checked by script (40 of 40 checks, `scripts/check_deployed.mjs`); **the check from a real phone on cellular data is the owner's** (`docs/FINAL_CHECKLIST.md`).
 - [ ] Validate requirements on the Hack2skill dashboard. **Owner.**
 - [ ] Formal submission. **Owner.**
-- [ ] Make the repository public. **Owner** (checklist in `docs/FINAL_CHECKLIST.md`; no LICENSE file exists yet: the owner must choose one).
+- [ ] Make the repository public. **Owner** (checklist in `docs/FINAL_CHECKLIST.md`). The LICENSE (MIT) is added.
 
 #### Done Means Checkpoint
 - [x] Fresh clone sets up and runs offline using only the README's instructions with zero API keys (also run in live mode: 50 of 50 browser checks against the clone's own backend, in the earlier clone test).
