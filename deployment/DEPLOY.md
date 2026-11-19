@@ -34,6 +34,9 @@ Regenerate the demo data after any pipeline change: `python scripts/export_stati
    - Root Directory: **`frontend`** (set in the Vercel dashboard)
    - Install / Build / Output: taken from `frontend/vercel.json` (`npm ci`, `npm run build`, `dist`)
    - Git integration stays on: a push to `main` redeploys the site. The CLI is not needed.
+   - **Status (reported by the repository owner, 19 Nov 2026):** the Root Directory is set to `frontend` and the build
+     works. **Earlier pushes to `main` did not deploy until this setting was made**, because Vercel built from the
+     repository root, where there is no `package.json`. If a push ever fails to deploy, check this setting first.
    - `deployment/vercel.json` is the older repository-root variant (no rewrite). Do not use it with the `frontend` root.
 3. Environment variable (add only after the backend exists): `VITE_API_BASE_URL` = the Render URL, no trailing slash.
 4. Deploy and record the URL in the table at the bottom of this file.

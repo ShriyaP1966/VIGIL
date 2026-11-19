@@ -46,7 +46,9 @@ CAVEAT = ("All data is synthetic and written by the same author as the rules, so
 
 
 def sha256_of(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """sha256 with CRLF normalised to LF. A clean Windows checkout converts line endings (git autocrlf), and the
+    raw-byte hash would then differ from the committed one although the content is identical."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def prf(tp: int, fp: int, fn: int) -> dict:

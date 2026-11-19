@@ -21,7 +21,7 @@
  "extractor": {
   "name": "rules",
   "version": "rules@1.0",
-  "lexicon_sha256": "13ef949f7c45772c74c1e981f8e624dfb5d891359fdf4587716637f4085c47f7",
+  "lexicon_sha256": "5621851d011fce7ac8cfb6200fc306b74351eb13ffa2f02e2711c5b6e08d8149",
   "threshold": 0.5
  },
  "metrics": {

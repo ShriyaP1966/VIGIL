@@ -21,9 +21,9 @@
 
 ## Project status
 
-This README describes the full v3.1 design. **Phases 1-5 are implemented so far**; everything in the right-hand column is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
+This README describes the full v3.1 design. **Phases 1-6 are implemented so far**; everything in the right-hand column is planned and not yet in the code. Progress is tracked in [TASK_TRACKER.md](TASK_TRACKER.md).
 
-| Implemented (Phases 1-5) | Planned (not built yet) |
+| Implemented (Phases 1-6) | Planned (not built yet) |
 |---|---|
 | Paste evidence, SHA-256 provenance, NFKC normalisation | Dwell similarity and the recurrence window (cut for now) |
 | Phone / UPI / email / URL / domain / organisation extraction, masked display | |
@@ -33,12 +33,16 @@ This README describes the full v3.1 design. **Phases 1-5 are implemented so far*
 | Counter-evidence engine (chronology, payment destination, public identifiers, impersonation, language) with confidence adjustment and automatic disputes; findings stay visible after an analyst accepts | CE-6 and CE-8, the F4 risk factor, fuller entity and incident inspectors (deferred) |
 | Secret redaction at ingestion (OTP, PIN, CVV, password, card, Aadhaar), best effort | |
 | `OBSERVED_MATCH` on exactly equal identifiers (invariant I1) | The held-out evaluation (E6): set drafted by another language model and reviewed by the owner, run once, last |
-| Rule-based tactic extraction (English, Hinglish, a few Hindi/Marathi patterns) with exact spans | Simulated live call, reports, scenario lab UI (Phase 6) |
+| Rule-based tactic extraction (English, Hinglish, a few Hindi/Marathi patterns) with exact spans | Render backend deployment (needs the owner's sign-in); the public demo video and final checks (Phase 7) |
 | Stage-based risk indicator with an exact contribution ledger | Gemini extractor and ML classifier: **cut**, not planned for the deadline |
 | Prompt-injection guard (regex), manipulation badge, no mitigation for flagged text | |
 | Tactic timeline and highlighted transcript; graph (React Flow), evidence inspector, static demo mode | |
 | Synthetic dataset generator v2 (decoys, two ground truths), the identifier-rotation experiment (E4), association integrity (E3) and the `tactics` / `entities` / `injection` / `latency` suites | |
 | Scenario Lab API: 11 deterministic, replayable scenarios (`GET /scenarios`, `POST /scenarios/{name}/run`) | |
+| Every page is a real URL (refresh, deep links, Back/Forward); responsive layout with a phone drawer; Investigations list with search and filters | |
+| Scenario Lab UI (rotation slider, run and replay, expected versus actual), Reports (JSON and CSV, facts / inferences / analyst actions / counter-evidence / limitations), Settings with "Clear all local data" | |
+| Simulated Live Call Analysis: scripted synthetic calls analysed turn by turn, stage tracker, risk meter, English and Hindi guidance, injection safety badge (a simulation: VIGIL does not listen to real calls) | |
+| Real-browser QA script (`scripts/qa_browser.mjs`): console errors, overflow, interactions, keyboard flow and a WCAG AA contrast audit, in hosted-demo and live modes | |
 
 **Evaluation (Phase 5): see section 9 and [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md).** The paragraph below is the earlier Phase 2 note, kept for its caveats.
 
@@ -150,7 +154,7 @@ cd ..
 #    Windows PowerShell: Copy-Item .env.example .env
 cp .env.example .env
 
-# 5. Launch the demo (seeds 3 synthetic incidents, starts the API and the web UI)
+# 5. Launch the demo (seeds the synthetic incidents, starts the API and the web UI)
 python scripts/run_demo.py
 ```
 
@@ -190,6 +194,7 @@ What it shows, honestly:
 - **The fingerprint (D) recovers links that rotation hides, at a cost:** at r = 1 it is the only graph arm that finds pairs (candidate recall about 0.9), but its pairwise F1 is 0.05 under (a) (below the text baseline's 0.20) and about 0.5 under (b) (above the baseline's 0.43), and its false association rate is 0.23 to 0.34 against about 0.03 or less for the others. A minority of wrong candidate links (mostly bank-KYC to payment-link scripts) are chained by connected components into one 75-incident group.
 - **D does not beat the text baseline under (a) at any rotation level.** It is better described as a lead generator for an analyst than as an automatic grouping.
 - **Decoys were not clean:** awareness notices that quote scams (D1) and reversed-order calls (D3) were linked by candidate links in a large share of runs; legitimate negatives never were (0 of 2000).
+- **Post-hoc, reported separately (docs/EXPERIMENTS.md section 10):** after seeing these results, a higher fingerprint threshold (0.80, chosen on dev data only) was tried and evaluated on fresh seeds. Under the script-family truth it cut the false association rate from about 0.22 to about 0.02 and raised F1 from about 0.5 to about 0.9; under the campaign-instance truth it still does not beat the text baseline. It was tuned after the results were seen, on the same generator and templates, so it says nothing about real scripts; **the headline above and the application default (0.75) are unchanged.**
 - **Not run:** the held-out set (E6; 25 scenarios drafted by a different language model, not Claude, then reviewed, edited and labelled by the owner; scenario-level scores only, no tactic-level scores). Limits and threats to validity are in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md), section 8.
 
 Other suites (all from `scripts/evaluate_model.py`): E1 tactics macro-F1 on the v2 sample train/dev/test 0.97/0.99/0.97 (test is a fresh sample of the same templates, not independent; the extractor matches wording, so it also labels most awareness notices as scam tactics), E2 entities, E3 integrity, E5 injection 10 of 10 authored attacks, E7 latency (descriptive).

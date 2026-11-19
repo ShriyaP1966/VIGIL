@@ -16,7 +16,7 @@
 | **Phase 3** | Associations, Temporal & Playbook Engine | 20 Nov 2026 | ✅ Done as scoped by the owner (dwell, fuzzy candidates, CE-8, side-by-side UI and graph hull cut); UI not yet viewed in a browser. **Finding:** the fingerprint recognises a script family, not a campaign instance (see DEVELOPMENT_LOG Session 5) | - |
 | **Phase 4** | Counter-Evidence, Risk Ledger, Inspector | 21 Nov 2026 | ✅ Done as scoped by the owner (CE-6, CE-8, F4, `risk_weights.json` and fuller node inspectors deferred; CE-4 minimal); UI not yet viewed in a browser | - |
 | **Phase 5** | Dataset v2, Evaluation & Rotation Hero Experiment | 22 Nov 2026 | ✅ Done as scoped by the owner (E8 cut), except the owner's hand-written held-out set (E6), which the owner writes and the harness runs once. **Findings:** identifier arms collapse at r = 1; the fingerprint recovers links but over-merges (false association rate 0.23-0.34) and does not beat the text baseline under the instance truth; decoys D1 and D3 were linked by candidate links (see docs/EXPERIMENTS.md) | Static demo data generator export (unchanged, re-verified) |
-| **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ⚪ Pending | **Final Production Deployment** (Dual-mode) |
+| **Phase 6** | UI Completion, Call Simulation, QA | 23 Nov 2026 | ✅ Done as scoped, except the owner's remote-device check and the Render backend (needs sign-in). Feature freeze declared. Post-hoc tuning experiment reported separately (EXPERIMENTS.md section 10) | **Final Production Deployment** (Vercel on push; Render pending) |
 | **Phase 7** | Documentation, Video, Fresh-Clone & Submit | 24 Nov 2026 | ⚪ Pending | **Deployed Link Public Verification** |
 | **Phase 8** | Buffer & Emergency Fallback | 25 Nov 2026 | ⚪ Pending | Standby monitoring |
 
@@ -185,34 +185,29 @@
 **Objective:** Polished, accessible dark enterprise interface; interactive call simulation; feature freeze.
 
 #### Tasks
-- [ ] Complete Overview dashboard: real database KPI cards, activity feed, graph snapshot.
-- [ ] Complete Investigations list with search and risk filters.
-- [ ] Complete Campaigns page: side-by-side playbook sequence alignment, member list, review actions.
-- [ ] Complete Scenario Lab UI: scenario selector, rotation slider, deterministic run/replay, expected vs. actual diff.
-- [ ] Complete Reports view: structured exports (Observed Facts, Model Inferences, Analyst Actions, Counter-Evidence, Limitations) in JSON and CSV.
-- [ ] Complete Settings view: processing mode selector, transparency disclaimers, **"Clear all local data"** action (`DELETE /data`).
-- [ ] Implement **Simulated Live Call Analysis** page:
-  - Prominent disclaimer banner: *"Simulation: scripted transcript playback. VIGIL does not intercept or listen to real calls."*
-  - Progressive streaming transcript with tactic keyword highlighting.
-  - Interactive 6-stage tracker chips lighting up in sequence.
-  - Live heuristic risk gauge with real-time contribution list.
-  - Multi-lingual guidance cards (English and Hindi).
-  - Adversarial injection demonstration showing safety badge activation.
-- [ ] Comprehensive UI states: loading skeletons, empty states, error banners, success toasts.
-- [ ] Accessibility: WCAG AA contrast, visible focus rings, ARIA labels, alternative accessible Table View for the graph canvas.
-- [ ] Implement `scripts/export_static_demo.py` to compile demo JSON bundles into `frontend/public/demo-data/`.
-- [ ] Client API dual-adapter (`HttpApi` + `StaticApi`) with automatic sleeping backend detection and UI badge.
-- [ ] **Deployment Milestone:** Final deployment to Vercel and Render. Verify static fallback behavior when backend is stopped.
-- [ ] Declare formal **Feature Freeze** in `DEVELOPMENT_LOG.md`.
+- [x] Overview: real counts from the pipeline (KPI cards), a recent-evidence feed and a graph snapshot (counts of incidents, indicators and observed / candidate / disputed links).
+- [x] Investigations list (`/incidents`) with search, risk-level and channel filters, sorting, empty and no-match states.
+- [x] Campaigns page: member list with stage chips, **side-by-side playbook alignment grid**, links with counter-evidence, review actions.
+- [x] Scenario Lab UI: 11 scenarios by category, rotation slider (any value live; five precomputed levels in the hosted demo), Run and Replay (reports whether a replay is identical), expected-versus-actual table. Failing expectations are shown as "Differs", not hidden.
+- [x] Reports: five separate sections (observed facts, model inferences, analyst actions, counter-evidence, limitations), JSON and CSV downloads (CSV neutralises spreadsheet formulas).
+- [x] Settings: processing-mode panel (offline rules is the only available mode; the cloud extractor is shown as cut), transparency notes, **"Clear all local data"** with a confirmation step (live backend only; checked end to end in a real browser).
+- [x] **Simulated Live Call Analysis**: simulation notice, four scripted synthetic calls (English, Hinglish, injection attempt, genuine bank call), turn-by-turn analysis by the real pipeline, highlighted transcript, six stage chips lighting in sequence, risk meter with contributions, English and Hindi guidance, safety badge on the injection attempt. Works offline and in the hosted demo (precomputed frames).
+- [x] UI states: loading skeletons, empty states, error banners with retry, success and error toasts in a live region.
+- [~] Accessibility: automated WCAG AA text-contrast audit of nine pages (it found real failures; the muted-text and red colours were fixed), visible focus rings, ARIA labels and meters, graph table view, keyboard-only workflow checked in a browser. **Not** a full audit with a screen reader or axe.
+- [x] `scripts/export_static_demo.py` now also exports scenarios (rotation scenarios at five levels), reports (JSON and CSV) and the call simulations; tests check the committed files equal what the endpoints produce.
+- [x] Client dual adapter (`HttpApi` + `StaticApi`) with sleeping-backend detection and the mode badge.
+- [~] **Deployment milestone:** the Vercel site redeploys on every push (Root Directory `frontend`; the owner reports earlier pushes did not deploy until that was set). **Render (backend) is not set up**: it needs the owner's sign-in. The static fallback was verified in a real browser with no backend.
+- [x] Post-hoc tuning experiment (owner-requested, separate from the headline): see docs/EXPERIMENTS.md section 10.
+- [x] Formal **Feature Freeze** declared in `DEVELOPMENT_LOG.md` (Session 8).
 
 #### Done Means Checkpoint
-- [ ] Every button, filter, and modal functions correctly across the entire application.
-- [ ] Every association edge has an explainable reason and triggers the Evidence Inspector.
-- [ ] Simulated Live Call Analysis operates completely offline and showcases real-time stage progression.
-- [ ] Keyboard-only navigation completes the core investigation workflow.
-- [ ] Zero unhandled JavaScript console errors on any route.
-- [ ] **Public Deployed Link verified:** Application operates seamlessly from a remote device in incognito mode with backend sleeping and awake.
-- [ ] Feature freeze formally committed to repository.
+- [~] Every button, filter and modal works: the main interactions of every page are exercised by `scripts/qa_browser.mjs` (54 checks static, 50 live); not literally every control.
+- [x] Every association edge has an explainable reason and opens the Evidence Inspector (Phases 3-4; re-checked by the browser QA).
+- [x] Simulated Live Call Analysis works completely offline and shows stage progression.
+- [x] Keyboard-only navigation completes the core workflow (sidebar, list, case, inspector open and close).
+- [x] Zero console errors or uncaught exceptions on the 12 routes tested, at 1280 px and 390 px, in static and live mode.
+- [ ] **Public deployed link verified from a remote device in incognito with the backend asleep and awake.** Pending: the owner's check on a phone; the local browser QA does not replace it.
+- [x] Feature freeze committed to the repository.
 
 ---
 
