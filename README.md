@@ -125,13 +125,12 @@ synthetic evidence, accept or reject links, and "Clear all local data". Checks: 
 
 ## Built with AI coding assistants
 
-This project was built with AI coding assistants, in three stages. Where `DEVELOPMENT_LOG.md` and `TASK_TRACKER.md` do not record a
-detail, it is stated here as the owner's account.
+This project was built with AI coding assistants, in three stages.
 
-1. **Blueprint.** The project blueprint (`PROJECT_BLUEPRINT.md`) was drafted with Claude in a chat, according to the owner. The log
-   treats it as the starting input.
+1. **Blueprint.** The project blueprint (`PROJECT_BLUEPRINT.md`) was drafted with Claude in a chat. The development log treats it as
+   the starting input.
 2. **Initial scaffold: Phase 0 and most of Phase 1** (setup, backend, frontend, AI-engine skeleton, deployment scaffold). Built in
-   **Google Antigravity**, using Gemini and Claude Sonnet 4.6 according to the owner. The log names Antigravity but not the models.
+   **Google Antigravity**, using Gemini and Claude Sonnet 4.6.
 3. **Everything after: finishing Phase 1, then Phases 2 to 7**, including the evaluation harness, the experiments, the call
    simulation, the reports and these documents. Built with **Claude Code** (Anthropic) under the owner's direction. Its first session
    audited the scaffold and fixed real defects, among them hand-typed demo values that were replaced by real pipeline output, a
