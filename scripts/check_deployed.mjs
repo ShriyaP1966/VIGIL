@@ -39,6 +39,7 @@ for (const [w, h, tag, mobile] of [[1280, 800, 'desktop', false], [390, 844, 'ph
   await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile });
   for (const r of ROUTES) {
     await goto(r);
+    await waitFor(`!!document.querySelector('main h1')`, 10000);      // the graph page is a lazily loaded chunk
     const bad = problems(), o = await ev(overflow), h1 = await ev(`!!document.querySelector('main h1')`);
     check(`${tag} ${r}: loads, no console error, no sideways scroll, has a heading`, bad.length === 0 && o <= 0 && h1, `${bad[0] || ''} overflow=${o}`);
   }
