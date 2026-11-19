@@ -81,8 +81,6 @@ def test_committed_tuning_follows_the_protocol():
 
 def test_committed_fresh_results_use_the_variant_chosen_on_dev():
     fresh_file = EXP / "posthoc_fresh.json"
-    if not fresh_file.exists():
-        pytest.skip("the fresh-seed stage has not been run yet")
     tuning = json.loads((EXP / "posthoc_tuning.json").read_text(encoding="utf-8"))
     fresh = json.loads(fresh_file.read_text(encoding="utf-8"))
     assert "POST-HOC" in fresh["notice"]

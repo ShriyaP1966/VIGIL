@@ -149,8 +149,50 @@ def posthoc_tune_table() -> str:
               f"against {b['mean_f1_both_truths']:.4f} for the pre-registered {b['variant']}).")
 
 
+def posthoc_fresh_tables() -> str:
+    d = json.loads((EXP / "posthoc_fresh.json").read_text(encoding="utf-8"))
+    arms = ["A", "B", "C", "D", "D_tuned"]
+    names = {"D": "D (pre-reg.)", "D_tuned": "D post-hoc"}
+    head = lambda suffix: [f"{names.get(a, a)} {suffix}" for a in arms]   # noqa: E731
+    out = [f"Fresh seeds {d['design']['seeds'][0]}-{d['design']['seeds'][-1]}, mean ± sample std over {len(d['design']['seeds'])} seeds. "
+           f"Column **D post-hoc** is variant `{d['chosen_on_dev']['variant']}`, chosen on dev data after the pre-registered "
+           "results were seen. Column **D (pre-reg.)** is the pre-registered arm D, re-measured on the same runs.\n"]
+    for sl, title in (("all", "all 150 incidents"), ("test", "test-split incidents only (secondary)")):
+        for g, gt in TRUTH.items():
+            agg = d["aggregate"][sl][g]
+            levels = sorted(agg, key=float)
+            out.append(f"**{title}, ground truth {gt}**\n")
+            out.append(table(["r"] + head("F1"), [[lv] + [cell(agg[lv][a]["f1"]) for a in arms] for lv in levels]))
+            out.append("")
+            out.append(table(["r"] + head("FAR"), [[lv] + [cell(agg[lv][a]["far"], 4) for a in arms] for lv in levels]))
+            out.append("")
+            if sl == "all":
+                out.append(table(["r", "D pre-reg. P / R", "D post-hoc P / R"],
+                                 [[lv] + [f"{cell(agg[lv][a]['precision'], 2)} / {cell(agg[lv][a]['recall'], 2)}"
+                                          for a in ("D", "D_tuned")] for lv in levels]))
+                out.append("")
+    sizes: dict[float, list] = {}
+    for r in d["largest_component_by_run"]:
+        sizes.setdefault(r["rotation"], []).append((r["d_preregistered"], r["d_tuned"]))
+    out.append("Largest predicted group (mean incidents over seeds; 150 incidents per run):\n")
+    out.append(table(["r", "D pre-reg.", "D post-hoc"],
+                     [[str(lv), f"{sum(a for a, _ in v) / len(v):.1f}", f"{sum(b for _, b in v) / len(v):.1f}"]
+                      for lv, v in sorted(sizes.items())]))
+    dec = d["decoys_linked_tuned_pooled"]
+    names_d = {"similar_wording_different_origin": "D1 similar wording, different origin",
+               "benign_shared_identifier": "D2 shared identifier, benign context",
+               "incompatible_chronology": "D3 same tactics, incompatible chronology",
+               "ambiguous_extraction": "D4 ambiguous extraction"}
+    out.append("\nDecoys linked by the post-hoc variant (pooled over the 50 runs; the pre-registered arm D linked D1 100 and "
+               "D3 185 of 250 in the headline runs, a different set of seeds):\n")
+    out.append(table(["decoy type", "linked", "of"],
+                     [[names_d[k], str(v["linked"]), str(v["total"])] for k, v in sorted(dec.items(), key=lambda kv: names_d[kv[0]])]))
+    return "\n".join(out)
+
+
 SECTIONS = {
     "posthoc-tune": posthoc_tune_table,
+    "posthoc-fresh": posthoc_fresh_tables,
     "rotation-all": lambda: rotation_tables("all"),
     "rotation-test": lambda: rotation_tables("test"),
     "candidates": candidate_table,

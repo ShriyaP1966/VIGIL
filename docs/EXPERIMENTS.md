@@ -481,4 +481,149 @@ scenarios. The harness refuses a second run. (Pre-registration amendment 2.) **E
 Chosen on dev data by the declared rule: **T=0.80/components** (mean F1 0.6164, against 0.5875 for the pre-registered T=0.75/components).
 <!-- END:posthoc-tune -->
 
-The dev gain is small, and clustering by triangles did not help. The fresh-seed stage follows.
+The dev gain was small, and clustering by triangles did not help. The protocol and this table were committed before
+the fresh-seed stage was run.
+
+**Stage 2 result (fresh seeds, post-hoc variant next to the pre-registered arms):**
+
+<!-- BEGIN:posthoc-fresh -->
+Fresh seeds 2001-2010, mean ± sample std over 10 seeds. Column **D post-hoc** is variant `T=0.80/components`, chosen on dev data after the pre-registered results were seen. Column **D (pre-reg.)** is the pre-registered arm D, re-measured on the same runs.
+
+**all 150 incidents, ground truth (a) same campaign instance**
+
+| r | A F1 | B F1 | C F1 | D (pre-reg.) F1 | D post-hoc F1 |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.208 ± 0.017 | 0.760 ± 0.044 | 0.908 ± 0.016 | 0.051 ± 0.008 | 0.118 ± 0.018 |
+| 0.25 | 0.191 ± 0.015 | 0.608 ± 0.033 | 0.753 ± 0.041 | 0.050 ± 0.008 | 0.119 ± 0.017 |
+| 0.5 | 0.196 ± 0.011 | 0.476 ± 0.045 | 0.598 ± 0.046 | 0.048 ± 0.008 | 0.117 ± 0.018 |
+| 0.75 | 0.197 ± 0.020 | 0.260 ± 0.069 | 0.346 ± 0.069 | 0.050 ± 0.008 | 0.125 ± 0.013 |
+| 1.0 | 0.198 ± 0.021 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.050 ± 0.007 | 0.121 ± 0.018 |
+
+| r | A FAR | B FAR | C FAR | D (pre-reg.) FAR | D post-hoc FAR |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.0340 ± 0.0039 | 0.0030 ± 0.0010 | 0.0000 ± 0.0000 | 0.3059 ± 0.0533 | 0.1237 ± 0.0256 |
+| 0.25 | 0.0352 ± 0.0055 | 0.0031 ± 0.0007 | 0.0000 ± 0.0000 | 0.3062 ± 0.0527 | 0.1187 ± 0.0259 |
+| 0.5 | 0.0320 ± 0.0037 | 0.0030 ± 0.0008 | 0.0000 ± 0.0000 | 0.3101 ± 0.0457 | 0.1185 ± 0.0200 |
+| 0.75 | 0.0313 ± 0.0028 | 0.0035 ± 0.0011 | 0.0000 ± 0.0000 | 0.2983 ± 0.0519 | 0.1050 ± 0.0156 |
+| 1.0 | 0.0311 ± 0.0048 | 0.0039 ± 0.0009 | 0.0000 ± 0.0000 | 0.2785 ± 0.0509 | 0.1049 ± 0.0263 |
+
+| r | D pre-reg. P / R | D post-hoc P / R |
+|---|---:|---:|
+| 0.0 | 0.03 ± 0.00 / 1.00 ± 0.01 | 0.06 ± 0.01 / 1.00 ± 0.01 |
+| 0.25 | 0.03 ± 0.00 / 0.96 ± 0.03 | 0.06 ± 0.01 / 0.96 ± 0.03 |
+| 0.5 | 0.02 ± 0.00 / 0.95 ± 0.03 | 0.06 ± 0.01 / 0.94 ± 0.03 |
+| 0.75 | 0.03 ± 0.00 / 0.93 ± 0.05 | 0.07 ± 0.01 / 0.92 ± 0.05 |
+| 1.0 | 0.03 ± 0.00 / 0.89 ± 0.05 | 0.07 ± 0.01 / 0.87 ± 0.06 |
+
+**all 150 incidents, ground truth (b) same script family**
+
+| r | A F1 | B F1 | C F1 | D (pre-reg.) F1 | D post-hoc F1 |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.428 ± 0.022 | 0.106 ± 0.003 | 0.109 ± 0.003 | 0.551 ± 0.067 | 0.945 ± 0.089 |
+| 0.25 | 0.407 ± 0.038 | 0.078 ± 0.006 | 0.080 ± 0.007 | 0.526 ± 0.064 | 0.926 ± 0.084 |
+| 0.5 | 0.396 ± 0.022 | 0.056 ± 0.006 | 0.057 ± 0.006 | 0.513 ± 0.065 | 0.902 ± 0.106 |
+| 0.75 | 0.394 ± 0.032 | 0.028 ± 0.007 | 0.029 ± 0.007 | 0.515 ± 0.069 | 0.906 ± 0.074 |
+| 1.0 | 0.393 ± 0.031 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.506 ± 0.056 | 0.857 ± 0.074 |
+
+| r | A FAR | B FAR | C FAR | D (pre-reg.) FAR | D post-hoc FAR |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.0060 ± 0.0035 | 0.0033 ± 0.0012 | 0.0000 ± 0.0000 | 0.2209 ± 0.0603 | 0.0167 ± 0.0294 |
+| 0.25 | 0.0087 ± 0.0046 | 0.0035 ± 0.0008 | 0.0000 ± 0.0000 | 0.2267 ± 0.0585 | 0.0160 ± 0.0282 |
+| 0.5 | 0.0065 ± 0.0035 | 0.0033 ± 0.0009 | 0.0000 ± 0.0000 | 0.2329 ± 0.0531 | 0.0192 ± 0.0274 |
+| 0.75 | 0.0061 ± 0.0021 | 0.0039 ± 0.0012 | 0.0000 ± 0.0000 | 0.2224 ± 0.0574 | 0.0094 ± 0.0173 |
+| 1.0 | 0.0058 ± 0.0029 | 0.0044 ± 0.0010 | 0.0000 ± 0.0000 | 0.2075 ± 0.0548 | 0.0159 ± 0.0259 |
+
+| r | D pre-reg. P / R | D post-hoc P / R |
+|---|---:|---:|
+| 0.0 | 0.38 ± 0.06 / 1.00 ± 0.01 | 0.91 ± 0.14 / 0.99 ± 0.01 |
+| 0.25 | 0.37 ± 0.06 / 0.95 ± 0.04 | 0.91 ± 0.14 / 0.95 ± 0.04 |
+| 0.5 | 0.36 ± 0.06 / 0.94 ± 0.03 | 0.89 ± 0.16 / 0.93 ± 0.05 |
+| 0.75 | 0.36 ± 0.06 / 0.92 ± 0.07 | 0.94 ± 0.10 / 0.88 ± 0.07 |
+| 1.0 | 0.36 ± 0.06 / 0.86 ± 0.05 | 0.90 ± 0.14 / 0.83 ± 0.07 |
+
+**test-split incidents only (secondary), ground truth (a) same campaign instance**
+
+| r | A F1 | B F1 | C F1 | D (pre-reg.) F1 | D post-hoc F1 |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.215 ± 0.036 | 0.993 ± 0.015 | 0.993 ± 0.015 | 0.198 ± 0.060 | 0.225 ± 0.051 |
+| 0.25 | 0.202 ± 0.041 | 0.857 ± 0.059 | 0.857 ± 0.059 | 0.184 ± 0.060 | 0.222 ± 0.050 |
+| 0.5 | 0.190 ± 0.046 | 0.717 ± 0.076 | 0.717 ± 0.076 | 0.173 ± 0.061 | 0.212 ± 0.053 |
+| 0.75 | 0.190 ± 0.038 | 0.442 ± 0.139 | 0.442 ± 0.139 | 0.183 ± 0.061 | 0.232 ± 0.038 |
+| 1.0 | 0.192 ± 0.049 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.188 ± 0.054 | 0.215 ± 0.047 |
+
+| r | A FAR | B FAR | C FAR | D (pre-reg.) FAR | D post-hoc FAR |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.0665 ± 0.0120 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.2116 ± 0.0884 | 0.1725 ± 0.0687 |
+| 0.25 | 0.0555 ± 0.0174 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.2126 ± 0.0917 | 0.1617 ± 0.0753 |
+| 0.5 | 0.0455 ± 0.0087 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.2182 ± 0.0795 | 0.1640 ± 0.0645 |
+| 0.75 | 0.0522 ± 0.0113 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.2020 ± 0.0853 | 0.1317 ± 0.0392 |
+| 1.0 | 0.0509 ± 0.0101 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.1748 ± 0.0769 | 0.1414 ± 0.0665 |
+
+**test-split incidents only (secondary), ground truth (b) same script family**
+
+| r | A F1 | B F1 | C F1 | D (pre-reg.) F1 | D post-hoc F1 |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.559 ± 0.093 | 0.247 ± 0.006 | 0.247 ± 0.006 | 0.852 ± 0.175 | 0.926 ± 0.149 |
+| 0.25 | 0.470 ± 0.129 | 0.194 ± 0.022 | 0.194 ± 0.022 | 0.780 ± 0.156 | 0.883 ± 0.135 |
+| 0.5 | 0.386 ± 0.064 | 0.149 ± 0.023 | 0.149 ± 0.023 | 0.748 ± 0.167 | 0.842 ± 0.164 |
+| 0.75 | 0.439 ± 0.101 | 0.080 ± 0.031 | 0.080 ± 0.031 | 0.768 ± 0.160 | 0.886 ± 0.124 |
+| 1.0 | 0.442 ± 0.086 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.756 ± 0.146 | 0.814 ± 0.132 |
+
+| r | A FAR | B FAR | C FAR | D (pre-reg.) FAR | D post-hoc FAR |
+|---|---:|---:|---:|---:|---:|
+| 0.0 | 0.0116 ± 0.0026 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0844 ± 0.1026 | 0.0402 ± 0.0819 |
+| 0.25 | 0.0117 ± 0.0029 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0993 ± 0.0999 | 0.0402 ± 0.0823 |
+| 0.5 | 0.0128 ± 0.0036 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.1098 ± 0.0928 | 0.0498 ± 0.0793 |
+| 0.75 | 0.0126 ± 0.0031 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0930 ± 0.0947 | 0.0158 ± 0.0473 |
+| 1.0 | 0.0111 ± 0.0030 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0730 ± 0.0835 | 0.0362 ± 0.0706 |
+
+Largest predicted group (mean incidents over seeds; 150 incidents per run):
+
+| r | D pre-reg. | D post-hoc |
+|---|---:|---:|
+| 0.0 | 82.8 | 48.1 |
+| 0.25 | 83.0 | 47.0 |
+| 0.5 | 83.7 | 47.2 |
+| 0.75 | 81.9 | 43.5 |
+| 1.0 | 79.1 | 43.5 |
+
+Decoys linked by the post-hoc variant (pooled over the 50 runs; the pre-registered arm D linked D1 100 and D3 185 of 250 in the headline runs, a different set of seeds):
+
+| decoy type | linked | of |
+|---|---:|---:|
+| D1 similar wording, different origin | 66 | 250 |
+| D2 shared identifier, benign context | 0 | 250 |
+| D3 same tactics, incompatible chronology | 82 | 250 |
+| D4 ambiguous extraction | 0 | 250 |
+<!-- END:posthoc-fresh -->
+
+**Reading it (post-hoc, and reported as it came out):**
+
+* **Under the script-family truth (b) the post-hoc variant is much better than the pre-registered arm D:** pairwise F1
+  about 0.86 to 0.95 against 0.51 to 0.55, false association rate about 0.02 against 0.21 to 0.23, precision about 0.9
+  against 0.36 to 0.38, with recall slightly lower (about 0.83 to 0.99 against 0.86 to 1.0). It also beats the text
+  baseline A on F1 at every rotation level (A about 0.39 to 0.43), but **A keeps a lower false association rate** (about
+  0.006 to 0.009 against 0.009 to 0.019). The largest predicted group falls from about 80 to about 45 incidents.
+* **Under the campaign-instance truth (a) it still does not help much:** F1 about 0.12 against 0.05, still below the
+  text baseline A (about 0.19 to 0.21) at every level, and below C for r up to 0.75. Its false association rate falls
+  to about 0.10 to 0.12, still far above B and C (about 0) and A (about 0.03). This is the same limit as before:
+  instances of one template run an identical script and a script-based method cannot separate them.
+* **Decoys are still not clean:** D3 (82 of 250) and D1 (66 of 250) are still linked; D2 and D4 are not.
+* **Why such a large change from a threshold move of 0.05?** Not examined here. A plausible but unverified explanation
+  is that the links between different families (bank KYC to payment link, digital arrest to bank KYC) sit just above
+  0.75 in similarity, so a slightly higher threshold removes most of them and breaks the chain.
+
+**Why this is not a new headline, and what it does not show:**
+
+* It was **tuned after seeing the pre-registered results**, to fix a problem they exposed. The pre-registered
+  `T_candidate = 0.75` results in sections 3 to 6 remain the headline and were not changed.
+* The fresh seeds are new draws from **the same generator and the same six templates**. They show the variant is not
+  fitted to seeds 901-905; they do **not** show it would work on new scripts, other languages or real traffic. A
+  threshold that separates these templates' stage orders is not evidence about real scripts.
+* The ground truth (b) family map was fixed in advance and treats bank KYC and payment link as different families; the
+  gain is largely the removal of exactly those cross-family links, so it is partly specific to that definition.
+* The dev split had no bank-KYC template, yet the variant fixed the bank-KYC chaining on the fresh seeds. That is
+  encouraging, but with one generator it may reflect how these templates happen to be written.
+* **The product default was not changed.** `T_CANDIDATE` stays 0.75 in the application. Adopting a higher threshold
+  would be a separate product decision (with its trade-off: fewer behaviour-only leads shown to analysts), and a test
+  pins the default and the headline results file.
