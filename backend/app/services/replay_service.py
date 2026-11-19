@@ -69,8 +69,11 @@ def _incident_payload(rec: dict) -> IncidentCreate:
     )
 
 
-def replay_records(records: list[dict], *, candidates: bool = True, counter_evidence: bool = True) -> ReplayResult:
-    """Run `records` (generator format) through the pipeline in an isolated in-memory database."""
+def replay_records(records: list[dict], *, candidates: bool = True, counter_evidence: bool = True,
+                   t_candidate: float | None = None) -> ReplayResult:
+    """Run `records` (generator format) through the pipeline in an isolated in-memory database.
+    `t_candidate` overrides the candidate threshold for this run only (used by the post-hoc tuning experiment);
+    the default is the application's 0.75."""
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(bind=engine)
     session = sessionmaker(autocommit=False, autoflush=False, bind=engine)()
@@ -78,6 +81,8 @@ def replay_records(records: list[dict], *, candidates: bool = True, counter_evid
         with ExitStack() as stack:
             if not candidates:
                 stack.enter_context(mock.patch.object(incident_service.settings, "T_CANDIDATE", NO_CANDIDATES))
+            elif t_candidate is not None:
+                stack.enter_context(mock.patch.object(incident_service.settings, "T_CANDIDATE", t_candidate))
             if not counter_evidence:
                 stack.enter_context(mock.patch.object(incident_service, "evaluate_incident_associations",
                                                       lambda db, incident_id: False))

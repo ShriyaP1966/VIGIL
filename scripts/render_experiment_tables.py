@@ -139,7 +139,18 @@ def latency_table() -> str:
             + f"\n\nEnd to end, first 20 incidents: mean {e['first_20_mean_ms']} ms; last 20: mean {e['last_20_mean_ms']} ms.")
 
 
+def posthoc_tune_table() -> str:
+    d = json.loads((EXP / "posthoc_tuning.json").read_text(encoding="utf-8"))
+    rows = [[r["variant"], f"{r['mean_f1_both_truths']:.4f}", f"{r['mean_far_both_truths']:.4f}",
+             f"{r['f1_a']:.4f}", f"{r['f1_b']:.4f}"] for r in d["table"]]
+    c, b = d["chosen"], d["baseline"]
+    return (table(["variant (dev data only)", "mean F1, both truths", "mean false association rate", "F1 (a)", "F1 (b)"], rows)
+            + f"\n\nChosen on dev data by the declared rule: **{c['variant']}** (mean F1 {c['mean_f1_both_truths']:.4f}, "
+              f"against {b['mean_f1_both_truths']:.4f} for the pre-registered {b['variant']}).")
+
+
 SECTIONS = {
+    "posthoc-tune": posthoc_tune_table,
     "rotation-all": lambda: rotation_tables("all"),
     "rotation-test": lambda: rotation_tables("test"),
     "candidates": candidate_table,

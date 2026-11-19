@@ -1,0 +1,156 @@
+{
+ "stage": "tune",
+ "notice": "POST-HOC and exploratory: chosen after the pre-registered results were seen, on dev data. The headline results in rotation.json (T_candidate 0.75, plain connected components) are unchanged.",
+ "command": "python scripts/posthoc_tuning.py --stage tune",
+ "protocol": {
+  "data": "dev split only (T2, T5, N3, N4, D2)",
+  "seeds": [
+   901,
+   902,
+   903,
+   904,
+   905
+  ],
+  "rotation_levels": [
+   0.0,
+   0.5,
+   1.0
+  ],
+  "criterion": "highest mean pairwise F1 over truths (a) and (b), levels and seeds; ties: lower mean false association rate, then higher threshold",
+  "grid": {
+   "t_candidate": [
+    0.75,
+    0.8,
+    0.85,
+    0.9,
+    0.95
+   ],
+   "clustering": [
+    "components",
+    "triangle"
+   ]
+  },
+  "not_used": "the test split, seeds 1001-1010, seed 900 and the held-out set"
+ },
+ "table": [
+  {
+   "variant": "T=0.75/components",
+   "t_candidate": 0.75,
+   "clustering": "components",
+   "mean_f1_both_truths": 0.5875,
+   "mean_far_both_truths": 0.1054,
+   "f1_a": 0.233,
+   "f1_b": 0.942
+  },
+  {
+   "variant": "T=0.75/triangle",
+   "t_candidate": 0.75,
+   "clustering": "triangle",
+   "mean_f1_both_truths": 0.5858,
+   "mean_far_both_truths": 0.1038,
+   "f1_a": 0.2329,
+   "f1_b": 0.9387
+  },
+  {
+   "variant": "T=0.80/components",
+   "t_candidate": 0.8,
+   "clustering": "components",
+   "mean_f1_both_truths": 0.6164,
+   "mean_far_both_truths": 0.0761,
+   "f1_a": 0.2489,
+   "f1_b": 0.9839
+  },
+  {
+   "variant": "T=0.80/triangle",
+   "t_candidate": 0.8,
+   "clustering": "triangle",
+   "mean_f1_both_truths": 0.6152,
+   "mean_far_both_truths": 0.0758,
+   "f1_a": 0.2487,
+   "f1_b": 0.9816
+  },
+  {
+   "variant": "T=0.85/components",
+   "t_candidate": 0.85,
+   "clustering": "components",
+   "mean_f1_both_truths": 0.6079,
+   "mean_far_both_truths": 0.0739,
+   "f1_a": 0.2476,
+   "f1_b": 0.9682
+  },
+  {
+   "variant": "T=0.85/triangle",
+   "t_candidate": 0.85,
+   "clustering": "triangle",
+   "mean_f1_both_truths": 0.6052,
+   "mean_far_both_truths": 0.0725,
+   "f1_a": 0.251,
+   "f1_b": 0.9595
+  },
+  {
+   "variant": "T=0.90/components",
+   "t_candidate": 0.9,
+   "clustering": "components",
+   "mean_f1_both_truths": 0.602,
+   "mean_far_both_truths": 0.0724,
+   "f1_a": 0.2472,
+   "f1_b": 0.9569
+  },
+  {
+   "variant": "T=0.90/triangle",
+   "t_candidate": 0.9,
+   "clustering": "triangle",
+   "mean_f1_both_truths": 0.5944,
+   "mean_far_both_truths": 0.0698,
+   "f1_a": 0.2493,
+   "f1_b": 0.9395
+  },
+  {
+   "variant": "T=0.95/components",
+   "t_candidate": 0.95,
+   "clustering": "components",
+   "mean_f1_both_truths": 0.5271,
+   "mean_far_both_truths": 0.0526,
+   "f1_a": 0.2521,
+   "f1_b": 0.8021
+  },
+  {
+   "variant": "T=0.95/triangle",
+   "t_candidate": 0.95,
+   "clustering": "triangle",
+   "mean_f1_both_truths": 0.5133,
+   "mean_far_both_truths": 0.0497,
+   "f1_a": 0.2512,
+   "f1_b": 0.7753
+  }
+ ],
+ "chosen": {
+  "variant": "T=0.80/components",
+  "t_candidate": 0.8,
+  "clustering": "components",
+  "mean_f1_both_truths": 0.6164,
+  "mean_far_both_truths": 0.0761,
+  "f1_a": 0.2489,
+  "f1_b": 0.9839
+ },
+ "baseline": {
+  "variant": "T=0.75/components",
+  "t_candidate": 0.75,
+  "clustering": "components",
+  "mean_f1_both_truths": 0.5875,
+  "mean_far_both_truths": 0.1054,
+  "f1_a": 0.233,
+  "f1_b": 0.942
+ },
+ "artefact_sha256_lf": {
+  "scripts/generate_dataset.py": "bab541ce6a7a24f911a3f00a1aba5402526a0fdef1b54ba995afb0b48edebe3a",
+  "data/lexicon.json": "5621851d011fce7ac8cfb6200fc306b74351eb13ffa2f02e2711c5b6e08d8149",
+  "ai_engine/fingerprint/similarity.py": "3def23745250c30a796b0660c601f92e019037b5930cd297abdc34b390f7edf7",
+  "config/counter_evidence_rules.json": "aad96090f92f02be0314be0381051232b2816aa8c0d9b7c0cf0f09a62ec3348b",
+  "data/public_identifiers.json": "9586e31758131564f923434c316e56c9564849148ac861ce6a98731c0da42d61"
+ },
+ "environment": {
+  "python": "3.13.15",
+  "platform": "Windows-11-10.0.26200-SP0"
+ }
+}

@@ -423,8 +423,9 @@ scenarios. The harness refuses a second run. (Pre-registration amendment 2.) **E
 * **Arm C is not the blueprint's full arm C** (CE-6 and CE-8 are not implemented).
 * **tau_A was tuned on dev data and `T_candidate` was not tuned at all.** This favours the baseline over D. A tuned
   `T_candidate` or a different clustering (for example requiring several links, or splitting giant components) might
-  change D's false association rate; that was **not tried** here, because it would be tuning after seeing results.
-  It is a sensible next experiment and is listed in the Phase 6 plan, on dev data only.
+  change D's false association rate. **That was not part of the pre-registered experiment.** It was tried afterwards
+  as a separate, clearly labelled post-hoc experiment on dev data only (section 10); the headline tables above
+  are unchanged.
 * **Decoys were authored by the same person** and are one reasonable reading of the blueprint's four types, fixed
   before the experiments.
 * **The 1848 and similar counts are pooled over runs** that share templates, so they are not independent.
@@ -438,3 +439,46 @@ scenarios. The harness refuses a second run. (Pre-registration amendment 2.) **E
   Scenario Lab); the chart layout was adjusted; `scripts/diagnose_candidates.py` was added to explain section 4.3.
 * The E1 decoy side-report counts scam labels only (a benign notice labelled `LEGITIMATE` is correct); this was
   decided while building the report, before the pre-registration.
+
+## 10. Post-hoc: a tuned fingerprint threshold and clustering (exploratory)
+
+> **This section is post-hoc.** The idea was prompted by the pre-registered results above, which showed that arm D
+> over-merges; the variant was chosen **after those results were seen**, on dev data. It is reported as a separate
+> row and never replaces the headline results, which stay at `T_candidate = 0.75` with plain connected components
+> (sections 3 to 6, `docs/experiments/rotation.json`, unchanged). The held-out set was not used.
+
+**Protocol, committed before the fresh-seed stage was run** (`scripts/posthoc_tuning.py`, header comment):
+
+* *Stage 1, tuning, dev data only:* seeds 901-905 (not used elsewhere), rotation 0, 0.5 and 1.0, the pipeline at the
+  pre-registered 0.75, scored on the `dev` split only (T2, T5, N3, N4, D2). Variants: `T_candidate` in 0.75, 0.80,
+  0.85, 0.90, 0.95, times clustering `components` (the pre-registered rule) or `triangle` (keep a candidate link only
+  if its two incidents share a neighbour in the link graph; observed links always kept). Criterion: the highest mean
+  pairwise F1 over both ground truths, the three levels and the five seeds; ties to the lower mean false association
+  rate, then the higher threshold. A higher threshold is read from a run made at 0.75 (a link exists at T' >= 0.75
+  exactly when its stored similarity is >= T'; a test checks this against a pipeline run at T').
+* *Stage 2, fresh seeds:* the chosen variant is evaluated on seeds 2001-2010 (never used before), all five rotation
+  levels, next to arms A, B, C and the pre-registered arm D on the same runs.
+* A limit worth stating: the dev split contains T2 and T5 but **no bank-KYC template (T4)**, so tuning on it cannot
+  see the T4-T5 chaining that drives most of D's false links (section 4.3). Whether a threshold chosen there helps
+  on the other templates is exactly what the fresh seeds test.
+
+**Stage 1 result (dev data only):**
+
+<!-- BEGIN:posthoc-tune -->
+| variant (dev data only) | mean F1, both truths | mean false association rate | F1 (a) | F1 (b) |
+|---|---:|---:|---:|---:|
+| T=0.75/components | 0.5875 | 0.1054 | 0.2330 | 0.9420 |
+| T=0.75/triangle | 0.5858 | 0.1038 | 0.2329 | 0.9387 |
+| T=0.80/components | 0.6164 | 0.0761 | 0.2489 | 0.9839 |
+| T=0.80/triangle | 0.6152 | 0.0758 | 0.2487 | 0.9816 |
+| T=0.85/components | 0.6079 | 0.0739 | 0.2476 | 0.9682 |
+| T=0.85/triangle | 0.6052 | 0.0725 | 0.2510 | 0.9595 |
+| T=0.90/components | 0.6020 | 0.0724 | 0.2472 | 0.9569 |
+| T=0.90/triangle | 0.5944 | 0.0698 | 0.2493 | 0.9395 |
+| T=0.95/components | 0.5271 | 0.0526 | 0.2521 | 0.8021 |
+| T=0.95/triangle | 0.5133 | 0.0497 | 0.2512 | 0.7753 |
+
+Chosen on dev data by the declared rule: **T=0.80/components** (mean F1 0.6164, against 0.5875 for the pre-registered T=0.75/components).
+<!-- END:posthoc-tune -->
+
+The dev gain is small, and clustering by triangles did not help. The fresh-seed stage follows.
