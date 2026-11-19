@@ -275,7 +275,40 @@ def readme_heldout() -> str:
         ["Tactic-level scores", "not measured", "no per-utterance labels in the set"]])
 
 
+def readme_key_results() -> str:
+    """Five lines for the top of the README, every number read from the result files."""
+    rot = json.loads((EXP / "rotation.json").read_text(encoding="utf-8"))["aggregate"]["all"]
+    post = json.loads((EXP / "posthoc_fresh.json").read_text(encoding="utf-8"))["aggregate"]["all"]
+    held = json.loads((EXP / "heldout.json").read_text(encoding="utf-8"))
+    s, ps = held["metrics"]["scenario_level"], held["per_scenario"]
+    missed = ", ".join(p["id"] for p in ps if not p["is_legitimate"] and not p["scam_tactic_detected"])
+    flagged = " and ".join(p["id"] for p in ps if p["is_legitimate"] and p["scam_tactic_detected"])
+
+    def v(src: dict, g: str, lv: str, arm: str, k: str) -> float:
+        return src[g][lv][arm][k]["mean"]
+
+    return "\n".join([
+        f"* **Pre-registered: rotating identifiers breaks identifier linking.** Under the campaign-instance truth, the identifier "
+        f"graph (B) and B with counter-evidence (C) fall from F1 {v(rot, 'a', '0.0', 'B', 'f1'):.2f} and {v(rot, 'a', '0.0', 'C', 'f1'):.2f} "
+        f"with no rotation to {v(rot, 'a', '1.0', 'B', 'f1'):.2f} and {v(rot, 'a', '1.0', 'C', 'f1'):.2f} when every identifier is replaced.",
+        f"* **Counter-evidence raises precision at no cost in recall:** with no rotation, precision {v(rot, 'a', '0.0', 'C', 'precision'):.2f} for C "
+        f"against {v(rot, 'a', '0.0', 'B', 'precision'):.2f} for B.",
+        f"* **The playbook fingerprint (D) recovers links that rotation hides, but over-merges.** At r = 0.5 its F1 is "
+        f"{v(rot, 'a', '0.5', 'D', 'f1'):.2f} under the instance truth (the plain text baseline A scores {v(rot, 'a', '0.5', 'A', 'f1'):.2f}) and "
+        f"{v(rot, 'b', '0.5', 'D', 'f1'):.2f} under the script-family truth, with a false association rate of {v(rot, 'b', '0.5', 'D', 'far'):.2f}.",
+        f"* **Post-hoc, tuned after seeing those results (fresh seeds, reported separately):** a higher threshold lifts D to F1 "
+        f"{v(post, 'b', '0.5', 'D_tuned', 'f1'):.2f} with a false association rate of {v(post, 'b', '0.5', 'D_tuned', 'far'):.3f} under the "
+        f"script-family truth (from {v(post, 'b', '0.5', 'D', 'f1'):.2f} and {v(post, 'b', '0.5', 'D', 'far'):.3f}), but only "
+        f"{v(post, 'a', '0.5', 'D_tuned', 'f1'):.2f} under the instance truth. The headline and the application default (`T_CANDIDATE = 0.75`) are unchanged.",
+        f"* **Held-out set, run once:** {s['scam_scenarios_detected']} of {s['scam_scenarios']} scam scenarios had a scam tactic detected "
+        f"(missed: {missed}, a cut-off call), but **{s['legitimate_false_alarms']} of {s['legitimate_scenarios']} legitimate scenarios "
+        f"({flagged}) were flagged as scams, a false-alarm rate of {s['legitimate_false_alarms']} of {s['legitimate_scenarios']}.** "
+        "Tactic-level scores were not measured. Small, synthetic set.",
+    ])
+
+
 README_SECTIONS = {
+    "readme-keyresults": readme_key_results,
     "readme-headline": readme_headline,
     "readme-posthoc": readme_posthoc,
     "readme-heldout": readme_heldout,

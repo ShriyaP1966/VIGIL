@@ -1,72 +1,164 @@
 # VIGIL
 
-> **Cross-channel scam intelligence: turning scattered scam evidence into explainable, reviewable investigations.**
-> PromptWars × AI Vibeathon 2026 submission. **All data is synthetic.**
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/Live%20demo-vigil--demo--eta.vercel.app-blue)](https://vigil-demo-eta.vercel.app)
+[![Data](https://img.shields.io/badge/Data-100%25%20synthetic-orange)](#limitations-please-read)
 
-**Live demo: https://vigil-demo-eta.vercel.app** (a static site on precomputed synthetic data; every page has its own URL).
-Demo video: *link to be added by the owner.* Documentation: [Architecture](ARCHITECTURE.md) ·
-[API](docs/API_SPEC.md) · [Privacy](docs/PRIVACY.md) · [Experiments](docs/EXPERIMENTS.md) ·
-[Pre-registration](docs/PREREGISTRATION.md) · [Dataset card](docs/DATASET_CARD.md) · [Model card](docs/MODEL_CARD.md).
+**VIGIL is an offline-first, explainable tool that helps an analyst see which scam reports share an identifier or a script.**
+*PromptWars × AI Vibeathon 2026 submission.*
+
+In India, "digital arrest" and other financial-impersonation scams (fake police, customs, bank or courier staff) spread across
+phone calls, SMS and WhatsApp. Scammers keep swapping phone numbers, UPI IDs and domains, so ten reports of the same script look
+like ten unrelated cases. VIGIL reads each report, extracts its tactics and identifiers, links reports with auditable states, and
+shows counter-evidence next to every link. **It never declares a campaign by itself: a group of linked reports is only a
+hypothesis until a person accepts it.** All data is synthetic.
+
+**▶ Live demo: https://vigil-demo-eta.vercel.app** (static site on precomputed synthetic data, no install)
+
+**Contents:** [Try it in 2 minutes](#try-it-in-2-minutes) · [What makes it different](#what-makes-it-different) ·
+[Key results](#key-results) · [Run it locally](#run-it-locally) · [Limitations](#limitations-please-read) ·
+[Built with AI coding assistants](#built-with-ai-coding-assistants) · [More detail (collapsed)](#more-detail) · [Licence](#licence)
+
+![VIGIL overview page on the live demo, showing synthetic cases and the synthetic-data labels](docs/screenshots/01-overview.png)
 
 ---
 
-## 1. The idea in one minute
+## Try it in 2 minutes
 
-Digital-arrest, impersonation and KYC scams run as industrialised **scripts** across calls, SMS and payment links, while
-scammers rotate the disposable phone numbers, UPI handles and domains that today's tools match on. Ten reports of the same
-script can look like ten unrelated incidents.
+Open the [live demo](https://vigil-demo-eta.vercel.app). Every step below exists in the hosted demo today (a test checks these
+claims against the demo data).
 
-VIGIL gives an analyst a way to look across channels:
+1. **Overview.** Note the "Hosted demo: precomputed synthetic data" badge and the synthetic-data notice. Nine synthetic cases.
+2. **Intelligence Graph** ([`/graph`](https://vigil-demo-eta.vercel.app/graph)). Click each kind of line to open the **Evidence Inspector**
+   (or use the direct link):
+   * a **solid blue** line between INC-0001 and INC-0002: the same UPI handle in both ([direct](https://vigil-demo-eta.vercel.app/graph?assoc=1));
+   * a **dashed amber** line from INC-0001 to INC-0004: a similar script with rotated identifiers, no shared identifier
+     ([direct](https://vigil-demo-eta.vercel.app/graph?assoc=2));
+   * a **dashed red** (disputed) line between INC-0003 and INC-0005: both cite the public helpline 1930, so counter-evidence rule CE-3
+     disputes the link ([direct](https://vigil-demo-eta.vercel.app/graph?assoc=3)). A second one (INC-0006 to INC-0007, CE-1, incompatible
+     order) is at [`?assoc=4`](https://vigil-demo-eta.vercel.app/graph?assoc=4).
+3. **Campaigns** ([`/campaigns`](https://vigil-demo-eta.vercel.app/campaigns)). Two *hypotheses*, both unreviewed. Open the first (three incidents) and read the
+   playbook alignment grid. Accept/Reject needs the local app.
+4. **Scenario Lab** ([`/scenarios`](https://vigil-demo-eta.vercel.app/scenarios)). Open "Digital arrest: central-agency impersonation" and drag **Identifier rotation**
+   from 0 to 1: the three exact-identifier links disappear and three behaviour-only candidate links remain. Click **Replay**: identical result.
+5. **An incident** ([`/incidents/1`](https://vigil-demo-eta.vercel.app/incidents/1)). Read the **tactic timeline**, the highlighted transcript and the risk ledger, whose
+   contributions sum exactly to the score.
+6. *Bonus:* [**Simulated Call Analysis**](https://vigil-demo-eta.vercel.app/simulated-call): pick "Scam call with an injected instruction" and press Play (a simulation of scripted text; VIGIL does not listen to calls).
 
-* It extracts the **tactic sequence** of each incident (authority → allegation → threat → isolation → urgency → demand),
-  the claimed institution and the payment channel: a **playbook fingerprint**.
-* It links incidents with **explicit, auditable association states** and always shows **counter-evidence** next to the
-  evidence for a link. Nothing is a conclusion until a person accepts it.
-* It is **offline-first and explainable**: rule-based extraction, no model, no API key, every score with its contributions.
+## What makes it different
 
-| Association state | Meaning | Created by |
+| Link type | What it means | What it does **not** mean |
 |---|---|---|
-| `OBSERVED_MATCH` | exactly the same normalised identifier in two incidents (an observation, **not** proof of one origin) | exact equality only |
-| `CANDIDATE_ASSOCIATION` | similar script, no shared identifier: a lead to investigate | the playbook fingerprint |
-| `ANALYST_VERIFIED_ASSOCIATION` | accepted by a person | analyst review only |
-| `DISPUTED_ASSOCIATION` | contradicted by high-severity counter-evidence | rules or analyst |
-| `REJECTED_ASSOCIATION` | dismissed | analyst review only |
+| **Observed match** | exactly the same normalised identifier (phone, UPI, domain…) appears in two reports | proof that one group or one campaign is behind both |
+| **Candidate association** | a similar *script*, with **no** shared identifier: a lead to investigate | a conclusion; the fingerprint alone can never make a link "observed" (only an exactly shared identifier can) |
+| **Analyst-verified association** | a person reviewed the evidence and accepted the link (recorded in an audit trail) | a statement about any named person or organisation |
 
-The fingerprint recognises a **script family / playbook**, never a specific group, person or organisation. A group of linked
-incidents is always called a **hypothesis** until an analyst accepts it. VIGIL does not listen to calls, block accounts or
-accuse anyone, and its risk score is an experimental heuristic, not a probability.
+* **Counter-evidence engine.** Rules look for reasons a link might be wrong (a public helpline shared by two notices, incompatible
+  order of stages, different payment destinations). Findings are shown **next to** the evidence, can dispute a link automatically, and
+  stay visible even after an analyst accepts it.
+* **Nothing is called a confirmed campaign automatically.** A group of linked reports is a **hypothesis** until an analyst accepts it,
+  and the interface and reports say so everywhere. Five safety invariants (I1-I5) enforce this in the data layer and are tested.
+* **Playbook** = the ordered steps a scam script follows (authority → allegation → threat → isolation → urgency → demand), plus the
+  claimed institution and payment channel. **Script family** = incidents that run the same kind of playbook (for example "digital arrest").
+  The fingerprint recognises a script family, **never** a specific group, person or organisation.
 
-> **Mandatory disclaimers.** (1) Everything in this repository and the demo is synthetic and marked as such. (2) *Simulated
-> Call Analysis* replays scripted text; VIGIL does not intercept, tap or record calls. (3) The risk indicator is an
-> experimental heuristic with a-priori weights. (4) Output is for human analysts.
+## Key results
 
-## 2. What you can try (live demo, no install)
+Synthetic data written by the same author as the rules, so the numbers are optimistic and say nothing about real traffic. The rotation
+experiment was **pre-registered** before it was run ([docs/PREREGISTRATION.md](docs/PREREGISTRATION.md)). Each line is generated from
+`docs/experiments/*.json`; full tables are under [More detail](#more-detail).
 
-| Page | What to look at |
-|---|---|
-| **Overview**, **Investigations** | synthetic cases with risk indicators; search and filter |
-| **Investigation detail** | tactic timeline, highlighted transcript, risk ledger that sums exactly to the score, redaction counts |
-| **Intelligence Graph** | observed (solid), candidate (dashed amber) and disputed (dashed red) links; click a link for the **Evidence Inspector** (source excerpts, normalisation, confidence, counter-evidence); an accessible table view |
-| **Campaigns** | hypotheses with members, a **playbook alignment grid** and review controls (reviews need the live backend) |
-| **Scenario Lab** | 11 deterministic scenarios; slide **identifier rotation** and watch exact links vanish while the script still links; expected-versus-actual table; Replay shows the result is identical |
-| **Simulated Call Analysis** | scripted calls analysed turn by turn: stages light up, risk meter moves, English and Hindi guidance, **injection safety badge** |
-| **Reports** | per-case report with observed facts, model inferences, analyst actions, counter-evidence and limitations; JSON and CSV |
+<!-- BEGIN:readme-keyresults -->
+* **Pre-registered: rotating identifiers breaks identifier linking.** Under the campaign-instance truth, the identifier graph (B) and B with counter-evidence (C) fall from F1 0.74 and 0.90 with no rotation to 0.00 and 0.00 when every identifier is replaced.
+* **Counter-evidence raises precision at no cost in recall:** with no rotation, precision 1.00 for C against 0.67 for B.
+* **The playbook fingerprint (D) recovers links that rotation hides, but over-merges.** At r = 0.5 its F1 is 0.05 under the instance truth (the plain text baseline A scores 0.21) and 0.50 under the script-family truth, with a false association rate of 0.25.
+* **Post-hoc, tuned after seeing those results (fresh seeds, reported separately):** a higher threshold lifts D to F1 0.90 with a false association rate of 0.019 under the script-family truth (from 0.51 and 0.233), but only 0.12 under the instance truth. The headline and the application default (`T_CANDIDATE = 0.75`) are unchanged.
+* **Held-out set, run once:** 18 of 19 scam scenarios had a scam tactic detected (missed: H21, a cut-off call), but **2 of 6 legitimate scenarios (H15 and H17) were flagged as scams, a false-alarm rate of 2 of 6.** Tactic-level scores were not measured. Small, synthetic set.
+<!-- END:readme-keyresults -->
 
-The hosted demo has no backend, so paste-your-own-evidence, reviews and "Clear all local data" need the local app (section 6).
-Open any deep link (for example `/scenarios` or `/incidents/1`) and refresh: it stays on that page.
+## Run it locally
 
-## 3. Screenshots (live site, synthetic data)
+100% free and offline; no API key is needed or used. Prerequisites: Python 3.11+, Node.js 18+, Git.
+
+```bash
+git clone https://github.com/ShriyaP1966/VIGIL.git
+cd VIGIL
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r backend/requirements.txt
+cd frontend && npm ci && cd ..
+cp .env.example .env               # optional; Windows PowerShell: Copy-Item .env.example .env
+python scripts/run_demo.py         # seeds the 9 synthetic incidents, starts the API and the web UI
+```
+
+Open http://localhost:5173 (API docs at http://localhost:8000/docs). The local app adds what the hosted demo cannot do: paste your own
+synthetic evidence, accept or reject links, and "Clear all local data". Checks: `pytest -q`, `cd frontend && npm test`,
+`python scripts/preflight.py`.
+
+## Limitations (please read)
+
+* **All data is synthetic**, and the generator, the lexicon and the rules share an author. Scores are optimistic. Nothing here
+  says how VIGIL would perform on real traffic, and it must not be used with real victims' data.
+* **The held-out set is small** (19 scam, 6 legitimate), drafted by a different language model and reviewed by the owner, and
+  synthetic. **Tactic-level scores were not measured on it.** Its rates are very imprecise: one legitimate scenario is 17 points.
+* **The held-out false alarms are real:** 2 of 6 legitimate scenarios (H15, H17) were flagged as scams, and 18 of 19 scam
+  scenarios were detected (H21 missed). The likely cause is that the extractor matches wording, not intent, for
+  example an awareness notice that quotes scam phrases; this is **unverified**. The rules were **not** changed afterwards.
+  **A future fix** would use the speaker's role and intent (who is saying it and why), not only wording.
+* **The fingerprint over-merges within script families.** Different instances of one template run an identical script, so it
+  cannot tell them apart (precision against the instance truth is low), and with connected-component grouping a few wrong
+  links merge many incidents. A tuned threshold helps on this synthetic data but was chosen after seeing results (post-hoc).
+* **Decoys are still linked.** Awareness notices that quote scams (D1) and reversed-order calls (D3) were linked by candidate
+  links in a large share of runs (100 and 185 of 250 in the headline runs); benign-identifier (D2) and vague-note (D4) decoys
+  were not.
+* **Counter-evidence is partial:** CE-6 and CE-8 are not built, severities are a-priori priors, and the public-identifier list is
+  a small starter list.
+* **Extraction is lexicon rules only.** It misses phrasings it has not seen, some words are ambiguous ("tonight" reads as
+  urgency), and Hindi, Marathi and Hinglish coverage is thin. The injection guard is a regex layer and does not catch
+  obfuscated or paraphrased attacks.
+* **Secret redaction is best effort** (spelled-out digits, secrets with no cue word and unusual formats are missed); use
+  synthetic data and HTTPS. See [docs/PRIVACY.md](docs/PRIVACY.md).
+* **Deployment:** the public site is static (precomputed data); a hosted backend was not set up. Accessibility was audited
+  automatically (contrast, keyboard flow), not with a screen reader. Protecting people during live calls would need telecom or
+  mobile-OS integration, which VIGIL does not attempt.
+* **Not a product.** It is a research prototype: no accounts, no access control, no claim of fitness for any real-world use.
+
+## Built with AI coding assistants
+
+This project was built with AI coding assistants, in three stages. Where `DEVELOPMENT_LOG.md` and `TASK_TRACKER.md` do not record a
+detail, it is stated here as the owner's account.
+
+1. **Blueprint.** The project blueprint (`PROJECT_BLUEPRINT.md`) was drafted with Claude in a chat, according to the owner. The log
+   treats it as the starting input.
+2. **Initial scaffold: Phase 0 and most of Phase 1** (setup, backend, frontend, AI-engine skeleton, deployment scaffold). Built in
+   **Google Antigravity**, using Gemini and Claude Sonnet 4.6 according to the owner. The log names Antigravity but not the models.
+3. **Everything after: finishing Phase 1, then Phases 2 to 7**, including the evaluation harness, the experiments, the call
+   simulation, the reports and these documents. Built with **Claude Code** (Anthropic) under the owner's direction. Its first session
+   audited the scaffold and fixed real defects, among them hand-typed demo values that were replaced by real pipeline output, a
+   `.gitignore` rule that had kept the ORM package out of git, and deployment settings that would not have worked (log, Session 2).
+
+How the work was kept honest: small reviewed steps under a standing rules file (`CLAUDE.md`), and a development log
+(`DEVELOPMENT_LOG.md`) that records each session's prompt, decisions, mistakes and fixes. Every metric comes from a script,
+experiments were pre-registered, and the held-out set was drafted by a different language model (not Claude) and then reviewed,
+edited and labelled by the owner, Shriya Patil. Treat the code as AI-assisted and verify it with the tests, the browser QA script
+and the reproduction commands rather than taking this README's word.
+
+## More detail
+
+<details>
+<summary><b>Screenshots</b> (live site, synthetic data)</summary>
 
 | | |
 |---|---|
-| ![Overview](docs/screenshots/01-overview.png) | ![Investigation detail](docs/screenshots/02-investigation-detail.png) |
-| ![Graph and Evidence Inspector](docs/screenshots/03-graph-and-evidence-inspector.png) | ![Campaign playbook alignment](docs/screenshots/04-campaign-playbook-alignment.png) |
-| ![Scenario Lab at rotation 1](docs/screenshots/05-scenario-lab-rotation-1.png) | ![Simulated call with the injection badge](docs/screenshots/06-simulated-call-injection.jpg) |
-| ![Report](docs/screenshots/07-report.jpg) | ![Mobile drawer](docs/screenshots/08-mobile-drawer.png) |
+| ![Investigation detail with the tactic timeline and risk ledger](docs/screenshots/02-investigation-detail.png) | ![Intelligence graph with the Evidence Inspector open on an observed match](docs/screenshots/03-graph-and-evidence-inspector.png) |
+| ![Campaign hypothesis with the playbook alignment grid](docs/screenshots/04-campaign-playbook-alignment.png) | ![Scenario Lab at identifier rotation 1: no observed links, three candidate links](docs/screenshots/05-scenario-lab-rotation-1.png) |
+| ![Simulated call analysis with the manipulation-attempt safety badge](docs/screenshots/06-simulated-call-injection.jpg) | ![Structured report with facts, inferences, analyst actions, counter-evidence and limitations](docs/screenshots/07-report.jpg) |
+| ![Phone layout with the navigation drawer open](docs/screenshots/08-mobile-drawer.png) | |
 
-## 4. Architecture
+</details>
+
+<details>
+<summary><b>Architecture</b> (diagram and pipeline; details in <a href="ARCHITECTURE.md">ARCHITECTURE.md</a>)</summary>
 
 ```mermaid
 flowchart LR
@@ -85,31 +177,26 @@ flowchart LR
   EX["scripts/export_static_demo.py<br/>(runs the real pipeline)"] --> S
 ```
 
-Per incident: redact secrets → normalise and extract identifiers → exact matches → injection guard → tactic extraction →
-risk ledger → playbook fingerprint (candidates only) → counter-evidence (a high finding disputes a link) → campaign
-hypotheses. Safety invariants **I1-I5** (observed match needs exactly equal identifiers; no model output can create an
-observed or analyst-verified link; analyst statuses need a recorded review; a campaign is a hypothesis until accepted; every
-link has evidence and a plain-language explanation) are enforced in the data layer and tested. Details:
-[ARCHITECTURE.md](ARCHITECTURE.md), [docs/API_SPEC.md](docs/API_SPEC.md).
+Per incident: redact secrets → normalise and extract identifiers → exact matches → injection guard → tactic extraction → risk
+ledger → playbook fingerprint (candidates only) → counter-evidence (a high finding disputes a link) → campaign hypotheses.
+Safety invariants **I1-I5**: an observed match needs exactly equal identifiers; no model output can create an observed or
+analyst-verified link; analyst statuses need a recorded review; a campaign is a hypothesis until accepted; every link has evidence
+and a plain-language explanation.
 
-## 5. Results, honestly
+</details>
 
-Everything below is produced by scripts from synthetic data written by the same author as the rules, so it is
-**optimistic and does not predict real-world performance**. The identifier-rotation experiment was **pre-registered**
-([docs/PREREGISTRATION.md](docs/PREREGISTRATION.md)) before it was run: arms, metrics, seeds and the family definition were
-fixed first. Tables are generated from `docs/experiments/*.json`; the full set, with precision/recall, the test slice and
-threats to validity, is in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md).
+<details>
+<summary><b>Full benchmark tables</b> (pre-registered headline, post-hoc row, held-out set)</summary>
 
-Four arms: **A** text similarity (TF-IDF); **B** identifier graph (exact matches); **C** B plus counter-evidence (CE-1, 2, 3,
-4, 5, 7; CE-6 and CE-8 are not built); **D** C plus the playbook fingerprint (`T_candidate = 0.75`). Two ground truths, always
-together: **(a)** a true pair is the same campaign instance; **(b)** a true pair is the same script family (digital arrest =
-T1+T2+T3, bank KYC = T4, payment link = T5, courier/customs = T6; a bank-KYC to payment-link link counts as **false**).
-Rotation `r` is the chance each identifier is replaced between incidents (0 = never, 1 = always). 10 seeds, 150 incidents per
-run (90 campaign, 40 legitimate, 20 decoys).
+Four arms: **A** text similarity (TF-IDF); **B** identifier graph (exact matches); **C** B plus counter-evidence (CE-1, 2, 3, 4, 5, 7;
+CE-6 and CE-8 are not built); **D** C plus the playbook fingerprint (`T_candidate = 0.75`). Two ground truths, always together:
+**(a)** a true pair is the same campaign instance; **(b)** a true pair is the same script family (digital arrest = T1+T2+T3, bank KYC = T4,
+payment link = T5, courier/customs = T6; a bank-KYC to payment-link link counts as **false**). Rotation `r` is the chance each identifier
+is replaced between incidents (0 = never, 1 = always). 10 seeds, 150 incidents per run (90 campaign, 40 legitimate, 20 decoys).
 
-### 5.1 Headline: the pre-registered configuration
+**Headline: the pre-registered configuration** (all numbers generated from [docs/experiments/rotation.json](docs/experiments/rotation.json)).
 
-![Rotation experiment](docs/experiments/rotation_all.png)
+![Identifier-rotation experiment: pairwise F1 and false association rate for arms A to D at five rotation levels, under both ground truths](docs/experiments/rotation_all.png)
 
 <!-- BEGIN:readme-headline -->
 **Ground truth (a) same campaign instance**; cells are pairwise F1 / false association rate:
@@ -129,22 +216,10 @@ run (90 campaign, 40 legitimate, 20 decoys).
 | 1.0 | 0.42 / 0.005 | 0.00 / 0.003 | 0.00 / 0.000 | 0.51 / 0.228 |
 <!-- END:readme-headline -->
 
-* **Identifier linking collapses under rotation.** Under (a), B and C fall from F1 0.74 and 0.90 at r = 0 to 0 at r = 1.
-* **Counter-evidence works as designed.** C has precision 1.0 against B's 0.67 at r = 0, at the same recall. Over 50 runs no
-  observed link touched a legitimate case or a decoy after counter-evidence (1848 did before), invariant I1 had 0 violations,
-  and no legitimate case was ever linked (0 of 2000).
-* **The fingerprint (D) recovers links that rotation hides, but it over-merges.** At r = 1 it is the only graph arm that finds
-  pairs (candidate recall about 0.9). Its false association rate is 0.23 to 0.34 because a minority of wrong links (mostly
-  bank-KYC to payment-link scripts) are chained by connected components (in the diagnostic run, into one 75-incident group).
-* **D does not beat the plain text baseline A under (a) at any rotation level.** It is a lead generator for an analyst, not an
-  automatic grouping.
-
-### 5.2 Post-hoc: a tuned threshold, reported separately
-
-> **Post-hoc and exploratory.** After seeing 5.1, a higher fingerprint threshold was tried: **chosen on dev data only**,
-> protocol committed before the fresh-seed run, then evaluated on 10 fresh seeds (2001-2010). It was **tuned after the
-> results were seen**, on the same generator and templates, so it shows nothing about new scripts. **The headline in 5.1 and
-> the application default (`T_CANDIDATE = 0.75`) are unchanged.**
+**Post-hoc and exploratory.** After seeing the headline, a higher fingerprint threshold was tried: **chosen on dev data only**, protocol
+committed before the fresh-seed run, then evaluated on 10 fresh seeds (2001-2010). It was **tuned after the results were seen**, on the
+same generator and templates, so it shows nothing about new scripts. **The headline and the application default (`T_CANDIDATE = 0.75`)
+are unchanged.**
 
 <!-- BEGIN:readme-posthoc -->
 **(a) same campaign instance** (fresh seeds, F1 / false association rate):
@@ -164,14 +239,13 @@ run (90 campaign, 40 legitimate, 20 decoys).
 | 1.0 | 0.51 / 0.207 | 0.86 / 0.016 |
 <!-- END:readme-posthoc -->
 
-Under the script-family truth the post-hoc variant is much better (it removes most cross-family links); under the instance
-truth it still does not beat the text baseline (about 0.20), and the text baseline keeps a lower false association rate.
-Details and caveats: [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) section 10.
+Under the script-family truth the post-hoc variant is much better (it removes most cross-family links); under the instance truth it still
+does not beat the text baseline (about 0.20), and the text baseline keeps a lower false association rate. See
+[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) section 10.
 
-### 5.3 Held-out set (run once, frozen configuration)
-
-25 scenarios (19 scam, 6 legitimate) **drafted by a different language model (not Claude), then reviewed, edited and labelled
-by the owner**. The rule extractor was run on them **once**; no rule, lexicon, threshold or test was changed afterwards.
+**Held-out set (run once, frozen configuration).** 25 scenarios (19 scam, 6 legitimate) **drafted by a different language model (not
+Claude), then reviewed, edited and labelled by the owner**. The rule extractor was run on them **once**; no rule, lexicon, threshold or
+test was changed afterwards.
 
 <!-- BEGIN:readme-heldout -->
 | held-out measure (run once) | result | which |
@@ -181,82 +255,59 @@ by the owner**. The rule extractor was run on them **once**; no rule, lexicon, t
 | Tactic-level scores | not measured | no per-utterance labels in the set |
 <!-- END:readme-heldout -->
 
-**Reading it, without softening it:** 18 of 19 scam scenarios had a scam tactic detected (the miss is H21, a cut-off call that
-ends before any demand), but **2 of 6 legitimate scenarios (H15 and H17) were flagged as scams, a false-alarm rate of 2 of 6.**
-The likely cause is that the extractor matches **wording, not intent**: H17 is an awareness notice that quotes scam phrases
-and H15 is a genuine bank alert with an urgent cue. That explanation is **unverified**, because the scenarios' tactic events
-were not examined afterwards to avoid tuning on them. It is a small synthetic set and **tactic-level scores were not
-measured** (the set has no per-utterance labels).
+18 of 19 scam scenarios had a scam tactic detected (the miss is H21, a cut-off call that ends before any demand), but **2 of 6 legitimate
+scenarios (H15 and H17) were flagged as scams, a false-alarm rate of 2 of 6.** The likely cause is that the extractor matches **wording,
+not intent**: H17 is an awareness notice that quotes scam phrases and H15 is a genuine bank alert with an urgent cue. That explanation is
+**unverified**, because the scenarios' tactic events were not examined afterwards to avoid tuning on them. It is a small synthetic set
+and **tactic-level scores were not measured** (the set has no per-utterance labels).
 
-Other suites: tactic extraction macro-F1 0.97 / 0.99 / 0.97 (train / dev / test; the test figure is a fresh sample of the
-same templates, not independent), prompt-injection 10 of 10 authored attacks neutralised (authored by the same hand as the
-guard), entity extraction, latency (descriptive).
+Other suites: tactic extraction macro-F1 0.97 / 0.99 / 0.97 (train / dev / test; the test figure is a fresh sample of the same templates,
+not independent), prompt-injection 10 of 10 authored attacks neutralised (authored by the same hand as the guard), entity extraction,
+latency (descriptive). Full tables, precision/recall, the test slice and threats to validity: [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md).
 
-## 6. Run it locally (100% free and offline)
+</details>
 
-Prerequisites: Python 3.11+, Node.js 18+, Git. No API key is needed or used.
+<details>
+<summary><b>API at a glance</b> (full specification: <a href="docs/API_SPEC.md">docs/API_SPEC.md</a>)</summary>
 
-```bash
-git clone https://github.com/ShriyaP1966/VIGIL.git
-cd VIGIL
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r backend/requirements.txt
-cd frontend && npm ci && cd ..
-cp .env.example .env               # optional; Windows PowerShell: Copy-Item .env.example .env
-python scripts/run_demo.py         # seeds the 9 synthetic incidents, starts the API and the web UI
-```
+Base path `/api/v1`: `GET /health` · `POST/GET /incidents`, `GET /incidents/{id}`, `POST /incidents/{id}/evidence`, `POST /analyze/{id}`,
+`GET /incidents/{id}/report?format=json|csv` · `GET /graph` · `GET /associations/{id}`, `POST /associations/{id}/review` ·
+`GET /campaigns`, `GET /campaigns/{id}`, `POST /campaigns/{id}/review` · `GET /scenarios`, `POST /scenarios/{name}/run` ·
+`GET /simulations`, `POST /simulations/live-call/analyze` · `DELETE /data?confirm=true`. JSON everywhere; one error body shape;
+no authentication (a local single-user tool).
 
-Open http://localhost:5173 (API docs at http://localhost:8000/docs). Checks: `pytest -q`, `cd frontend && npm test`,
-`python scripts/preflight.py`. Regenerate the static demo data with `python scripts/export_static_demo.py`; re-run the
-experiments with the commands in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md). Real-browser QA of a build:
-`node scripts/qa_browser.mjs --dist frontend/dist --edge <browser> --profile <empty dir>`.
+</details>
 
-## 7. Limitations (please read)
+<details>
+<summary><b>Privacy and safety notes</b> (full text: <a href="docs/PRIVACY.md">docs/PRIVACY.md</a>)</summary>
 
-* **All data is synthetic**, and the generator, the lexicon and the rules share an author. Scores are optimistic. Nothing here
-  says how VIGIL would perform on real traffic, and it must not be used with real victims' data.
-* **The held-out set is small** (19 scam, 6 legitimate), drafted by a different language model and reviewed by the owner, and
-  synthetic. **Tactic-level scores were not measured on it.** Its rates are very imprecise: one legitimate scenario is 17 points.
-* **The held-out false alarms are real:** 2 of 6 legitimate scenarios (H15, H17) were flagged as scams, and 18 of 19 scam
-  scenarios were detected (H21 missed). The likely cause is that the extractor matches wording rather than intent, for
-  example an awareness notice that quotes scam phrases; this is **unverified**. The rules were **not** changed afterwards.
-  **A future fix** would use the speaker's role and intent (who is saying it and why), not only wording.
-* **The fingerprint over-merges within script families.** Different instances of one template run an identical script, so it
-  cannot tell them apart (precision against the instance truth is low), and with connected-component grouping a few wrong
-  links merge many incidents. A tuned threshold helps on this synthetic data but was chosen after seeing results.
-* **Decoys are still linked.** Awareness notices that quote scams (D1) and reversed-order calls (D3) were linked by candidate
-  links in a large share of runs (100 and 185 of 250 in the headline runs); benign-identifier (D2) and vague-note (D4) decoys
-  were not.
-* **Counter-evidence is partial:** CE-6 and CE-8 are not built, severities are a-priori priors, and the public-identifier list is
-  a small starter list.
-* **Extraction is lexicon rules only.** It misses phrasings it has not seen, some words are ambiguous ("tonight" reads as
-  urgency), and Hindi, Marathi and Hinglish coverage is thin. The injection guard is a regex layer and does not catch
-  obfuscated or paraphrased attacks.
-* **Secret redaction is best effort** (spelled-out digits, secrets with no cue word and unusual formats are missed); use
-  synthetic data and HTTPS. See [docs/PRIVACY.md](docs/PRIVACY.md).
-* **Deployment:** the public site is static (precomputed data); a hosted backend was not set up. Accessibility was audited
-  automatically (contrast, keyboard flow), not with a screen reader. Protecting people during live calls would need telecom or
-  mobile-OS integration, which VIGIL does not attempt.
+* Synthetic data only; no accounts, analytics or third-party calls; the hosted demo stores nothing you do.
+* Secrets (OTP, PIN, CVV, password, card, Aadhaar) are redacted before anything is stored, best effort and fail-closed; only counts are kept.
+* Evidence is rendered as plain text, never HTML; URLs in evidence are never fetched; a regex guard flags instruction-like text and the
+  UI shows a safety badge; reports export masked identifiers and neutralise spreadsheet formulas.
+* The risk score is an experimental heuristic, not a probability. Simulated call analysis replays scripted text; VIGIL does not listen to calls.
 
-## 8. Built with AI coding assistants
+</details>
 
-The project was planned against a blueprint written for Google Antigravity; the implementation, tests and documents were
-produced with **Claude Code** (Anthropic) working under the owner's direction, in small reviewed steps with a standing rule
-file (`CLAUDE.md`) and a development log (`DEVELOPMENT_LOG.md`) that records each session's prompt, decisions, mistakes and
-fixes. Every metric comes from a script, experiments were pre-registered, and the held-out set was drafted by a different
-language model (not Claude) and then reviewed, edited and labelled by the owner, Shriya Patil. Treat the code as AI-assisted
-and verify it with the tests, the browser QA script and the reproduction commands rather than taking this README's word.
+<details>
+<summary><b>Documents, reproduction and repository rules</b></summary>
 
-## 9. Repository, roadmap and documents
+[Architecture](ARCHITECTURE.md) · [API](docs/API_SPEC.md) · [Privacy](docs/PRIVACY.md) · [Experiments](docs/EXPERIMENTS.md) ·
+[Pre-registration](docs/PREREGISTRATION.md) · [Dataset card](docs/DATASET_CARD.md) · [Model card](docs/MODEL_CARD.md) ·
+[Demo video script](docs/DEMO_SCRIPT.md) · [Final checklist](docs/FINAL_CHECKLIST.md) · [Task tracker](TASK_TRACKER.md) ·
+[Development log](DEVELOPMENT_LOG.md) · [Original blueprint](PROJECT_BLUEPRINT.md).
 
-Single branch `main`; size budget enforced by `scripts/preflight.py` (`--history` audits all of git history). Progress and
-phase gates: [TASK_TRACKER.md](TASK_TRACKER.md); original plan: [PROJECT_BLUEPRINT.md](PROJECT_BLUEPRINT.md).
+Reproduce: regenerate the static demo data with `python scripts/export_static_demo.py`; re-run the experiments with the commands in
+[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md); drive a build in a real browser with
+`node scripts/qa_browser.mjs --dist frontend/dist --edge <browser> --profile <empty dir>`. Single branch `main`; the size budget and a
+secret scan are enforced by `scripts/preflight.py` (`--history` audits all of git history).
 
 Possible next steps (not built): a hosted backend, verifying the held-out false-alarm cause and using speaker role and intent,
-instance-level behavioural features, multi-tenant access control and audit trails, privacy-preserving sharing of indicator
-playbooks between institutions, and an assessment under India's DPDP Act 2023 before any real data.
+instance-level behavioural features, access control and audit trails, privacy-preserving sharing of indicator playbooks between
+institutions, and an assessment under India's DPDP Act 2023 before any real data.
 
-## 10. Licence
+</details>
+
+## Licence
 
 MIT, copyright 2026 Shriya Patil. See [LICENSE](LICENSE). The data in this repository is synthetic.

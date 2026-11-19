@@ -25,5 +25,5 @@ drawer on `/incidents`.
 or GitHub admin pages, or the development log. **Do not claim:** real-time protection, attribution to any group, real data,
 tactic-level scores on the held-out set (they were not measured), or that the tuned threshold is the product default (it is not).
 
-**After recording:** upload to YouTube (unlisted) or Drive, add the link under "Demo video" at the top of `README.md`, and
+**After recording:** upload to YouTube (unlisted) or Drive, add a "Video" line under the live-demo line near the top of `README.md`, and
 re-run `python scripts/render_experiment_tables.py --check` and the tests before committing the README.

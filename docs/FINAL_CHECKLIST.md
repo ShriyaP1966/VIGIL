@@ -17,7 +17,7 @@ assistant and the results are recorded in `DEVELOPMENT_LOG.md` (Session 9).
 5. **Only `main` exists.** `git ls-remote --heads origin` lists one branch. No tags or releases you do not want public.
 6. **(owner) Repository metadata:** description ("Cross-channel scam intelligence: explainable, offline-first, synthetic data"),
    topics (`scam-detection`, `fraud`, `fastapi`, `react`, `explainable-ai`), the live URL as the website.
-7. **(owner) Demo video:** upload (unlisted), then put the link under "Demo video" in `README.md`, run
+7. **(owner) Demo video:** upload (unlisted), then add a "Video" line under the live-demo line near the top of `README.md`, run
    `python scripts/render_experiment_tables.py --check`, the tests and preflight, commit as ShriyaP1966 (no AI attribution),
    push.
 8. **(owner) Vercel:** the project's Root Directory must stay `frontend` (without it a push does not deploy). After the flip,
