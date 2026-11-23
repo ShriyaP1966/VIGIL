@@ -7,6 +7,8 @@
 **VIGIL is an offline-first, explainable tool that helps an analyst see which scam reports share an identifier or a script.**
 *PromptWars × AI Vibeathon 2026 submission.*
 
+Judges: start with the live demo, then Key results and Limitations.
+
 In India, "digital arrest" and other financial-impersonation scams (fake police, customs, bank or courier staff) spread across
 phone calls, SMS and WhatsApp. Scammers keep swapping phone numbers, UPI IDs and domains, so ten reports of the same script look
 like ten unrelated cases. VIGIL reads each report, extracts its tactics and identifiers, links reports with auditable states, and
@@ -293,7 +295,7 @@ no authentication (a local single-user tool).
 
 [Architecture](ARCHITECTURE.md) · [API](docs/API_SPEC.md) · [Privacy](docs/PRIVACY.md) · [Experiments](docs/EXPERIMENTS.md) ·
 [Pre-registration](docs/PREREGISTRATION.md) · [Dataset card](docs/DATASET_CARD.md) · [Model card](docs/MODEL_CARD.md) ·
-[Demo video script](docs/DEMO_SCRIPT.md) · [Final checklist](docs/FINAL_CHECKLIST.md) · [Task tracker](TASK_TRACKER.md) ·
+[Demo walkthrough script](docs/DEMO_SCRIPT.md) · [Final checklist](docs/FINAL_CHECKLIST.md) · [Task tracker](TASK_TRACKER.md) ·
 [Development log](DEVELOPMENT_LOG.md) · [Original blueprint](PROJECT_BLUEPRINT.md).
 
 Reproduce: regenerate the static demo data with `python scripts/export_static_demo.py`; re-run the experiments with the commands in
