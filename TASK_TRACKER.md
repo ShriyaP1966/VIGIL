@@ -50,7 +50,7 @@
 - [x] `pytest -q` passes. *(54 passed on 17 Nov.)*
 - [x] `npm test` passes. *(19 passed; logic tests only, no DOM component tests because no DOM test library is in the blueprint.)*
 - [x] `GET /health` returns `status: ok`, `mode: offline`, `version: 3.1.0` (plus a timestamp).
-- [ ] Frontend loads and navigates all placeholder views without console errors. *(`tsc` and `vite build` pass; not yet walked through in a browser.)*
+- [x] Frontend loads and navigates all placeholder views without console errors. *(`tsc` and `vite build` pass. The placeholder views have since been replaced by the real pages; `scripts/qa_browser.mjs` loaded 12 routes in a real browser with zero console errors, see Phase 6.)*
 - [x] `python scripts/preflight.py --quick` exits with code 0.
 - [x] Commit pushed to `origin main`. *(`a0b0d0d` was on origin at the start of the 17 Nov session; later local commits wait for the owner's push.)*
 - [x] `git branch -a` and `git ls-remote --heads origin` confirm that **only** the `main` branch exists.
@@ -72,7 +72,7 @@
 - [x] Frontend Intelligence Graph: React Flow canvas showing incident nodes, entity nodes, and solid `OBSERVED_MATCH` edges.
 - [x] Minimal Evidence Inspector: opening on node/edge click showing source evidence excerpts.
 - [x] Seed script (`scripts/seed_demo.py`) with 3 synthetic incidents (two sharing a UPI ID, one isolated).
-- [ ] **Deployment Milestone:** Deploy frontend to Vercel and backend to Render. Document URLs in `deployment/DEPLOY.md`. Resolve all CORS and bundle build errors. *(Blocked: needs the owner's Vercel and Render sign-in. Config and docs are ready; a Render-style boot was verified locally.)*
+- [ ] **Deployment Milestone:** Deploy frontend to Vercel and backend to Render. Document URLs in `deployment/DEPLOY.md`. Resolve all CORS and bundle build errors. *(Frontend: done, https://vigil-demo-eta.vercel.app, recorded in `deployment/DEPLOY.md`. Backend on Render: **not done / not claimed**, skipped on purpose; the public link is static-first and runs on precomputed synthetic data. A Render-style boot was verified locally.)*
 
 #### Done Means Checkpoint
 - [x] Pasting a synthetic transcript generates an incident and displays masked entities (e.g., `+91 98•••••10`). *(Verified through the API in `test_api_slice.py`; UI not yet walked through in a browser.)*
@@ -81,7 +81,7 @@
 - [x] The third unrelated incident remains disconnected in the graph. *(API test and layout test.)*
 - [x] Unit tests pass verifying entity extraction and invariant I1 (no `OBSERVED_MATCH` without exact normalized equality).
 - [x] ~~Antigravity weekly quota inspected in **Settings → Models** and logged.~~ **Waived by owner: build moved to Claude Code.**
-- [ ] **First slice deployed publicly:** Deployed link opens on an external device and renders the interactive slice. *(Blocked on sign-in, see above.)*
+- [ ] **First slice deployed publicly:** Deployed link opens on an external device and renders the interactive slice. *(The site is now live and was checked by script in a headless browser; opening it on a real external device is still the owner's phone check.)*
 
 ---
 
@@ -164,7 +164,7 @@
 #### Tasks
 - [x] Dataset generator v2: 6 templates × 15 variants, 40 legitimate negatives, 20 decoys (four types), unique identifiers, script-family ground truth; the 10 injection attacks are in `data/injection_attacks.json`. Frozen and pre-registered (`docs/PREREGISTRATION.md`) before any experiment.
 - [x] The 25 held-out scenarios exist in `data/heldout/heldout.jsonl` (19 scam, 6 legitimate), drafted by a different language model (not Claude) and reviewed, edited and labelled by the owner, Shriya Patil. Format checked only; **evaluated once** (see below). No per-utterance tactic labels, so tactic-level scores are not measured (scenario-level detection and false-alarm rate only).
-- [~] Evaluation harness `scripts/evaluate_model.py`: suites `tactics`, `entities`, `associations`, `rotation`, `injection`, `latency` run and committed; `heldout` is implemented and guarded (refuses an empty file and a second run) but **not run**.
+- [~] Evaluation harness `scripts/evaluate_model.py`: suites `tactics`, `entities`, `associations`, `rotation`, `injection`, `latency` run and committed; `heldout` is implemented and guarded (refuses an empty file and a second run) and was **run once** (19 Nov 2026, see Phase 5 below).
 - [x] Hero Rotation Experiment (E4): arms A, B, C, D at r in 0, 0.25, 0.5, 0.75, 1.0, 10 seeds (1001-1010), both ground truths, two scored slices.
 - [x] Pairwise F1, false association rate, candidate precision/recall (`docs/experiments/rotation.json`).
 - [x] `scripts/plot_results.py` chart PNGs (about 108 KB each, limit 200 KB; matplotlib is a dev-only dependency in `scripts/requirements-dev.txt`).
@@ -196,7 +196,7 @@
 - [~] Accessibility: automated WCAG AA text-contrast audit of nine pages (it found real failures; the muted-text and red colours were fixed), visible focus rings, ARIA labels and meters, graph table view, keyboard-only workflow checked in a browser. **Not** a full audit with a screen reader or axe.
 - [x] `scripts/export_static_demo.py` now also exports scenarios (rotation scenarios at five levels), reports (JSON and CSV) and the call simulations; tests check the committed files equal what the endpoints produce.
 - [x] Client dual adapter (`HttpApi` + `StaticApi`) with sleeping-backend detection and the mode badge.
-- [~] **Deployment milestone:** the Vercel site redeploys on every push (Root Directory `frontend`; the owner reports earlier pushes did not deploy until that was set). **Render (backend) is not set up**: it needs the owner's sign-in. The static fallback was verified in a real browser with no backend.
+- [~] **Deployment milestone:** the Vercel site redeploys on every push (Root Directory `frontend`; the owner reports earlier pushes did not deploy until that was set). **Render (backend): not done / not claimed**, skipped on purpose; the public link is static-first, which the project rules allow. The static fallback was verified in a real browser with no backend.
 - [x] Post-hoc tuning experiment (owner-requested, separate from the headline): see docs/EXPERIMENTS.md section 10.
 - [x] Formal **Feature Freeze** declared in `DEVELOPMENT_LOG.md` (Session 8).
 
@@ -224,12 +224,12 @@
 - [~] Deployed link: checked by script (40 of 40 checks, `scripts/check_deployed.mjs`); **the check from a real phone on cellular data is the owner's** (`docs/FINAL_CHECKLIST.md`).
 - [ ] Validate requirements on the Hack2skill dashboard. **Owner.**
 - [ ] Formal submission. **Owner.**
-- [ ] Make the repository public. **Owner** (checklist in `docs/FINAL_CHECKLIST.md`). The LICENSE (MIT) is added.
+- [x] Make the repository public. **Owner** (checklist in `docs/FINAL_CHECKLIST.md`). The repository is now public; the LICENSE (MIT) is added.
 
 #### Done Means Checkpoint
 - [x] Fresh clone sets up and runs offline using only the README's instructions with zero API keys (also run in live mode: 50 of 50 browser checks against the clone's own backend, in the earlier clone test).
 - [x] `preflight.py --history` passes all checks (M1 < 8 MB, M2 < 9 MB, M3 < 9 MB, only `main`).
-- [ ] Public repository confirmed accessible in a logged-out private session. **After the owner flips it.**
+- [x] Public repository confirmed accessible without signing in. *(Anonymous read check run after the owner made it public, 24 Nov 2026; not a manual private-window check.)*
 - [x] Live link loads, works with no backend, and shows the synthetic-data labels on desktop and phone width (script); deep links survive a refresh.
 - [ ] Submission recorded on the competition portal. **Owner.**
 

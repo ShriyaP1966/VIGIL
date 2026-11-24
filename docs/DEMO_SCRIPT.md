@@ -1,4 +1,4 @@
-# 3-minute demo video: script and shot list
+# 3-minute demo walkthrough: script and shot list
 
 **Rules for the recording.** Use **only the live site** (https://vigil-demo-eta.vercel.app) and its **synthetic** data. Do not
 open the Vercel dashboard, GitHub settings, `.env` files, terminals with tokens, or any real message, number or person. Say
