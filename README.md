@@ -7,8 +7,6 @@
 **VIGIL is an offline-first, explainable tool that helps an analyst see which scam reports share an identifier or a script.**
 *PromptWars × AI Vibeathon 2026 submission.*
 
-Judges: start with the live demo, then Key results and Limitations.
-
 In India, "digital arrest" and other financial-impersonation scams (fake police, customs, bank or courier staff) spread across
 phone calls, SMS and WhatsApp. Scammers keep swapping phone numbers, UPI IDs and domains, so ten reports of the same script look
 like ten unrelated cases. VIGIL reads each report, extracts its tactics and identifiers, links reports with auditable states, and
@@ -16,6 +14,8 @@ shows counter-evidence next to every link. **It never declares a campaign by its
 hypothesis until a person accepts it.** All data is synthetic.
 
 **▶ Live demo: https://vigil-demo-eta.vercel.app** (static site on precomputed synthetic data, no install)
+
+**Built with:** Python (FastAPI, Pydantic, SQLAlchemy, SQLite) and React 18 + TypeScript + Vite + Tailwind + React Flow. Free tools only, no API key, runs offline.
 
 **Contents:** [Try it in 2 minutes](#try-it-in-2-minutes) · [What makes it different](#what-makes-it-different) ·
 [Key results](#key-results) · [Run it locally](#run-it-locally) · [Limitations](#limitations-please-read) ·
@@ -136,7 +136,7 @@ This project was built with AI coding assistants, in three stages.
 3. **Everything after: finishing Phase 1, then Phases 2 to 7**, including the evaluation harness, the experiments, the call
    simulation, the reports and these documents. Built with **Claude Code** (Anthropic) under the owner's direction. Its first session
    audited the scaffold and fixed real defects, among them hand-typed demo values that were replaced by real pipeline output, a
-   `.gitignore` rule that had kept the ORM package out of git, and deployment settings that would not have worked (log, Session 2).
+   `.gitignore` rule that had kept the ORM package out of git, and deployment settings that would not have worked (see `DEVELOPMENT_LOG.md`, Session 2).
 
 How the work was kept honest: small reviewed steps under a standing rules file (`CLAUDE.md`), and a development log
 (`DEVELOPMENT_LOG.md`) that records each session's prompt, decisions, mistakes and fixes. Every metric comes from a script,

@@ -92,7 +92,7 @@ def test_the_ai_assistants_section_names_the_three_stages_and_keeps_the_honesty_
     for hedge in ("according to the owner", "owner's account", "do not record a detail"):
         assert hedge not in flat, hedge                                    # the statements are made flatly
     for needle in ("drafted with Claude in a chat", "Google Antigravity", "using Gemini and Claude Sonnet 4.6", "Phase 0 and most of Phase 1",
-                   "hand-typed demo values", "a `.gitignore` rule that had kept the ORM package out of git", "(log, Session 2)",
+                   "hand-typed demo values", "a `.gitignore` rule that had kept the ORM package out of git", "(see `DEVELOPMENT_LOG.md`, Session 2)",
                    "Claude Code", "Phases 2 to 7", "CLAUDE.md", "DEVELOPMENT_LOG.md", "Every metric comes from a script",
                    "pre-registered", "drafted by a different language model (not Claude)", "reviewed, edited and labelled by the owner",
                    "rather than taking this README's word"):
